@@ -19,6 +19,9 @@ jobs:
       - name: Install dependencies
         run: npm run install:all
 
+      - name: Build libraries
+        run: npm run build:libs
+
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
