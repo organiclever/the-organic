@@ -12,7 +12,10 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@libs/hello": "file:../../libs/hello"
+    "@libs/hello": "file:../../libs/hello",
+    "react": "^18",
+    "react-dom": "^18",
+    "next": "14.2.8"
   },
   "devDependencies": {
     "typescript": "^5",
