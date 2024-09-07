@@ -1,0 +1,11 @@
+{
+  "name": "e2e-web",
+  "version": "1.0.0",
+  "description": "E2E tests for AyoKoding",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}

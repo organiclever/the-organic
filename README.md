@@ -11,6 +11,7 @@ Brief description of your project.
   - [Project Structure](#project-structure)
   - [Installation](#installation)
   - [Usage](#usage)
+  - [Testing](#testing)
   - [Maintenance](#maintenance)
   - [Features](#features)
   - [Contributing](#contributing)
@@ -54,6 +55,19 @@ Other available scripts:
 - Lint the code: `npm run lint:ayokoding`
 - Clean build artifacts: `npm run clean:ayokoding`
 - Run tests: `npm run test:ayokoding`
+
+## Testing
+
+To run the e2e tests:
+
+1. Navigate to the `e2e-web` directory:
+   ```
+   cd apps/e2e-web
+   ```
+2. Run the tests:
+   ```
+   npm run test
+   ```
 
 ## Maintenance
 
