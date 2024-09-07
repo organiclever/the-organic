@@ -7,11 +7,13 @@
     "start:ayokoding": "cd apps/ayokoding && npm run start",
     "lint:ayokoding": "cd apps/ayokoding && npm run lint",
     "install:ayokoding": "cd apps/ayokoding && npm install",
-    "clean:ayokoding": "cd apps/ayokoding && rm -rf .next out",
+    "clean:ayokoding": "rimraf apps/ayokoding/.next apps/ayokoding/out",
     "test:ayokoding": "cd apps/ayokoding && npm run test",
-    "install:all": "npm install && if [ -d \"apps\" ]; then for dir in apps/*; do (cd \"$dir\" && npm install); done; fi",
-    "update:all": "npm update && if [ -d \"apps\" ]; then for dir in apps/*; do (cd \"$dir\" && npm update); done; fi",
-    "clean:all": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +"
+    "install:all": "npm install && npm-run-all -s create-apps-dir install:ayokoding",
+    "create-apps-dir": "mkdirp apps",
+    "update:all": "npm update && npm-run-all -s update:apps",
+    "update:apps": "cd apps && npm-run-all -p update:*",
+    "clean:all": "rimraf **/node_modules"
   },
   "author": "",
   "license": "ISC",
@@ -19,5 +21,11 @@
   "volta": {
     "node": "20.17.0",
     "npm": "10.8.3"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "mkdirp": "^1.0.4",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^3.0.2"
   }
 }
