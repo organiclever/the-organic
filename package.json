@@ -32,7 +32,7 @@
     "test:e2e:chrome": "cd apps/e2e-web && npm run test:chrome",
     "test:e2e:firefox": "cd apps/e2e-web && npm run test:firefox",
     "test:e2e:safari": "cd apps/e2e-web && npm run test:safari",
-    "test:e2e:ci": "start-server-and-test 'npm run dev:ayokoding' http://localhost:3300 'npm run dev:organic-lever' http://localhost:3301 'npm run test:e2e'",
+    "test:e2e:ci": "start-server-and-test 'npm run dev:ayokoding' http://localhost:3300 'npm run dev:organic-lever' http://localhost:3301 'cd apps/e2e-web && npm run test'",
     "// Library scripts": "",
     "build:libs": "cd libs/hello && npm run build",
     "test:libs": "cd libs/hello && npm run test",

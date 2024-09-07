@@ -25,9 +25,4 @@ export default defineConfig({
       use: { ...devices["Desktop Safari"] },
     },
   ],
-  webServer: {
-    command: "cd ../ayokoding && npm run dev",
-    url: "http://localhost:3300",
-    reuseExistingServer: !process.env.CI,
-  },
 });
