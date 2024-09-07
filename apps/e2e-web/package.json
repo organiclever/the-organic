@@ -8,9 +8,5 @@
     "test:chrome": "playwright test --project=chromium",
     "test:firefox": "playwright test --project=firefox",
     "test:safari": "playwright test --project=webkit"
-  },
-  "devDependencies": {
-    "@playwright/test": "^1.47.0",
-    "@types/node": "^20"
   }
 }

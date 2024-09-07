@@ -25,6 +25,7 @@
     "install:ayokoding": "cd apps/ayokoding && npm install",
     "install:e2e-web": "cd apps/e2e-web && npm install",
     "install:libs": "cd libs/hello && npm install",
+    "install:playwright": "cd apps/e2e-web && npx playwright install --with-deps",
     "create-apps-dir": "mkdirp apps",
     "// General scripts": "",
     "build:all": "npm-run-all build:libs build:ayokoding",
@@ -47,8 +48,7 @@
   "dependencies": {
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.8",
-    "@libs/hello": "file:libs/hello"
+    "next": "14.2.8"
   },
   "devDependencies": {
     "@playwright/test": "^1.47.0",
