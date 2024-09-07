@@ -1,0 +1,23 @@
+{
+  "name": "the-organic",
+  "version": "1.0.0",
+  "scripts": {
+    "dev:ayokoding": "cd apps/ayokoding && npm run dev",
+    "build:ayokoding": "cd apps/ayokoding && npm run build",
+    "start:ayokoding": "cd apps/ayokoding && npm run start",
+    "lint:ayokoding": "cd apps/ayokoding && npm run lint",
+    "install:ayokoding": "cd apps/ayokoding && npm install",
+    "clean:ayokoding": "cd apps/ayokoding && rm -rf .next out",
+    "test:ayokoding": "cd apps/ayokoding && npm run test",
+    "install:all": "npm install && if [ -d \"apps\" ]; then for dir in apps/*; do (cd \"$dir\" && npm install); done; fi",
+    "update:all": "npm update && if [ -d \"apps\" ]; then for dir in apps/*; do (cd \"$dir\" && npm update); done; fi",
+    "clean:all": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "volta": {
+    "node": "20.17.0",
+    "npm": "10.8.3"
+  }
+}
