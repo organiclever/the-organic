@@ -24,8 +24,8 @@ jobs:
       - name: Install and build libraries
         run: npm run build:libs
 
-      - name: Build AyoKoding
-        run: npm run build:ayokoding
+      - name: Build apps
+        run: npm run build:all
 
       - name: Run unit tests
         run: npm run test:unit
