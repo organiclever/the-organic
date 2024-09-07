@@ -1,87 +1,54 @@
 # The Organic
 
-[![CI](https://github.com/organiclever/the-organic/actions/workflows/ci.yml/badge.svg)](https://github.com/organiclever/the-organic/actions/workflows/ci.yml)
+[![Build and Unit Test](https://github.com/organiclever/the-organic/actions/workflows/build-and-unit-test.yml/badge.svg)](https://github.com/organiclever/the-organic/actions/workflows/build-and-unit-test.yml)
+[![E2E Tests](https://github.com/organiclever/the-organic/actions/workflows/e2e.yml/badge.svg)](https://github.com/organiclever/the-organic/actions/workflows/e2e.yml)
 
-Brief description of your project.
+This project contains multiple applications, including AyoKoding and E2E tests.
 
-## Table of Contents
+## Getting Started
 
-- [The Organic](#the-organic)
-  - [Table of Contents](#table-of-contents)
-  - [Project Structure](#project-structure)
-  - [Installation](#installation)
-  - [Usage](#usage)
-  - [Testing](#testing)
-  - [Maintenance](#maintenance)
-  - [Features](#features)
-  - [Contributing](#contributing)
-  - [License](#license)
+To get started with this project, follow these steps:
 
-## Project Structure
+1. Clone the repository
+2. Install dependencies: `npm run install:all`
+3. Start the AyoKoding development server: `npm run dev:ayokoding`
 
-This project is set up as a monorepo with the following structure:
+## Available Scripts
 
-## Installation
+### AyoKoding Scripts
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/organiclever/the-organic.git
-   ```
-2. Navigate to the project directory:
-   ```
-   cd the-organic
-   ```
-3. Install dependencies for all projects:
-   ```
-   npm run install:all
-   ```
-
-This will install dependencies for the root project and all projects in the `apps` directory.
-
-## Usage
-
-To run the AyoKoding Next.js application:
-
-1. Start the development server:
-   ```
-   npm run dev:ayokoding
-   ```
-2. Open your browser and visit `http://localhost:3000`
-
-Other available scripts:
-
+- Start development server: `npm run dev:ayokoding`
 - Build the application: `npm run build:ayokoding`
 - Start the production server: `npm run start:ayokoding`
 - Lint the code: `npm run lint:ayokoding`
-- Clean build artifacts: `npm run clean:ayokoding`
 - Run tests: `npm run test:ayokoding`
+- Run tests in watch mode: `npm run test:ayokoding:watch`
+- Clean build artifacts: `npm run clean:ayokoding`
+
+### E2E Testing Scripts
+
+- Run all E2E tests: `npm run test:e2e`
+- Run E2E tests with UI: `npm run test:e2e:ui`
+- Run E2E tests on Chrome: `npm run test:e2e:chrome`
+- Run E2E tests on Firefox: `npm run test:e2e:firefox`
+- Run E2E tests on Safari: `npm run test:e2e:safari`
+
+### General Scripts
+
+- Install all dependencies: `npm run install:all`
+- Update all dependencies: `npm run update:all`
+- Clean all node_modules: `npm run clean:all`
+- Format code: `npm run format`
+- Reset project (clean and reinstall): `npm run reset:all`
+- Run all unit tests: `npm run test:unit`
+
+## Project Structure
+
+- `apps/ayokoding`: Main Next.js application
+- `apps/e2e-web`: End-to-end tests using Playwright
 
 ## Testing
 
-To run the e2e tests:
+This project uses Jest for unit testing and Playwright for E2E testing.
 
-1. Navigate to the `e2e-web` directory:
-   ```
-   cd apps/e2e-web
-   ```
-2. Run the tests:
-   ```
-   npm run test
-   ```
-
-## Maintenance
-
-To update all dependencies to their latest versions:
-
-## Features
-
-- List key features of your project
-- You can use bullet points for easy readability
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the ISC License.
+To run all unit tests:

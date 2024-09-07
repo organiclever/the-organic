@@ -27,10 +27,11 @@
     "format": "prettier --write .",
     "prepare": "husky install && npm run make-hooks-executable",
     "make-hooks-executable": "node scripts/make-hooks-executable.js",
-    "reset:all": "npm-run-all clean:all install:all"
+    "reset:all": "npm-run-all clean:all install:all",
+    "test:unit": "npm-run-all -p test:ayokoding"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "description": "",
   "volta": {
     "node": "20.17.0",
