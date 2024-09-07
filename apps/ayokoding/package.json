@@ -14,7 +14,8 @@
   "dependencies": {
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.8"
+    "next": "14.2.8",
+    "@libs/hello": "file:../../libs/hello"
   },
   "devDependencies": {
     "typescript": "^5",

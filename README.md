@@ -3,7 +3,7 @@
 [![Build and Unit Tests](https://github.com/organiclever/the-organic/actions/workflows/build-and-unit-tests.yml/badge.svg)](https://github.com/organiclever/the-organic/actions/workflows/build-and-unit-tests.yml)
 [![E2E Tests](https://github.com/organiclever/the-organic/actions/workflows/e2e-tests.yml/badge.svg)](https://github.com/organiclever/the-organic/actions/workflows/e2e-tests.yml)
 
-This project contains multiple applications, including AyoKoding and E2E tests.
+This project contains multiple applications, including AyoKoding and E2E tests, as well as a shared library.
 
 ## Getting Started
 
@@ -34,6 +34,11 @@ To get started with this project, follow these steps:
 - Run E2E tests on Firefox: `npm run test:e2e:firefox`
 - Run E2E tests on Safari: `npm run test:e2e:safari`
 
+### Library Scripts
+
+- Build libraries: `npm run build:libs`
+- Test libraries: `npm run test:libs`
+
 ### General Scripts
 
 - Install all dependencies: `npm run install:all`
@@ -42,14 +47,16 @@ To get started with this project, follow these steps:
 - Format code: `npm run format`
 - Reset project (clean and reinstall): `npm run reset:all`
 - Run all unit tests: `npm run test:unit`
+- Build all projects: `npm run build:all`
 
 ## Project Structure
 
 - `apps/ayokoding`: Main Next.js application
 - `apps/e2e-web`: End-to-end tests using Playwright
+- `libs/hello`: TypeScript library for generating greetings
 
 ## Testing
 
 This project uses Jest for unit testing and Playwright for E2E testing.
 
-To run all unit tests:
+To run all unit tests (including library tests):
