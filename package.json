@@ -15,7 +15,8 @@
     "update:apps": "cd apps && npm-run-all -p update:*",
     "clean:all": "rimraf **/node_modules",
     "format": "prettier --write .",
-    "prepare": "husky install"
+    "prepare": "husky install && npm run make-hooks-executable",
+    "make-hooks-executable": "node scripts/make-hooks-executable.js"
   },
   "author": "",
   "license": "ISC",
