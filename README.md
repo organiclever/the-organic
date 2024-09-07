@@ -38,6 +38,8 @@ To get started with this project, follow these steps:
 
 - Build libraries: `npm run build:libs`
 - Test libraries: `npm run test:libs`
+- Watch and auto-build libraries: `npm run watch:libs`
+- Watch and run library tests: `npm run test:libs:watch`
 
 ### General Scripts
 
@@ -47,6 +49,7 @@ To get started with this project, follow these steps:
 - Format code: `npm run format`
 - Reset project (clean and reinstall): `npm run reset:all`
 - Run all unit tests: `npm run test:unit`
+- Watch and run all unit tests: `npm run test:unit:watch`
 - Build all projects: `npm run build:all`
 
 ## Project Structure
