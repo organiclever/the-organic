@@ -17,6 +17,7 @@
     "test:e2e:chrome": "cd apps/e2e-web && npm run test:chrome",
     "test:e2e:firefox": "cd apps/e2e-web && npm run test:firefox",
     "test:e2e:safari": "cd apps/e2e-web && npm run test:safari",
+    "test:e2e:ci": "start-server-and-test 'npm run dev:ayokoding' http://localhost:3300 'npm run test:e2e'",
     "install:e2e-web": "cd apps/e2e-web && npm install",
     "// General scripts": "",
     "install:all": "npm install && npm-run-all -s create-apps-dir install:ayokoding install:e2e-web",
@@ -44,7 +45,8 @@
     "mkdirp": "^1.0.4",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.8.8",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "start-server-and-test": "^2.0.5"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"

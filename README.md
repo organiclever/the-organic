@@ -12,6 +12,7 @@ To get started with this project, follow these steps:
 1. Clone the repository
 2. Install dependencies: `npm run install:all`
 3. Start the AyoKoding development server: `npm run dev:ayokoding`
+4. Open [http://localhost:3300](http://localhost:3300) with your browser to see the result.
 
 ## Available Scripts
 
