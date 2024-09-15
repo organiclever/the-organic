@@ -1,72 +1,108 @@
 import { Client } from "@notionhq/client";
-import {
-  BlockObjectResponse,
-  RichTextItemResponse,
-} from "@notionhq/client/build/src/api-endpoints";
+import { BlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
+import { RichTextItemResponse } from "@notionhq/client/build/src/api-endpoints";
+import ContentClient from "./ContentClient";
 
 // Initialize the Notion client
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
 
-async function getNotionData() {
-  const pageId = process.env.NOTION_PAGE_ID;
-  if (!pageId) {
-    throw new Error("NOTION_PAGE_ID is not set");
+async function getNotionData(blockId: string): Promise<BlockObjectResponse[]> {
+  try {
+    const response = await notion.blocks.children.list({
+      block_id: blockId,
+      page_size: 100,
+    });
+    return response.results as BlockObjectResponse[];
+  } catch (error) {
+    console.error("Error fetching Notion data:", error);
+    throw error;
   }
-
-  const response = await notion.blocks.children.list({
-    block_id: pageId,
-    page_size: 100,
-  });
-
-  return response.results as BlockObjectResponse[];
 }
 
 function renderRichText(richText: RichTextItemResponse[]): string {
   return richText.map((text) => text.plain_text).join("");
 }
 
-function renderBlock(block: BlockObjectResponse): string {
+function renderBlock(block: BlockObjectResponse, depth: number = 0): string {
+  let content = "";
+  const indent = "  ".repeat(depth); // 2 spaces per depth level
+
   switch (block.type) {
     case "paragraph":
-      return `<p>${renderRichText(block.paragraph.rich_text)}</p>`;
+      content = `<p>${renderRichText(block.paragraph.rich_text)}</p>`;
+      break;
     case "heading_1":
-      return `<h1>${renderRichText(block.heading_1.rich_text)}</h1>`;
+      content = `<h1>${renderRichText(block.heading_1.rich_text)}</h1>`;
+      break;
     case "heading_2":
-      return `<h2>${renderRichText(block.heading_2.rich_text)}</h2>`;
+      content = `<h2>${renderRichText(block.heading_2.rich_text)}</h2>`;
+      break;
     case "heading_3":
-      return `<h3>${renderRichText(block.heading_3.rich_text)}</h3>`;
+      content = `<h3>${renderRichText(block.heading_3.rich_text)}</h3>`;
+      break;
     case "bulleted_list_item":
-      return `<li>${renderRichText(block.bulleted_list_item.rich_text)}</li>`;
+      content = `<li>${renderRichText(block.bulleted_list_item.rich_text)}${
+        block.children ? renderBlocks(block.children, depth + 1) : ""
+      }</li>`;
+      break;
     case "numbered_list_item":
-      return `<li>${renderRichText(block.numbered_list_item.rich_text)}</li>`;
+      content = `<li>${renderRichText(block.numbered_list_item.rich_text)}${
+        block.children ? renderBlocks(block.children, depth + 1) : ""
+      }</li>`;
+      break;
     case "to_do":
       const checked = block.to_do.checked ? "checked" : "";
-      return `<div><input type="checkbox" ${checked} disabled> ${renderRichText(
+      content = `<div><input type="checkbox" ${checked} disabled> ${renderRichText(
         block.to_do.rich_text
-      )}</div>`;
+      )}${block.children ? renderBlocks(block.children, depth + 1) : ""}</div>`;
+      break;
     case "toggle":
-      return `<details><summary>${renderRichText(
+      content = `<details><summary>${renderRichText(
         block.toggle.rich_text
-      )}</summary>${renderBlocks(
-        block.toggle.children as BlockObjectResponse[]
-      )}</details>`;
+      )}</summary>${
+        block.children ? renderBlocks(block.children, depth + 1) : ""
+      }</details>`;
+      break;
     case "child_page":
-      return `<h3>${block.child_page.title}</h3>`;
+      content = `<h3><a href="/content/${block.id}">${block.child_page.title}</a></h3>`;
+      break;
     case "image":
       const src =
         block.image.type === "external"
           ? block.image.external.url
           : block.image.file.url;
-      return `<img src="${src}" alt="Notion image" />`;
+      content = `<img src="${src}" alt="Notion image" />`;
+      break;
+    case "link_to_page":
+      if (block.link_to_page.type === "page_id") {
+        content = `<p><a href="/content/${block.link_to_page.page_id}">Link to page</a></p>`;
+      } else if (block.link_to_page.type === "database_id") {
+        content = `<p><a href="/content/${block.link_to_page.database_id}">Link to database</a></p>`;
+      } else {
+        content = `<p>Unsupported link type</p>`;
+      }
+      break;
+    case "divider":
+      content = `<hr />`;
+      break;
     default:
-      return "";
+      content = `<p>Unsupported block type: ${block.type}</p>`;
   }
+  return `${indent}<div style="margin-left: ${
+    depth * 20
+  }px;">${content} - <span style="color: gray; font-size: 0.8em;">${
+    block.type
+  }</span></div>`;
 }
 
-function renderBlocks(blocks: BlockObjectResponse[]): string {
+function renderBlocks(
+  blocks: BlockObjectResponse[],
+  depth: number = 0
+): string {
   let content = "";
   let inList = false;
   let listType: "ul" | "ol" | null = null;
+  const indent = "  ".repeat(depth); // 2 spaces per depth level
 
   blocks.forEach((block, index) => {
     if (
@@ -76,22 +112,24 @@ function renderBlocks(blocks: BlockObjectResponse[]): string {
       const newListType = block.type === "bulleted_list_item" ? "ul" : "ol";
       if (!inList || listType !== newListType) {
         if (inList) {
-          content += `</${listType}>`;
+          content += `${indent}</${listType}>`;
         }
-        content += `<${newListType}>`;
+        content += `${indent}<${newListType} style="margin-left: ${
+          depth * 20
+        }px;">`;
         inList = true;
         listType = newListType;
       }
     } else if (inList) {
-      content += `</${listType}>`;
+      content += `${indent}</${listType}>`;
       inList = false;
       listType = null;
     }
 
-    content += renderBlock(block);
+    content += renderBlock(block, depth);
 
     if (inList && index === blocks.length - 1) {
-      content += `</${listType}>`;
+      content += `${indent}</${listType}>`;
     }
   });
 
@@ -99,13 +137,44 @@ function renderBlocks(blocks: BlockObjectResponse[]): string {
 }
 
 export default async function ContentPage() {
-  const notionBlocks = await getNotionData();
-  const content = renderBlocks(notionBlocks);
+  const pageId = process.env.NOTION_PAGE_ID;
+  if (!pageId) {
+    throw new Error("NOTION_PAGE_ID is not set");
+  }
 
-  return (
-    <div>
-      <h1>Content from Notion</h1>
-      <div dangerouslySetInnerHTML={{ __html: content }} />
-    </div>
-  );
+  try {
+    const notionBlocks = await getNotionData(pageId);
+    console.log("Fetched blocks:", notionBlocks.length);
+
+    if (notionBlocks.length === 0) {
+      return (
+        <div>
+          <h1>Content from Notion</h1>
+          <p>No content available. The page might be empty or inaccessible.</p>
+        </div>
+      );
+    }
+
+    const content = renderBlocks(notionBlocks);
+
+    return (
+      <div>
+        <h1>Content from Notion</h1>
+        <div dangerouslySetInnerHTML={{ __html: content }} />
+        <ContentClient rawData={JSON.stringify(notionBlocks)} />
+      </div>
+    );
+  } catch (error) {
+    console.error("Error in ContentPage:", error);
+    return (
+      <div>
+        <h1>Content from Notion</h1>
+        <p>Error loading content. Please try again later.</p>
+        <p>
+          Error details:{" "}
+          {error instanceof Error ? error.message : String(error)}
+        </p>
+      </div>
+    );
+  }
 }
