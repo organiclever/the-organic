@@ -12,10 +12,15 @@ export default function RefreshPage() {
       if (response.ok) {
         setStatus("Data refreshed successfully!");
       } else {
-        setStatus("Failed to refresh data.");
+        const errorData = await response.json();
+        setStatus(`Failed to refresh data: ${errorData.error}`);
       }
     } catch (error) {
-      setStatus("Error refreshing data.");
+      setStatus(
+        `Error refreshing data: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
     }
   };
 

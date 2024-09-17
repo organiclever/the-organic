@@ -5,11 +5,16 @@ import { getNotionData } from "@/lib/notion";
 
 const DATA_FILE = path.join(process.cwd(), "notion-data.json");
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const pageId = process.env.NOTION_PAGE_ID;
     if (!pageId) {
-      throw new Error("NOTION_PAGE_ID is not set");
+      return NextResponse.json(
+        { error: "NOTION_PAGE_ID is not set" },
+        { status: 500 }
+      );
     }
 
     const notionData = await getNotionData(pageId);

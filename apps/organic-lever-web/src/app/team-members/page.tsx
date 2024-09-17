@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { TeamMember } from "./types";
 import { validateTeamMember } from "./validation";
+import Image from "next/image";
 
 export default function TeamMembersPage() {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
@@ -184,10 +185,25 @@ export default function TeamMembersPage() {
                   </span>
                 )}
                 {/* ... existing buttons ... */}
+                <button
+                  onClick={updateMember}
+                  className="bg-green-500 text-white p-1 rounded ml-2"
+                >
+                  Update
+                </button>
               </>
             ) : (
               <>
                 {member.name} - {member.role} (GitHub: {member.githubId})
+                {member.avatarUrl && (
+                  <Image
+                    src={member.avatarUrl}
+                    alt={`${member.name}'s avatar`}
+                    width={50}
+                    height={50}
+                    className="rounded-full ml-2"
+                  />
+                )}
                 <button
                   onClick={() => setEditingMember(member)}
                   className="bg-yellow-500 text-white p-1 rounded ml-2 mr-2"

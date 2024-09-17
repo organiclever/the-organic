@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
-import { getNotionData } from "@/lib/notion";
 
 const DATA_FILE = path.join(process.cwd(), "notion-data.json");
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
@@ -13,7 +14,7 @@ export async function GET() {
   } catch (error) {
     console.error("Error reading notion data file:", error);
     return NextResponse.json(
-      { error: "Failed to fetch data" },
+      { error: "Failed to fetch data. Make sure to refresh the data first." },
       { status: 500 }
     );
   }

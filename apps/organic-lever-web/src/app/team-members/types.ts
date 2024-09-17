@@ -3,4 +3,5 @@ export interface TeamMember {
   name: string;
   role: string;
   githubId: string; // Add this line
+  avatarUrl?: string; // Add this line
 }
