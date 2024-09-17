@@ -1,74 +1,81 @@
 # The Organic
 
-[![Build and Unit Tests](https://github.com/organiclever/the-organic/actions/workflows/build-and-unit-tests.yml/badge.svg)](https://github.com/organiclever/the-organic/actions/workflows/build-and-unit-tests.yml)
-[![E2E Tests](https://github.com/organiclever/the-organic/actions/workflows/e2e-tests.yml/badge.svg)](https://github.com/organiclever/the-organic/actions/workflows/e2e-tests.yml)
-
-This project contains multiple applications, including ayokoding-web and Organic Lever, as well as a shared library.
-
-## Getting Started
-
-To get started with this project, follow these steps:
-
-1. Clone the repository
-2. Install dependencies: `npm run install:all`
-3. Start the ayokoding-web development server: `npm run dev:ayokoding-web`
-4. Open [http://localhost:3300](http://localhost:3300) with your browser to see the result.
-
-## Available Scripts
-
-### ayokoding-web Scripts
-
-- Start development server: `npm run dev:ayokoding-web`
-- Build the application: `npm run build:ayokoding-web`
-- Start the production server: `npm run start:ayokoding-web`
-- Lint the code: `npm run lint:ayokoding-web`
-- Run tests: `npm run test:ayokoding-web`
-- Run tests in watch mode: `npm run test:ayokoding-web:watch`
-
-### Organic Lever Scripts
-
-- Start development server: `npm run dev:organic-lever-web`
-- Build the application: `npm run build:organic-lever-web`
-- Start the production server: `npm run start:organic-lever-web`
-- Lint the code: `npm run lint:organic-lever-web`
-- Run tests: `npm run test:organic-lever-web`
-- Run tests in watch mode: `npm run test:organic-lever-web:watch`
-
-### E2E Testing Scripts
-
-- Run all E2E tests: `npm run test:e2e`
-- Run E2E tests with UI: `npm run test:e2e:ui`
-- Run E2E tests on Chrome: `npm run test:e2e:chrome`
-- Run E2E tests on Firefox: `npm run test:e2e:firefox`
-- Run E2E tests on Safari: `npm run test:e2e:safari`
-
-### Library Scripts
-
-- Build libraries: `npm run build:libs`
-- Test libraries: `npm run test:libs`
-- Watch and auto-build libraries: `npm run watch:libs`
-- Watch and run library tests: `npm run test:libs:watch`
-
-### General Scripts
-
-- Install all dependencies: `npm run install:all`
-- Update all dependencies: `npm run update:all`
-- Clean all node_modules: `npm run clean:all`
-- Format code: `npm run format`
-- Reset project (clean and reinstall): `npm run reset:all`
-- Run all unit tests: `npm run test:unit`
-- Watch and run all unit tests: `npm run test:unit:watch`
-- Build all projects: `npm run build:all`
+This monorepo contains multiple projects including ayokoding-web, organic-lever-web, and associated libraries.
 
 ## Project Structure
 
-- `apps/ayokoding-web`: ayokoding-web Next.js application
-- `apps/organic-lever-web`: Organic Lever Next.js application
-- `apps/organic-lever-web-e2e`: End-to-end tests using Playwright
-- `libs/hello`: TypeScript library for generating greetings
+- `apps/`
+  - `ayokoding-web/`: Ayokoding web application
+  - `organic-lever-web/`: Organic Lever web application
+  - `organic-lever-web-e2e/`: End-to-end tests for Organic Lever
+- `libs/`
+  - `hello/`: Shared library
 
-## Testing
+## Getting Started
 
-This project uses Jest for unit testing and Playwright for E2E testing.
+1. Install dependencies:
 
-To run all unit tests (including library tests):
+   `npm run install:all`
+
+2. Run development servers:
+   `npm run dev`
+
+## Available Scripts
+
+### Installation
+
+- `install:all`: Install all dependencies
+- `install:ayokoding-web`: Install ayokoding-web dependencies
+- `install:organic-lever-web`: Install organic-lever-web dependencies
+- `install:organic-lever-web-e2e`: Install e2e test dependencies
+- `install:libs`: Install shared library dependencies
+- `install:playwright`: Install Playwright for e2e tests
+
+### Development
+
+- `dev`: Run both ayokoding-web and organic-lever-web in development mode
+- `dev:ayokoding-web`: Run ayokoding-web in development mode
+- `dev:organic-lever-web`: Run organic-lever-web in development mode
+
+### Building
+
+- `build`: Build both web applications
+- `build:all`: Build libraries and both web applications
+- `build:ayokoding-web`: Build ayokoding-web
+- `build:organic-lever-web`: Build organic-lever-web
+- `build:libs`: Build shared libraries
+
+### Testing
+
+- `test`: Run tests for both web applications
+- `test:unit`: Run unit tests for all projects
+- `test:e2e`: Run end-to-end tests
+- `test:e2e:ui`: Run e2e tests with UI
+- `test:e2e:chrome`, `test:e2e:firefox`, `test:e2e:safari`: Run e2e tests in specific browsers
+
+### Linting and Formatting
+
+- `lint`: Lint both web applications
+- `format`: Format all files using Prettier
+
+### Cleaning
+
+- `clean`: Clean build artifacts for both web applications
+- `clean:all`: Remove all node_modules directories
+
+### Updating
+
+- `update:all`: Update all dependencies
+- `reset:all`: Clean all dependencies and reinstall
+
+## Contributing
+
+Please ensure to run tests and linting before submitting pull requests:
+
+`npm run test`
+`npm run lint`
+`npm run format`
+
+## License
+
+This project is licensed under the MIT License.
