@@ -34,6 +34,8 @@ The `repo-manager` tool provides several commands to manage the monorepo:
 - `cargo run -- --doctor`: Check if required tools are installed
 - `cargo run -- --init`: Initialize the project and install dependencies
 - `cargo run -- --reset`: Reset the project (delete node_modules, recreate package.json, reinstall dependencies)
+- `cargo run -- --deps <package-name>`: Add dependencies to root package.json and package-tmpl.json
+- `cargo run -- --deps-dev <package-name>`: Add dev dependencies to root package.json and package-tmpl.json
 
 ## Available Scripts
 
@@ -51,3 +53,52 @@ Please ensure to run tests and linting before submitting pull requests. See the 
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
+
+# Repo Manager 🛠️
+
+Repo Manager is a command-line tool for managing repositories and dependencies.
+
+## Features
+
+- Initialize project: Set up package.json and install dependencies 🚀
+- Run doctor checks: Verify installation of volta, npm, and node 🩺
+- Reset project: Clean and reinitialize the project 🔄
+- Add dependencies: Easily add new packages to your project 📦
+
+## Usage
+
+`repo-manager [OPTIONS]`
+
+Options:
+--init Initialize package.json, run npm install, and install project dependencies
+--doctor Check if volta, npm, and node are installed
+--reset Reset the project: delete package.json and node_modules, then reinitialize
+--deps Add dependencies to root package.json and package-tmpl.json
+--deps-dev Add dev dependencies to root package.json and package-tmpl.json
+--help Print help information
+--version Print version information
+
+## Examples
+
+1. Initialize the project:
+   `repo-manager --init`
+
+2. Run doctor checks:
+   `repo-manager --doctor`
+
+3. Reset the project:
+   `repo-manager --reset`
+
+4. Add a dependency:
+   `repo-manager --deps lodash`
+
+5. Add a dev dependency:
+   `repo-manager --deps-dev jest`
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License.
