@@ -4,7 +4,8 @@
 cd repo-manager
 
 # Run the Rust program
-cargo run
+cargo run -- --doctor
+cargo run -- --init
 
 # Return to the original directory
 cd ..
