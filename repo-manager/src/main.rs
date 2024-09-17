@@ -32,6 +32,20 @@ fn main() {
                 )
                 .takes_value(false),
         )
+        .arg(
+            Arg::with_name("deps")
+                .long("deps")
+                .help("Add dependencies to root package.json and package-tmpl.json 📦")
+                .takes_value(true)
+                .multiple(true),
+        )
+        .arg(
+            Arg::with_name("deps-dev")
+                .long("deps-dev")
+                .help("Add dev dependencies to root package.json and package-tmpl.json 🛠️")
+                .takes_value(true)
+                .multiple(true),
+        )
         .get_matches();
 
     if matches.is_present("init") {
@@ -46,10 +60,20 @@ fn main() {
         if let Err(e) = reset_project() {
             eprintln!("❌ Error during project reset: {}", e);
         }
+    } else if let Some(deps) = matches.values_of("deps") {
+        if let Err(e) = add_dependencies(deps.collect(), false) {
+            eprintln!("❌ Error adding dependencies: {}", e);
+        }
+    } else if let Some(deps_dev) = matches.values_of("deps-dev") {
+        if let Err(e) = add_dependencies(deps_dev.collect(), true) {
+            eprintln!("❌ Error adding dev dependencies: {}", e);
+        }
     } else {
         println!("🚀 Use --init to initialize package.json and install dependencies");
         println!("🩺 Use --doctor to check if volta, npm, and node are installed");
         println!("🔄 Use --reset to reset the project and reinstall dependencies");
+        println!("📦 Use --deps <package-name> to add dependencies");
+        println!("🛠️ Use --deps-dev <package-name> to add dev dependencies");
     }
 }
 
@@ -301,4 +325,71 @@ fn delete_node_modules(dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
     }
 
     Ok(())
+}
+
+fn add_dependencies(packages: Vec<&str>, is_dev: bool) -> Result<(), Box<dyn std::error::Error>> {
+    let root_dir = find_root_dir()?;
+    let package_json_path = root_dir.join("package.json");
+    let package_tmpl_json_path = root_dir.join("package-tmpl.json");
+
+    // Read and parse package.json
+    let package_json_content = fs::read_to_string(&package_json_path)?;
+    let mut package_json: Value = serde_json::from_str(&package_json_content)?;
+
+    // Read and parse package-tmpl.json
+    let package_tmpl_json_content = fs::read_to_string(&package_tmpl_json_path)?;
+    let mut package_tmpl_json: Value = serde_json::from_str(&package_tmpl_json_content)?;
+
+    // Determine which dependency object to update
+    let dep_key = if is_dev {
+        "devDependencies"
+    } else {
+        "dependencies"
+    };
+
+    // Update package.json and package-tmpl.json
+    for package in packages {
+        let version = get_latest_version(package)?;
+        let version_string = format!("^{}", version);
+
+        if let Some(deps) = package_json[dep_key].as_object_mut() {
+            deps.insert(package.to_string(), json!(version_string));
+        } else {
+            package_json[dep_key] = json!({ package: version_string });
+        }
+
+        if let Some(deps) = package_tmpl_json[dep_key].as_object_mut() {
+            deps.insert(package.to_string(), json!(version_string));
+        } else {
+            package_tmpl_json[dep_key] = json!({ package: version_string });
+        }
+
+        println!("✅ Added {} {} to {} 📦", package, version_string, dep_key);
+    }
+
+    // Write updated package.json
+    let updated_package_json = serde_json::to_string_pretty(&package_json)?;
+    fs::write(package_json_path, updated_package_json)?;
+
+    // Write updated package-tmpl.json
+    let updated_package_tmpl_json = serde_json::to_string_pretty(&package_tmpl_json)?;
+    fs::write(package_tmpl_json_path, updated_package_tmpl_json)?;
+
+    // Run npm install
+    run_npm_install(&root_dir)?;
+
+    println!("✅ Dependencies added and installed successfully! 🎉");
+    Ok(())
+}
+
+fn get_latest_version(package: &str) -> Result<String, Box<dyn std::error::Error>> {
+    let output = Command::new("npm")
+        .args(&["view", package, "version"])
+        .output()?;
+
+    if output.status.success() {
+        Ok(String::from_utf8(output.stdout)?.trim().to_string())
+    } else {
+        Err(format!("Failed to get latest version for {}", package).into())
+    }
 }

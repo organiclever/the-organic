@@ -1,22 +1,14 @@
 {
-  "name": "the-organic",
-  "version": "1.0.0",
-  "scripts": {},
   "author": "",
-  "license": "MIT",
-  "description": "",
-  "volta": {
-    "node": "20.17.0",
-    "npm": "10.8.3"
-  },
   "dependencies": {
     "@notionhq/client": "^2.2.15",
+    "fs-extra": "^11.1.1",
     "next": "14.2.8",
-    "react": "^18",
+    "react": "^18.3.1",
     "react-dom": "^18",
-    "react-query": "^3.39.3",
-    "fs-extra": "^11.1.1"
+    "react-query": "^3.39.3"
   },
+  "description": "",
   "devDependencies": {
     "@playwright/test": "^1.47.0",
     "@testing-library/jest-dom": "^6.0.0",
@@ -43,7 +35,15 @@
     "ts-jest": "^29.0.0",
     "typescript": "^5"
   },
+  "license": "MIT",
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
+  },
+  "name": "the-organic",
+  "scripts": {},
+  "version": "1.0.0",
+  "volta": {
+    "node": "20.17.0",
+    "npm": "10.8.3"
   }
 }
