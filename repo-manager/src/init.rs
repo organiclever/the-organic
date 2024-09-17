@@ -1,3 +1,4 @@
+use crate::dependencies::add_dev_dependency;
 use serde_json::{json, Value};
 use std::env;
 use std::fs;
@@ -7,6 +8,10 @@ use std::process::Command;
 pub fn initialize_and_install_all() -> Result<(), Box<dyn std::error::Error>> {
     println!("🚀 Initializing and installing all dependencies...");
     let root_dir = initialize_package_json()?;
+
+    // Add concurrently as a dev dependency
+    add_dev_dependency("concurrently")?;
+
     run_npm_install(&root_dir)?;
     install_project_dependencies(&root_dir)?;
     println!("✅ All dependencies installed successfully! 🎉");
@@ -53,6 +58,10 @@ fn initialize_package_json() -> Result<PathBuf, Box<dyn std::error::Error>> {
     )?;
     merge_scripts(&mut scripts, &root_dir, "libs/hello/package.json", "libs")?;
 
+    // Add the new dev script
+    let dev_scripts = create_dev_scripts(&root_dir)?;
+    scripts["dev"] = json!(dev_scripts);
+
     template["scripts"] = scripts;
 
     let output_content = serde_json::to_string_pretty(&template)?;
@@ -79,7 +88,11 @@ fn merge_scripts(
 
     if let Some(package_scripts) = package["scripts"].as_object() {
         for (key, value) in package_scripts {
-            let new_key = format!("{}:{}", prefix, key);
+            let new_key = if prefix == "libs" {
+                format!("{}:{}", prefix, key)
+            } else {
+                format!("{}:{}", prefix, key)
+            };
             let parent_path = Path::new(relative_path)
                 .parent()
                 .ok_or_else(|| Box::<dyn std::error::Error>::from("❌ Invalid file path 😢"))?;
@@ -92,6 +105,38 @@ fn merge_scripts(
     }
 
     Ok(())
+}
+
+fn create_dev_scripts(root_dir: &Path) -> Result<String, Box<dyn std::error::Error>> {
+    let mut scripts = Vec::new();
+
+    // Add libs dev script
+    scripts.push("npm run libs:dev".to_string());
+
+    // Collect app scripts
+    if let Ok(entries) = fs::read_dir(root_dir.join("apps")) {
+        for entry in entries {
+            if let Ok(entry) = entry {
+                let path = entry.path();
+                if path.is_dir() && path.join("package.json").exists() {
+                    let name = path.file_name().unwrap().to_str().unwrap();
+                    if name != "organic-lever-web-e2e" {
+                        // Exclude e2e from dev script
+                        scripts.push(format!("npm run {}:dev", name));
+                    }
+                }
+            }
+        }
+    }
+
+    Ok(format!(
+        "concurrently {}",
+        scripts
+            .iter()
+            .map(|s| format!("\"{}\"", s))
+            .collect::<Vec<_>>()
+            .join(" ")
+    ))
 }
 
 fn install_project_dependencies(root_dir: &Path) -> Result<(), Box<dyn std::error::Error>> {

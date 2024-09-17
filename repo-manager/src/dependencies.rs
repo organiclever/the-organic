@@ -46,6 +46,33 @@ pub fn add_dependencies(
         println!("✅ Added {} {} to {} 📦", package, version_string, dep_key);
     }
 
+    // Add concurrently as a dev dependency
+    if !is_dev {
+        let concurrently_version = get_latest_version("concurrently")?;
+        if let Some(dev_deps) = package_json["devDependencies"].as_object_mut() {
+            dev_deps.insert(
+                "concurrently".to_string(),
+                json!(format!("^{}", concurrently_version)),
+            );
+        } else {
+            package_json["devDependencies"] =
+                json!({ "concurrently": format!("^{}", concurrently_version) });
+        }
+        if let Some(dev_deps) = package_tmpl_json["devDependencies"].as_object_mut() {
+            dev_deps.insert(
+                "concurrently".to_string(),
+                json!(format!("^{}", concurrently_version)),
+            );
+        } else {
+            package_tmpl_json["devDependencies"] =
+                json!({ "concurrently": format!("^{}", concurrently_version) });
+        }
+        println!(
+            "✅ Added concurrently {} to devDependencies 📦",
+            concurrently_version
+        );
+    }
+
     // Write updated package.json
     let updated_package_json = serde_json::to_string_pretty(&package_json)?;
     fs::write(package_json_path, updated_package_json)?;
@@ -104,4 +131,49 @@ fn run_npm_install(dir: &PathBuf) -> Result<(), Box<dyn std::error::Error>> {
         )
         .into())
     }
+}
+
+pub fn add_dev_dependency(package: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let root_dir = find_root_dir()?;
+    let package_json_path = root_dir.join("package.json");
+    let package_tmpl_json_path = root_dir.join("package-tmpl.json");
+
+    // Read and parse package.json
+    let package_json_content = fs::read_to_string(&package_json_path)?;
+    let mut package_json: Value = serde_json::from_str(&package_json_content)?;
+
+    // Read and parse package-tmpl.json
+    let package_tmpl_json_content = fs::read_to_string(&package_tmpl_json_path)?;
+    let mut package_tmpl_json: Value = serde_json::from_str(&package_tmpl_json_content)?;
+
+    let version = get_latest_version(package)?;
+    let version_string = format!("^{}", version);
+
+    // Update package.json
+    if let Some(dev_deps) = package_json["devDependencies"].as_object_mut() {
+        dev_deps.insert(package.to_string(), json!(version_string));
+    } else {
+        package_json["devDependencies"] = json!({ package: version_string });
+    }
+
+    // Update package-tmpl.json
+    if let Some(dev_deps) = package_tmpl_json["devDependencies"].as_object_mut() {
+        dev_deps.insert(package.to_string(), json!(version_string));
+    } else {
+        package_tmpl_json["devDependencies"] = json!({ package: version_string });
+    }
+
+    // Write updated package.json
+    let updated_package_json = serde_json::to_string_pretty(&package_json)?;
+    fs::write(package_json_path, updated_package_json)?;
+
+    // Write updated package-tmpl.json
+    let updated_package_tmpl_json = serde_json::to_string_pretty(&package_tmpl_json)?;
+    fs::write(package_tmpl_json_path, updated_package_tmpl_json)?;
+
+    println!(
+        "✅ Added {} {} to devDependencies 📦",
+        package, version_string
+    );
+    Ok(())
 }
