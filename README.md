@@ -1,4 +1,4 @@
-# The Organic
+# The Organic Monorepo
 
 This monorepo contains multiple projects including ayokoding-web, organic-lever-web, and associated libraries.
 
@@ -10,72 +10,44 @@ This monorepo contains multiple projects including ayokoding-web, organic-lever-
   - `organic-lever-web-e2e/`: End-to-end tests for Organic Lever
 - `libs/`
   - `hello/`: Shared library
+- `repo-manager/`: Rust-based repository management tool
 
 ## Getting Started
 
-1. Install dependencies:
+1. Ensure you have [Volta](https://volta.sh/), [Node.js](https://nodejs.org/), and [npm](https://www.npmjs.com/) installed.
 
-   `npm run install:all`
+2. Clone the repository:
+   `git clone https://github.com/your-username/the-organic.git`
 
-2. Run development servers:
-   `npm run dev`
+3. Navigate to the project root:
+   `cd the-organic`
+
+4. Run the initialization script:
+   `./init.sh`
+
+   This script will check if required tools are installed, initialize the project, and install dependencies for all sub-projects.
+
+## Repository Management
+
+The `repo-manager` tool provides several commands to manage the monorepo:
+
+- `cargo run -- --doctor`: Check if required tools are installed
+- `cargo run -- --init`: Initialize the project and install dependencies
+- `cargo run -- --reset`: Reset the project (delete node_modules, recreate package.json, reinstall dependencies)
 
 ## Available Scripts
 
-### Installation
+Check the `scripts` section in the root `package.json` file for a full list of available commands. Some key scripts include:
 
-- `install:all`: Install all dependencies
-- `install:ayokoding-web`: Install ayokoding-web dependencies
-- `install:organic-lever-web`: Install organic-lever-web dependencies
-- `install:organic-lever-web-e2e`: Install e2e test dependencies
-- `install:libs`: Install shared library dependencies
-- `install:playwright`: Install Playwright for e2e tests
-
-### Development
-
-- `dev`: Run both ayokoding-web and organic-lever-web in development mode
-- `dev:ayokoding-web`: Run ayokoding-web in development mode
-- `dev:organic-lever-web`: Run organic-lever-web in development mode
-
-### Building
-
-- `build`: Build both web applications
-- `build:all`: Build libraries and both web applications
-- `build:ayokoding-web`: Build ayokoding-web
-- `build:organic-lever-web`: Build organic-lever-web
-- `build:libs`: Build shared libraries
-
-### Testing
-
-- `test`: Run tests for both web applications
-- `test:unit`: Run unit tests for all projects
-- `test:e2e`: Run end-to-end tests
-- `test:e2e:ui`: Run e2e tests with UI
-- `test:e2e:chrome`, `test:e2e:firefox`, `test:e2e:safari`: Run e2e tests in specific browsers
-
-### Linting and Formatting
-
-- `lint`: Lint both web applications
-- `format`: Format all files using Prettier
-
-### Cleaning
-
-- `clean`: Clean build artifacts for both web applications
-- `clean:all`: Remove all node_modules directories
-
-### Updating
-
-- `update:all`: Update all dependencies
-- `reset:all`: Clean all dependencies and reinstall
+- `npm run ayokoding-web:dev`: Start the AyoKoding web development server
+- `npm run organic-lever-web:dev`: Start the Organic Lever web development server
+- `npm run organic-lever-web-e2e:test`: Run end-to-end tests for Organic Lever web
+- `npm run libs:build`: Build the shared libraries
 
 ## Contributing
 
-Please ensure to run tests and linting before submitting pull requests:
-
-`npm run test`
-`npm run lint`
-`npm run format`
+Please ensure to run tests and linting before submitting pull requests. See the Contributing Guide for more details.
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. See the LICENSE file for details.
