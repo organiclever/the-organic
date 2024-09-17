@@ -33,3 +33,21 @@ yarn-error.log*
 
 # Optional: Uncomment if using TypeScript
 # *.tsbuildinfo
+
+# Rust-specific ignores
+target/
+**/*.rs.bk
+Cargo.lock
+
+# IDE-specific files (optional, but commonly ignored)
+.idea/
+.vscode/
+
+# macOS-specific files
+.DS_Store
+
+# Windows-specific files
+Thumbs.db
+
+# Backup files
+*.bak
