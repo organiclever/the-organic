@@ -49,25 +49,17 @@ fn main() {
         .get_matches();
 
     if matches.is_present("init") {
-        if let Err(e) = initialize_and_install_all() {
-            eprintln!("❌ Error: {}", e);
-        }
+        initialize_and_install_all().unwrap_or_else(|e| eprintln!("❌ Error: {}", e));
     } else if matches.is_present("doctor") {
-        if let Err(e) = run_doctor_checks() {
-            eprintln!("❌ Error during doctor checks: {}", e);
-        }
+        run_doctor_checks().unwrap_or_else(|e| eprintln!("❌ Error during doctor checks: {}", e));
     } else if matches.is_present("reset") {
-        if let Err(e) = reset_project() {
-            eprintln!("❌ Error during project reset: {}", e);
-        }
+        reset_project().unwrap_or_else(|e| eprintln!("❌ Error during project reset: {}", e));
     } else if let Some(deps) = matches.values_of("deps") {
-        if let Err(e) = add_dependencies(deps.collect(), false) {
-            eprintln!("❌ Error adding dependencies: {}", e);
-        }
+        add_dependencies(deps.collect(), false)
+            .unwrap_or_else(|e| eprintln!("❌ Error adding dependencies: {}", e));
     } else if let Some(deps_dev) = matches.values_of("deps-dev") {
-        if let Err(e) = add_dependencies(deps_dev.collect(), true) {
-            eprintln!("❌ Error adding dev dependencies: {}", e);
-        }
+        add_dependencies(deps_dev.collect(), true)
+            .unwrap_or_else(|e| eprintln!("❌ Error adding dev dependencies: {}", e));
     } else {
         println!("🚀 Use --init to initialize package.json and install dependencies");
         println!("🩺 Use --doctor to check if volta, npm, and node are installed");
@@ -128,7 +120,7 @@ fn initialize_package_json() -> Result<PathBuf, Box<dyn std::error::Error>> {
     let root_dir = current_dir
         .ancestors()
         .nth(1)
-        .ok_or("❌ Cannot find root directory 😢")?
+        .ok_or_else(|| Box::<dyn std::error::Error>::from("❌ Cannot find root directory 😢"))?
         .to_path_buf();
 
     let template_path = root_dir.join("package-tmpl.json");
@@ -222,7 +214,7 @@ fn merge_scripts(
             let new_key = format!("{}:{}", prefix, key);
             let parent_path = Path::new(relative_path)
                 .parent()
-                .ok_or("❌ Invalid file path 😢")?;
+                .ok_or_else(|| Box::<dyn std::error::Error>::from("❌ Invalid file path 😢"))?;
             scripts[new_key] = json!(format!(
                 "cd {} && {}",
                 parent_path.display(),
@@ -333,8 +325,8 @@ fn find_root_dir() -> Result<PathBuf, Box<dyn std::error::Error>> {
     current_dir
         .ancestors()
         .find(|p| p.join("package-tmpl.json").exists())
-        .ok_or_else(|| "❌ Cannot find root directory 😢".into())
         .map(|p| p.to_path_buf())
+        .ok_or_else(|| Box::<dyn std::error::Error>::from("❌ Cannot find root directory 😢"))
 }
 
 fn delete_node_modules(dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
