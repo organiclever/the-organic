@@ -6,6 +6,14 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 fn main() {
+    let result = run_app();
+    if let Err(e) = result {
+        eprintln!("❌ Error: {}", e);
+        std::process::exit(1);
+    }
+}
+
+fn run_app() -> Result<(), Box<dyn std::error::Error>> {
     let matches = App::new("Repo Manager 🛠️")
         .version("1.0")
         .author("Your Name")
@@ -49,17 +57,15 @@ fn main() {
         .get_matches();
 
     if matches.is_present("init") {
-        initialize_and_install_all().unwrap_or_else(|e| eprintln!("❌ Error: {}", e));
+        initialize_and_install_all()?;
     } else if matches.is_present("doctor") {
-        run_doctor_checks().unwrap_or_else(|e| eprintln!("❌ Error during doctor checks: {}", e));
+        run_doctor_checks()?;
     } else if matches.is_present("reset") {
-        reset_project().unwrap_or_else(|e| eprintln!("❌ Error during project reset: {}", e));
+        reset_project()?;
     } else if let Some(deps) = matches.values_of("deps") {
-        add_dependencies(deps.collect(), false)
-            .unwrap_or_else(|e| eprintln!("❌ Error adding dependencies: {}", e));
+        add_dependencies(deps.collect(), false)?;
     } else if let Some(deps_dev) = matches.values_of("deps-dev") {
-        add_dependencies(deps_dev.collect(), true)
-            .unwrap_or_else(|e| eprintln!("❌ Error adding dev dependencies: {}", e));
+        add_dependencies(deps_dev.collect(), true)?;
     } else {
         println!("🚀 Use --init to initialize package.json and install dependencies");
         println!("🩺 Use --doctor to check if volta, npm, and node are installed");
@@ -67,6 +73,8 @@ fn main() {
         println!("📦 Use --deps <package-name> to add dependencies");
         println!("🛠️ Use --deps-dev <package-name> to add dev dependencies");
     }
+
+    Ok(())
 }
 
 fn run_doctor_checks() -> Result<(), Box<dyn std::error::Error>> {
