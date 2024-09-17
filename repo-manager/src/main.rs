@@ -184,7 +184,7 @@ fn initialize_package_json() -> Result<PathBuf, Box<dyn std::error::Error>> {
         .as_object()
         .unwrap()
         .keys()
-        .filter(|k| k.ends_with(":test:watch"))
+        .filter(|k| k.ends_with(":test:watch") && *k != "organic-lever-web-e2e:test:watch")
         .cloned()
         .collect();
 
