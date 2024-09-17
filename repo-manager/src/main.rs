@@ -162,6 +162,37 @@ fn initialize_package_json() -> Result<PathBuf, Box<dyn std::error::Error>> {
     )?;
     merge_scripts(&mut scripts, &root_dir, "libs/hello/package.json", "libs")?;
 
+    // Dynamically generate dev script
+    let dev_scripts: Vec<String> = scripts
+        .as_object()
+        .unwrap()
+        .keys()
+        .filter(|k| k.ends_with(":dev"))
+        .cloned()
+        .collect();
+
+    if !dev_scripts.is_empty() {
+        let dev_command = format!(
+            "npm-run-all --parallel {} libs:watch",
+            dev_scripts.join(" ")
+        );
+        scripts["dev"] = json!(dev_command);
+    }
+
+    // Add test:watch script to run all test:watch scripts
+    let test_watch_scripts: Vec<String> = scripts
+        .as_object()
+        .unwrap()
+        .keys()
+        .filter(|k| k.ends_with(":test:watch"))
+        .cloned()
+        .collect();
+
+    if !test_watch_scripts.is_empty() {
+        let test_watch_command = format!("npm-run-all --parallel {}", test_watch_scripts.join(" "));
+        scripts["test:watch"] = json!(test_watch_command);
+    }
+
     template["scripts"] = scripts;
 
     let output_content = serde_json::to_string_pretty(&template)?;
