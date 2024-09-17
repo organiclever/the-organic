@@ -3,7 +3,7 @@
 [![Build and Unit Tests](https://github.com/organiclever/the-organic/actions/workflows/build-and-unit-tests.yml/badge.svg)](https://github.com/organiclever/the-organic/actions/workflows/build-and-unit-tests.yml)
 [![E2E Tests](https://github.com/organiclever/the-organic/actions/workflows/e2e-tests.yml/badge.svg)](https://github.com/organiclever/the-organic/actions/workflows/e2e-tests.yml)
 
-This project contains multiple applications, including AyoKoding and Organic Lever, as well as a shared library.
+This project contains multiple applications, including ayokoding-web and Organic Lever, as well as a shared library.
 
 ## Getting Started
 
@@ -11,19 +11,19 @@ To get started with this project, follow these steps:
 
 1. Clone the repository
 2. Install dependencies: `npm run install:all`
-3. Start the AyoKoding development server: `npm run dev:ayokoding`
+3. Start the ayokoding-web development server: `npm run dev:ayokoding-web`
 4. Open [http://localhost:3300](http://localhost:3300) with your browser to see the result.
 
 ## Available Scripts
 
-### AyoKoding Scripts
+### ayokoding-web Scripts
 
-- Start development server: `npm run dev:ayokoding`
-- Build the application: `npm run build:ayokoding`
-- Start the production server: `npm run start:ayokoding`
-- Lint the code: `npm run lint:ayokoding`
-- Run tests: `npm run test:ayokoding`
-- Run tests in watch mode: `npm run test:ayokoding:watch`
+- Start development server: `npm run dev:ayokoding-web`
+- Build the application: `npm run build:ayokoding-web`
+- Start the production server: `npm run start:ayokoding-web`
+- Lint the code: `npm run lint:ayokoding-web`
+- Run tests: `npm run test:ayokoding-web`
+- Run tests in watch mode: `npm run test:ayokoding-web:watch`
 
 ### Organic Lever Scripts
 
@@ -62,7 +62,7 @@ To get started with this project, follow these steps:
 
 ## Project Structure
 
-- `apps/ayokoding`: AyoKoding Next.js application
+- `apps/ayokoding-web`: ayokoding-web Next.js application
 - `apps/organic-lever-web`: Organic Lever Next.js application
 - `apps/organic-lever-web-e2e`: End-to-end tests using Playwright
 - `libs/hello`: TypeScript library for generating greetings

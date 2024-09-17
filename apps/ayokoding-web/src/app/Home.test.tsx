@@ -9,7 +9,9 @@ jest.mock("@libs/hello", () => ({
 describe("Home", () => {
   it("renders the main heading with greeting from hello library", () => {
     render(<Home />);
-    const heading = screen.getByRole("heading", { name: /Hello, AyoKoding!/i });
+    const heading = screen.getByRole("heading", {
+      name: /Hello, ayokoding-web!/i,
+    });
     expect(heading).toBeInTheDocument();
   });
 });

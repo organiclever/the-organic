@@ -3,7 +3,7 @@ import { hello } from "../index";
 describe("hello function", () => {
   it("should return a greeting with the given name", () => {
     expect(hello("World")).toBe("Hello, World!");
-    expect(hello("AyoKoding")).toBe("Hello, AyoKoding!");
+    expect(hello("ayokoding-web")).toBe("Hello, ayokoding-web!");
   });
 
   it("should handle empty string", () => {
