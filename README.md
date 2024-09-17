@@ -27,12 +27,12 @@ To get started with this project, follow these steps:
 
 ### Organic Lever Scripts
 
-- Start development server: `npm run dev:organic-lever`
-- Build the application: `npm run build:organic-lever`
-- Start the production server: `npm run start:organic-lever`
-- Lint the code: `npm run lint:organic-lever`
-- Run tests: `npm run test:organic-lever`
-- Run tests in watch mode: `npm run test:organic-lever:watch`
+- Start development server: `npm run dev:organic-lever-web`
+- Build the application: `npm run build:organic-lever-web`
+- Start the production server: `npm run start:organic-lever-web`
+- Lint the code: `npm run lint:organic-lever-web`
+- Run tests: `npm run test:organic-lever-web`
+- Run tests in watch mode: `npm run test:organic-lever-web:watch`
 
 ### E2E Testing Scripts
 
@@ -63,8 +63,8 @@ To get started with this project, follow these steps:
 ## Project Structure
 
 - `apps/ayokoding`: AyoKoding Next.js application
-- `apps/organic-lever`: Organic Lever Next.js application
-- `apps/e2e-web`: End-to-end tests using Playwright
+- `apps/organic-lever-web`: Organic Lever Next.js application
+- `apps/organic-lever-web-e2e`: End-to-end tests using Playwright
 - `libs/hello`: TypeScript library for generating greetings
 
 ## Testing

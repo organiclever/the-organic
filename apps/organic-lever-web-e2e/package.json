@@ -1,5 +1,5 @@
 {
-  "name": "e2e-web",
+  "name": "organic-lever-web-e2e",
   "version": "1.0.0",
   "description": "E2E tests for AyoKoding",
   "scripts": {

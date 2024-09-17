@@ -5,7 +5,7 @@ import { TeamMember } from "../team-members/types";
 const dataFilePath = path.join(
   process.cwd(),
   "..",
-  "organic-lever",
+  "organic-lever-web",
   "team-members.json"
 );
 
