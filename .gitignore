@@ -53,3 +53,5 @@ Thumbs.db
 *.bak
 
 /package.json
+
+.rustc_info.json
