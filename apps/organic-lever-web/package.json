@@ -9,7 +9,8 @@
     "start": "next start -p 3301",
     "lint": "next lint",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "clean": "rimraf .next out"
   },
   "dependencies": {
     "@libs/hello": "file:../../libs/hello",
@@ -31,5 +32,11 @@
     "@testing-library/jest-dom": "^6.0.0",
     "jest-environment-jsdom": "^29.0.0",
     "@types/jest": "^29.0.0"
+  },
+  "project": {
+    "kind": "npm",
+    "dependencies": [
+      "libs/hello"
+    ]
   }
 }
