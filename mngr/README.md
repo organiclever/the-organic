@@ -12,15 +12,15 @@ Repo Manager is a command-line tool for managing repositories and dependencies w
 ## Installation
 
 1. Ensure you have Rust and Cargo installed on your system.
-2. Navigate to the `repo-manager` directory:
-   `cd repo-manager`
+2. Navigate to the `mngr` directory:
+   `cd mngr`
 3. Build the project:
    `cargo build --release`
-4. The binary will be available in `target/release/repo-manager`
+4. The binary will be available in `target/release/mngr`
 
 ## Usage
 
-`repo-manager [OPTIONS]`
+`mngr [OPTIONS]`
 
 Options:
 --init Initialize package.json, run npm install, and install project dependencies
@@ -34,19 +34,19 @@ Options:
 ## Examples
 
 1. Initialize the project:
-   `repo-manager --init`
+   `mngr --init`
 
 2. Run doctor checks:
-   `repo-manager --doctor`
+   `mngr --doctor`
 
 3. Reset the project:
-   `repo-manager --reset`
+   `mngr --reset`
 
 4. Add a dependency:
-   `repo-manager --deps lodash`
+   `mngr --deps lodash`
 
 5. Add a dev dependency:
-   `repo-manager --deps-dev jest`
+   `mngr --deps-dev jest`
 
 ## Development
 

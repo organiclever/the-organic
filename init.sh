@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Navigate to the repo-manager directory
-cd repo-manager
+# Navigate to the mngr directory
+cd mngr
 
 # Run the Rust program
 cargo run -- --doctor
