@@ -5,6 +5,26 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
+/// Initializes the project and installs all dependencies.
+///
+/// This function performs the following steps:
+/// 1. Initializes the package.json file
+/// 2. Adds the 'concurrently' dev dependency
+/// 3. Runs npm install in the root directory
+/// 4. Installs dependencies for all sub-projects
+///
+/// # Returns
+///
+/// * `Result<(), Box<dyn std::error::Error>>` - Ok(()) if all operations are successful,
+///   or an error if any step fails.
+///
+/// # Errors
+///
+/// This function will return an error if:
+/// * The package.json initialization fails
+/// * Adding the 'concurrently' dev dependency fails
+/// * The npm install process fails
+/// * Installing project dependencies fails
 pub fn initialize_and_install_all() -> Result<(), Box<dyn std::error::Error>> {
     println!("🚀 Initializing and installing all dependencies...");
     let root_dir = initialize_package_json()?;
