@@ -1,8 +1,8 @@
+use crate::config::{PACKAGE_JSON, PACKAGE_TMPL_JSON};
 use serde_json::{json, Value};
 use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
-use crate::config::{PACKAGE_JSON, PACKAGE_TMPL_JSON};
 
 /// Adds dependencies to the project's package.json and package-tmpl.json files.
 ///
@@ -194,7 +194,7 @@ fn find_root_dir() -> Result<PathBuf, Box<dyn std::error::Error>> {
     let current_dir = std::env::current_dir()?;
     current_dir
         .ancestors()
-        .find(|p| p.join("package-tmpl.json").exists())
+        .find(|p| p.join(PACKAGE_TMPL_JSON).exists())
         .map(|p| p.to_path_buf())
         .ok_or_else(|| Box::<dyn std::error::Error>::from("❌ Cannot find root directory 😢"))
 }

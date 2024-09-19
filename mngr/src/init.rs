@@ -106,7 +106,13 @@ fn initialize_package_json() -> Result<PathBuf, Box<dyn std::error::Error>> {
             if path.is_dir() {
                 let package_json_path = path.join(PACKAGE_JSON);
                 if package_json_path.exists() {
-                    let app_name = path.file_name().unwrap().to_str().unwrap();
+                    let app_name = match path.file_name() {
+                        Some(name) => match name.to_str() {
+                            Some(s) => s,
+                            None => continue,
+                        },
+                        None => continue,
+                    };
                     merge_scripts(
                         &mut scripts,
                         &root_dir,
@@ -127,7 +133,13 @@ fn initialize_package_json() -> Result<PathBuf, Box<dyn std::error::Error>> {
             if path.is_dir() {
                 let package_json_path = path.join(PACKAGE_JSON);
                 if package_json_path.exists() {
-                    let lib_name = path.file_name().unwrap().to_str().unwrap();
+                    let lib_name = match path.file_name() {
+                        Some(name) => match name.to_str() {
+                            Some(s) => s,
+                            None => continue,
+                        },
+                        None => continue,
+                    };
                     merge_scripts(
                         &mut scripts,
                         &root_dir,
@@ -202,9 +214,14 @@ fn merge_scripts(
     if let Some(package_scripts) = package["scripts"].as_object() {
         for (key, value) in package_scripts {
             let new_key = format!("{}:{}", prefix, key);
-            let parent_path = Path::new(relative_path)
-                .parent()
-                .ok_or_else(|| Box::<dyn std::error::Error>::from("❌ Invalid file path 😢"))?;
+            let parent_path = match Path::new(relative_path).parent() {
+                Some(path) => path,
+                None => {
+                    return Err(Box::<dyn std::error::Error>::from(
+                        "❌ Invalid file path 😢",
+                    ))
+                }
+            };
 
             let script_value = format!(
                 "cd {} && {}",
@@ -260,10 +277,17 @@ fn create_dev_scripts(root_dir: &Path) -> Result<String, Box<dyn std::error::Err
             if let Ok(entry) = entry {
                 let path = entry.path();
                 if path.is_dir() && path.join(PACKAGE_JSON).exists() {
-                    let name = path.file_name().unwrap().to_str().unwrap();
-                    if name != "organic-lever-web-e2e" {
-                        // Exclude e2e from dev script
-                        scripts.push(format!("npm run {}:dev", name));
+                    match path.file_name() {
+                        Some(name) => match name.to_str() {
+                            Some(name_str) => {
+                                if name_str != "organic-lever-web-e2e" {
+                                    // Exclude e2e from dev script
+                                    scripts.push(format!("npm run {}:dev", name_str));
+                                }
+                            }
+                            None => continue,
+                        },
+                        None => continue,
                     }
                 }
             }
