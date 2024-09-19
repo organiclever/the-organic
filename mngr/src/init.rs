@@ -9,7 +9,7 @@ pub fn initialize_and_install_all() -> Result<(), Box<dyn std::error::Error>> {
     println!("🚀 Initializing and installing all dependencies...");
     let root_dir = initialize_package_json()?;
 
-    // Add concurrently as a dev dependency
+    // we use concurrently to run multiple npm scripts concurrently
     add_dev_dependency("concurrently")?;
 
     run_npm_install(&root_dir)?;
@@ -71,6 +71,38 @@ fn initialize_package_json() -> Result<PathBuf, Box<dyn std::error::Error>> {
     Ok(root_dir)
 }
 
+/// Merges scripts from a package.json file into the main scripts object.
+///
+/// # Arguments
+///
+/// * `scripts` - A mutable reference to the Value object containing all scripts.
+/// * `root_dir` - The root directory of the project.
+/// * `relative_path` - The relative path to the package.json file.
+/// * `prefix` - The prefix to be added to each script name.
+///
+/// # Returns
+///
+/// Returns `Ok(())` if successful, or an error if any operation fails.
+///
+/// # Examples
+///
+/// ```
+/// use serde_json::json;
+/// use std::path::Path;
+///
+/// let mut scripts = json!({});
+/// let root_dir = Path::new("/path/to/project");
+/// let relative_path = "apps/my-app/package.json";
+/// let prefix = "my-app";
+///
+/// merge_scripts(&mut scripts, root_dir, relative_path, prefix).unwrap();
+///
+///  If the original package.json had a "start" script,
+///  the merged scripts might now include:
+///  {
+///      "my-app:start": "cd apps/my-app && npm run start"
+///  }
+/// ```
 fn merge_scripts(
     scripts: &mut Value,
     root_dir: &Path,
@@ -88,19 +120,18 @@ fn merge_scripts(
 
     if let Some(package_scripts) = package["scripts"].as_object() {
         for (key, value) in package_scripts {
-            let new_key = if prefix == "libs" {
-                format!("{}:{}", prefix, key)
-            } else {
-                format!("{}:{}", prefix, key)
-            };
+            let new_key = format!("{}:{}", prefix, key);
             let parent_path = Path::new(relative_path)
                 .parent()
                 .ok_or_else(|| Box::<dyn std::error::Error>::from("❌ Invalid file path 😢"))?;
-            scripts[new_key] = json!(format!(
+
+            let script_value = format!(
                 "cd {} && {}",
                 parent_path.display(),
                 value.as_str().unwrap_or("")
-            ));
+            );
+
+            scripts[new_key] = json!(script_value);
         }
     }
 
