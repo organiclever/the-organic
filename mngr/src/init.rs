@@ -138,6 +138,35 @@ fn merge_scripts(
     Ok(())
 }
 
+/// Creates a development script that runs all project components concurrently.
+///
+/// This function generates a command string that uses `concurrently` to run
+/// development scripts for all project components simultaneously.
+///
+/// # Arguments
+///
+/// * `root_dir` - A `Path` reference to the root directory of the project.
+///
+/// # Returns
+///
+/// * `Result<String, Box<dyn std::error::Error>>` - A Result containing the
+///   generated command string or an error if something goes wrong.
+///
+/// # Behavior
+///
+/// 1. Adds a "libs:dev" script to run development for all libraries.
+/// 2. Scans the "apps" directory for subdirectories containing a package.json file.
+/// 3. For each valid app (excluding "organic-lever-web-e2e"), adds an "{app}:dev" script.
+/// 4. Combines all scripts into a single `concurrently` command.
+///
+/// # Example
+///
+/// ```
+/// let root_dir = Path::new("/path/to/project");
+/// let dev_script = create_dev_scripts(root_dir)?;
+/// // dev_script might look like:
+/// // "concurrently \"npm run libs:dev\" \"npm run app1:dev\" \"npm run app2:dev\""
+/// ```
 fn create_dev_scripts(root_dir: &Path) -> Result<String, Box<dyn std::error::Error>> {
     let mut scripts = Vec::new();
 
@@ -170,52 +199,130 @@ fn create_dev_scripts(root_dir: &Path) -> Result<String, Box<dyn std::error::Err
     ))
 }
 
+/// Installs dependencies for all projects in the `libs` and `apps` directories.
+///
+/// This function traverses the `libs` and `apps` directories, identifying npm projects
+/// and installing their dependencies.
+///
+/// # Arguments
+///
+/// * `root_dir` - A `Path` representing the root directory of the project.
+///
+/// # Returns
+///
+/// * `Result<(), Box<dyn std::error::Error>>` - Ok(()) if all dependencies are installed successfully,
+///   or an error if something goes wrong during the installation process.
+///
+/// # Example
+///
+/// ```
+/// use std::path::Path;
+///
+/// let root_dir = Path::new("/path/to/project");
+/// match install_project_dependencies(root_dir) {
+///     Ok(()) => println!("All dependencies installed successfully"),
+///     Err(e) => eprintln!("Error installing dependencies: {}", e),
+/// }
+/// ```
 fn install_project_dependencies(root_dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
     println!("📚 Installing project dependencies...");
-    let apps_dir = root_dir.join("apps");
     let libs_dir = root_dir.join("libs");
+    let apps_dir = root_dir.join("apps");
 
-    install_dependencies_in_dir(&apps_dir)?;
+    // TODO: install dependencies based on dependecy graph for monorepo
     install_dependencies_in_dir(&libs_dir)?;
+    install_dependencies_in_dir(&apps_dir)?;
 
     println!("✅ All project dependencies installed successfully! 🎉");
     Ok(())
 }
 
+/// Installs dependencies for all npm projects in a given directory.
+///
+/// This function traverses the given directory, identifying npm projects
+/// and installing their dependencies.
+///
+/// # Arguments
+///
+/// * `dir` - A `&Path` representing the directory to search for npm projects.
+///
+/// # Returns
+///
+/// * `Result<(), Box<dyn std::error::Error>>` - Ok(()) if all dependencies are installed successfully,
+///   or an error if something goes wrong during the installation process.
+///
+/// # Errors
+///
+/// This function will return an error if:
+/// * The directory cannot be read
+/// * There's an issue accessing a subdirectory
+/// * The `install_project_if_npm` function returns an error
 fn install_dependencies_in_dir(dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
     if dir.is_dir() {
         for entry in fs::read_dir(dir)? {
             let entry = entry?;
             let path = entry.path();
             if path.is_dir() {
-                install_project_if_npm(&path)?;
-            }
-        }
-    }
-    Ok(())
-}
-
-fn install_project_if_npm(project_dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
-    let package_json_path = project_dir.join("package.json");
-    if package_json_path.exists() {
-        let content = fs::read_to_string(&package_json_path)?;
-        let package: Value = serde_json::from_str(&content)?;
-
-        if let Some(project_info) = package.get("project") {
-            if let Some(kind) = project_info.get("kind") {
-                if kind == "npm" {
-                    println!(
-                        "📦 Installing dependencies for {} 🚀",
-                        project_dir.display()
-                    );
-                    run_npm_install(project_dir)?;
+                if is_npm_project(&path) {
+                    run_npm_install(&path)?;
                 }
+                // TODO: Add checks and installations for other project types
             }
         }
     }
     Ok(())
 }
 
+/// Determines if a given directory is an npm project.
+///
+/// This function checks for the existence of a `package.json` file
+/// in the provided directory, which is a standard indicator of an npm project.
+///
+/// # Arguments
+///
+/// * `project_dir` - A `&Path` representing the directory to check.
+///
+/// # Returns
+///
+/// * `bool` - Returns `true` if a `package.json` file exists in the directory,
+///            indicating it's likely an npm project. Returns `false` otherwise.
+fn is_npm_project(project_dir: &Path) -> bool {
+    let package_json_path = project_dir.join("package.json");
+    package_json_path.exists()
+}
+
+/// Runs `npm install` in the specified directory.
+///
+/// This function executes the `npm install` command in the given directory,
+/// which installs all dependencies specified in the `package.json` file.
+///
+/// # Arguments
+///
+/// * `dir` - A `&Path` representing the directory where `npm install` should be run.
+///
+/// # Returns
+///
+/// * `Result<(), Box<dyn std::error::Error>>` - Ok(()) if the installation is successful,
+///   or an error if the installation fails.
+///
+/// # Errors
+///
+/// This function will return an error if:
+/// * The `npm install` command fails to execute
+/// * The command executes but returns a non-zero exit status
+///
+/// # Examples
+///
+/// ```
+/// use std::path::Path;
+/// use your_crate::run_npm_install;
+///
+/// let project_dir = Path::new("/path/to/your/project");
+/// match run_npm_install(project_dir) {
+///     Ok(()) => println!("npm install completed successfully"),
+///     Err(e) => eprintln!("npm install failed: {}", e),
+/// }
+/// ```
 pub fn run_npm_install(dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
     println!("🛠️ Running npm install in {}...", dir.display());
     let output = Command::new("npm")
