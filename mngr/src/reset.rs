@@ -1,7 +1,36 @@
+use crate::init;
 use std::fs;
 use std::path::{Path, PathBuf};
-use crate::init;
 
+/// Resets the project by removing existing configuration and dependencies,
+/// then reinitializing the project.
+///
+/// This function performs the following steps:
+/// 1. Finds the root directory of the project.
+/// 2. Deletes the package.json file if it exists.
+/// 3. Removes node_modules directories from the root, apps, and libs directories.
+/// 4. Recreates the package.json file and reinstalls all dependencies.
+///
+/// # Returns
+///
+/// * `Result<(), Box<dyn std::error::Error>>` - Ok(()) if the reset is successful,
+///   or an error if any step fails.
+///
+/// # Errors
+///
+/// This function will return an error if:
+/// * The root directory cannot be found
+/// * Deleting files or directories fails
+/// * Reinitializing the project fails
+///
+/// # Examples
+///
+/// ```
+/// match reset_project() {
+///     Ok(()) => println!("Project reset successfully"),
+///     Err(e) => eprintln!("Failed to reset project: {}", e),
+/// }
+/// ```
 pub fn reset_project() -> Result<(), Box<dyn std::error::Error>> {
     println!("🔄 Resetting project...");
     let root_dir = find_root_dir()?;
@@ -25,6 +54,30 @@ pub fn reset_project() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+/// Finds the root directory of the project.
+///
+/// This function searches for the root directory by looking for the 'package-tmpl.json' file
+/// in the current directory and its ancestors.
+///
+/// # Returns
+///
+/// * `Result<PathBuf, Box<dyn std::error::Error>>` - The path to the root directory if found,
+///   or an error if the root directory cannot be determined.
+///
+/// # Errors
+///
+/// This function will return an error if:
+/// * The current directory cannot be determined
+/// * The root directory (containing 'package-tmpl.json') is not found in the current directory or its ancestors
+///
+/// # Examples
+///
+/// ```
+/// match find_root_dir() {
+///     Ok(root_dir) => println!("Root directory found: {}", root_dir.display()),
+///     Err(e) => eprintln!("Failed to find root directory: {}", e),
+/// }
+/// ```
 fn find_root_dir() -> Result<PathBuf, Box<dyn std::error::Error>> {
     let current_dir = std::env::current_dir()?;
     current_dir
@@ -34,6 +87,39 @@ fn find_root_dir() -> Result<PathBuf, Box<dyn std::error::Error>> {
         .ok_or_else(|| Box::<dyn std::error::Error>::from("❌ Cannot find root directory 😢"))
 }
 
+/// Recursively deletes 'node_modules' directories within the given directory and its subdirectories.
+///
+/// This function performs the following actions:
+/// 1. Deletes the 'node_modules' directory in the given directory, if it exists.
+/// 2. Recursively searches for and deletes 'node_modules' directories in all subdirectories.
+///
+/// # Arguments
+///
+/// * `dir` - A reference to a `Path` representing the directory to start the deletion process from.
+///
+/// # Returns
+///
+/// * `Result<(), Box<dyn std::error::Error>>` - Ok(()) if all operations are successful,
+///   or an error if any deletion fails.
+///
+/// # Errors
+///
+/// This function will return an error if:
+/// * There's a problem accessing or reading the directory
+/// * Deleting a 'node_modules' directory fails
+/// * Recursing into subdirectories encounters any issues
+///
+/// # Examples
+///
+/// ```
+/// use std::path::Path;
+///
+/// let project_dir = Path::new("/path/to/project");
+/// match delete_node_modules(project_dir) {
+///     Ok(()) => println!("Successfully deleted all node_modules directories"),
+///     Err(e) => eprintln!("Error deleting node_modules: {}", e),
+/// }
+/// ```
 fn delete_node_modules(dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
     let node_modules = dir.join("node_modules");
     if node_modules.exists() {
