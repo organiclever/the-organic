@@ -1,3 +1,4 @@
+mod config;
 mod dependencies;
 mod doctor;
 mod init;

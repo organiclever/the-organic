@@ -2,6 +2,7 @@ use serde_json::{json, Value};
 use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
+use crate::config::{PACKAGE_JSON, PACKAGE_TMPL_JSON};
 
 /// Adds dependencies to the project's package.json and package-tmpl.json files.
 ///
@@ -42,8 +43,8 @@ pub fn add_dependencies(
     is_dev: bool,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let root_dir = find_root_dir()?;
-    let package_json_path = root_dir.join("package.json");
-    let package_tmpl_json_path = root_dir.join("package-tmpl.json");
+    let package_json_path = root_dir.join(PACKAGE_JSON);
+    let package_tmpl_json_path = root_dir.join(PACKAGE_TMPL_JSON);
 
     // Read and parse package.json
     let package_json_content = fs::read_to_string(&package_json_path)?;
@@ -285,8 +286,8 @@ fn run_npm_install(dir: &PathBuf) -> Result<(), Box<dyn std::error::Error>> {
 /// ```
 pub fn add_dev_dependency(package: &str) -> Result<(), Box<dyn std::error::Error>> {
     let root_dir = find_root_dir()?;
-    let package_json_path = root_dir.join("package.json");
-    let package_tmpl_json_path = root_dir.join("package-tmpl.json");
+    let package_json_path = root_dir.join(PACKAGE_JSON);
+    let package_tmpl_json_path = root_dir.join(PACKAGE_TMPL_JSON);
 
     // Read and parse package.json
     let package_json_content = fs::read_to_string(&package_json_path)?;

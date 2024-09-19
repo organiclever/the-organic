@@ -1,3 +1,4 @@
+use crate::config::{APPS_DIR, LIBS_DIR, PACKAGE_JSON};
 use crate::init;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -8,7 +9,7 @@ use std::path::{Path, PathBuf};
 /// This function performs the following steps:
 /// 1. Finds the root directory of the project.
 /// 2. Deletes the package.json file if it exists.
-/// 3. Removes node_modules directories from the root, apps, and libs directories.
+/// 3. Removes node_modules directories from the root, apps (APPS_DIR), and libs (LIBS_DIR) directories.
 /// 4. Recreates the package.json file and reinstalls all dependencies.
 ///
 /// # Returns
@@ -36,16 +37,15 @@ pub fn reset_project() -> Result<(), Box<dyn std::error::Error>> {
     let root_dir = find_root_dir()?;
 
     // Delete package.json
-    let package_json_path = root_dir.join("package.json");
-    if package_json_path.exists() {
-        fs::remove_file(&package_json_path)?;
-        println!("✅ Deleted package.json 🗑️");
+    if Path::new(PACKAGE_JSON).exists() {
+        fs::remove_file(PACKAGE_JSON)?;
+        println!("Removed {}", PACKAGE_JSON);
     }
 
     // Delete node_modules in root, apps, and libs
     delete_node_modules(&root_dir)?;
-    delete_node_modules(&root_dir.join("apps"))?;
-    delete_node_modules(&root_dir.join("libs"))?;
+    delete_node_modules(&root_dir.join(APPS_DIR))?;
+    delete_node_modules(&root_dir.join(LIBS_DIR))?;
 
     // Recreate package.json and install dependencies
     init::initialize_and_install_all()?;

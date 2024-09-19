@@ -5,6 +5,8 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
+use crate::config::{APPS_DIR, LIBS_DIR, PACKAGE_JSON, PACKAGE_TMPL_JSON};
+
 /// Initializes the project and installs all dependencies.
 ///
 /// This function performs the following steps:
@@ -38,6 +40,37 @@ pub fn initialize_and_install_all() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+/// Initializes the package.json file in the root directory of the project.
+///
+/// This function performs the following steps:
+/// 1. Locates the root directory of the project.
+/// 2. Reads the template package.json file (package-tmpl.json).
+/// 3. Dynamically finds and merges scripts from all apps in the 'apps' directory (defined by APPS_DIR).
+/// 4. Dynamically finds and merges scripts from all libs in the 'libs' directory (defined by LIBS_DIR).
+/// 5. Creates and adds a new 'dev' script that runs all app and lib dev scripts concurrently.
+/// 6. Writes the final package.json file to the root directory.
+///
+/// # Returns
+///
+/// * `Result<PathBuf, Box<dyn std::error::Error>>` - The path to the root directory if successful,
+///   or an error if any step fails.
+///
+/// # Errors
+///
+/// This function will return an error if:
+/// * The root directory cannot be found
+/// * The package-tmpl.json file is not found in the root directory
+/// * There are issues reading or parsing the template or any package.json files
+/// * There are problems creating or writing the final package.json file
+///
+/// # Examples
+///
+/// ```
+/// match initialize_package_json() {
+///     Ok(root_dir) => println!("Successfully initialized package.json in {}", root_dir.display()),
+///     Err(e) => eprintln!("Failed to initialize package.json: {}", e),
+/// }
+/// ```
 fn initialize_package_json() -> Result<PathBuf, Box<dyn std::error::Error>> {
     println!("📦 Initializing package.json...");
     let current_dir = env::current_dir()?;
@@ -47,11 +80,16 @@ fn initialize_package_json() -> Result<PathBuf, Box<dyn std::error::Error>> {
         .ok_or_else(|| Box::<dyn std::error::Error>::from("❌ Cannot find root directory 😢"))?
         .to_path_buf();
 
-    let template_path = root_dir.join("package-tmpl.json");
-    let output_path = root_dir.join("package.json");
+    let template_path = root_dir.join(PACKAGE_TMPL_JSON);
+    let output_path = root_dir.join(PACKAGE_JSON);
 
     if !template_path.exists() {
-        return Err(format!("❌ package-tmpl.json not found in {}", root_dir.display()).into());
+        return Err(format!(
+            "❌ {} not found in {}",
+            PACKAGE_TMPL_JSON,
+            root_dir.display()
+        )
+        .into());
     }
 
     let template_content = fs::read_to_string(&template_path)?;
@@ -60,19 +98,19 @@ fn initialize_package_json() -> Result<PathBuf, Box<dyn std::error::Error>> {
     let mut scripts = json!({});
 
     // Dynamically find and merge scripts from all apps
-    let apps_dir = root_dir.join("apps");
+    let apps_dir = root_dir.join(APPS_DIR);
     if apps_dir.is_dir() {
         for entry in fs::read_dir(apps_dir)? {
             let entry = entry?;
             let path = entry.path();
             if path.is_dir() {
-                let package_json_path = path.join("package.json");
+                let package_json_path = path.join(PACKAGE_JSON);
                 if package_json_path.exists() {
                     let app_name = path.file_name().unwrap().to_str().unwrap();
                     merge_scripts(
                         &mut scripts,
                         &root_dir,
-                        &format!("apps/{}/package.json", app_name),
+                        &format!("{}/{}/{}", APPS_DIR, app_name, PACKAGE_JSON),
                         app_name,
                     )?;
                 }
@@ -80,8 +118,26 @@ fn initialize_package_json() -> Result<PathBuf, Box<dyn std::error::Error>> {
         }
     }
 
-    // Merge scripts from libs
-    merge_scripts(&mut scripts, &root_dir, "libs/hello/package.json", "libs")?;
+    // Dynamically find and merge scripts from all libs
+    let libs_dir = root_dir.join(LIBS_DIR);
+    if libs_dir.is_dir() {
+        for entry in fs::read_dir(libs_dir)? {
+            let entry = entry?;
+            let path = entry.path();
+            if path.is_dir() {
+                let package_json_path = path.join(PACKAGE_JSON);
+                if package_json_path.exists() {
+                    let lib_name = path.file_name().unwrap().to_str().unwrap();
+                    merge_scripts(
+                        &mut scripts,
+                        &root_dir,
+                        &format!("{}/{}/{}", LIBS_DIR, lib_name, PACKAGE_JSON),
+                        lib_name,
+                    )?;
+                }
+            }
+        }
+    }
 
     // Add the new dev script
     let dev_scripts = create_dev_scripts(&root_dir)?;
@@ -180,7 +236,7 @@ fn merge_scripts(
 /// # Behavior
 ///
 /// 1. Adds a "libs:dev" script to run development for all libraries.
-/// 2. Scans the "apps" directory for subdirectories containing a package.json file.
+/// 2. Scans the "apps" directory (defined by APPS_DIR) for subdirectories containing a package.json file.
 /// 3. For each valid app (excluding "organic-lever-web-e2e"), adds an "{app}:dev" script.
 /// 4. Combines all scripts into a single `concurrently` command.
 ///
@@ -199,11 +255,11 @@ fn create_dev_scripts(root_dir: &Path) -> Result<String, Box<dyn std::error::Err
     scripts.push("npm run libs:dev".to_string());
 
     // Collect app scripts
-    if let Ok(entries) = fs::read_dir(root_dir.join("apps")) {
+    if let Ok(entries) = fs::read_dir(root_dir.join(APPS_DIR)) {
         for entry in entries {
             if let Ok(entry) = entry {
                 let path = entry.path();
-                if path.is_dir() && path.join("package.json").exists() {
+                if path.is_dir() && path.join(PACKAGE_JSON).exists() {
                     let name = path.file_name().unwrap().to_str().unwrap();
                     if name != "organic-lever-web-e2e" {
                         // Exclude e2e from dev script
@@ -226,8 +282,8 @@ fn create_dev_scripts(root_dir: &Path) -> Result<String, Box<dyn std::error::Err
 
 /// Installs dependencies for all projects in the `libs` and `apps` directories.
 ///
-/// This function traverses the `libs` and `apps` directories, identifying npm projects
-/// and installing their dependencies.
+/// This function traverses the `libs` (LIBS_DIR) and `apps` (APPS_DIR) directories,
+/// identifying npm projects and installing their dependencies.
 ///
 /// # Arguments
 ///
@@ -251,8 +307,8 @@ fn create_dev_scripts(root_dir: &Path) -> Result<String, Box<dyn std::error::Err
 /// ```
 fn install_project_dependencies(root_dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
     println!("📚 Installing project dependencies...");
-    let libs_dir = root_dir.join("libs");
-    let apps_dir = root_dir.join("apps");
+    let libs_dir = root_dir.join(LIBS_DIR);
+    let apps_dir = root_dir.join(APPS_DIR);
 
     // TODO: install dependencies based on dependecy graph for monorepo
     install_dependencies_in_dir(&libs_dir)?;
@@ -312,7 +368,7 @@ fn install_dependencies_in_dir(dir: &Path) -> Result<(), Box<dyn std::error::Err
 /// * `bool` - Returns `true` if a `package.json` file exists in the directory,
 ///            indicating it's likely an npm project. Returns `false` otherwise.
 fn is_npm_project(project_dir: &Path) -> bool {
-    let package_json_path = project_dir.join("package.json");
+    let package_json_path = project_dir.join(PACKAGE_JSON);
     package_json_path.exists()
 }
 
