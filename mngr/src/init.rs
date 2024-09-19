@@ -58,24 +58,29 @@ fn initialize_package_json() -> Result<PathBuf, Box<dyn std::error::Error>> {
     let mut template: Value = serde_json::from_str(&template_content)?;
 
     let mut scripts = json!({});
-    merge_scripts(
-        &mut scripts,
-        &root_dir,
-        "apps/ayokoding-web/package.json",
-        "ayokoding-web",
-    )?;
-    merge_scripts(
-        &mut scripts,
-        &root_dir,
-        "apps/organic-lever-web/package.json",
-        "organic-lever-web",
-    )?;
-    merge_scripts(
-        &mut scripts,
-        &root_dir,
-        "apps/organic-lever-web-e2e/package.json",
-        "organic-lever-web-e2e",
-    )?;
+
+    // Dynamically find and merge scripts from all apps
+    let apps_dir = root_dir.join("apps");
+    if apps_dir.is_dir() {
+        for entry in fs::read_dir(apps_dir)? {
+            let entry = entry?;
+            let path = entry.path();
+            if path.is_dir() {
+                let package_json_path = path.join("package.json");
+                if package_json_path.exists() {
+                    let app_name = path.file_name().unwrap().to_str().unwrap();
+                    merge_scripts(
+                        &mut scripts,
+                        &root_dir,
+                        &format!("apps/{}/package.json", app_name),
+                        app_name,
+                    )?;
+                }
+            }
+        }
+    }
+
+    // Merge scripts from libs
     merge_scripts(&mut scripts, &root_dir, "libs/hello/package.json", "libs")?;
 
     // Add the new dev script
