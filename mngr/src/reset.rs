@@ -31,10 +31,19 @@ use std::sync::Arc;
 /// # Examples
 ///
 /// ```
-/// match reset_project() {
-///     Ok(()) => println!("Project reset successfully"),
-///     Err(e) => eprintln!("Failed to reset project: {}", e),
-/// }
+/// use mngr::reset::reset_project;
+///
+/// let result = reset_project();
+/// assert!(result.is_ok());
+/// ```
+
+/// ```
+/// use mngr::reset::delete_node_modules;
+/// use std::path::Path;
+///
+/// let project_dir = Path::new(".");
+/// let result = delete_node_modules(project_dir);
+/// assert!(result.is_ok());
 /// ```
 pub fn reset_project() -> Result<(), BoxError> {
     println!("🔄 Resetting project...");
@@ -115,7 +124,7 @@ pub fn reset_project() -> Result<(), BoxError> {
 ///     Ok(())
 /// }
 /// ```
-fn find_root_dir() -> Result<PathBuf, BoxError> {
+pub fn find_root_dir() -> Result<PathBuf, BoxError> {
     let current_dir = std::env::current_dir()?;
     current_dir
         .ancestors()
@@ -150,14 +159,13 @@ fn find_root_dir() -> Result<PathBuf, BoxError> {
 ///
 /// ```
 /// use std::path::Path;
+/// use mngr::reset::delete_node_modules;
 ///
 /// let project_dir = Path::new("/path/to/project");
-/// match delete_node_modules(project_dir) {
-///     Ok(()) => println!("Successfully deleted all node_modules directories"),
-///     Err(e) => eprintln!("Error deleting node_modules: {}", e),
-/// }
+/// let result = delete_node_modules(project_dir);
+/// assert!(result.is_ok());
 /// ```
-fn delete_node_modules(dir: &Path) -> Result<(), BoxError> {
+pub fn delete_node_modules(dir: &Path) -> Result<(), BoxError> {
     let node_modules = dir.join("node_modules");
     if node_modules.exists() {
         fs::remove_dir_all(&node_modules)?;

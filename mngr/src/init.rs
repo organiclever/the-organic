@@ -9,8 +9,7 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Arc;
 
 use crate::config::{APPS_DIR, LIBS_DIR, PACKAGE_JSON, PACKAGE_TMPL_JSON};
-
-pub type BoxError = Box<dyn std::error::Error + Send + Sync>;
+use crate::BoxError;
 
 /// Initializes the project and installs all dependencies.
 ///
@@ -45,38 +44,17 @@ pub fn initialize_and_install_all() -> Result<(), BoxError> {
     Ok(())
 }
 
-/// Initializes the package.json file in the root directory of the project.
-///
-/// This function performs the following steps:
-/// 1. Locates the root directory of the project.
-/// 2. Reads the template package.json file (package-tmpl.json).
-/// 3. Dynamically finds and merges scripts from all apps in the 'apps' directory (defined by APPS_DIR).
-/// 4. Dynamically finds and merges scripts from all libs in the 'libs' directory (defined by LIBS_DIR).
-/// 5. Creates and adds a new 'dev' script that runs all app and lib dev scripts concurrently.
-/// 6. Writes the final package.json file to the root directory.
-///
-/// # Returns
-///
-/// * `Result<PathBuf, BoxError>` - The path to the root directory if successful,
-///   or an error if any step fails.
-///
-/// # Errors
-///
-/// This function will return an error if:
-/// * The root directory cannot be found
-/// * The package-tmpl.json file is not found in the root directory
-/// * There are issues reading or parsing the template or any package.json files
-/// * There are problems creating or writing the final package.json file
-///
-/// # Examples
+/// Example usage of initialize_package_json
 ///
 /// ```
+/// use mngr::init::initialize_package_json;
+///
 /// match initialize_package_json() {
-///     Ok(root_dir) => println!("Successfully initialized package.json in {}", root_dir.display()),
-///     Err(e) => eprintln!("Failed to initialize package.json: {}", e),
+///     Ok(_) => println!("Package.json initialized successfully."),
+///     Err(e) => eprintln!("Error initializing package.json: {}", e),
 /// }
 /// ```
-fn initialize_package_json() -> Result<PathBuf, BoxError> {
+pub fn initialize_package_json() -> Result<PathBuf, BoxError> {
     println!("📦 Initializing package.json...");
     let current_dir = env::current_dir().map_err(BoxError::from)?;
     let root_dir = current_dir
@@ -187,6 +165,7 @@ fn initialize_package_json() -> Result<PathBuf, BoxError> {
 /// ```
 /// use serde_json::json;
 /// use std::path::Path;
+/// use mngr::init::merge_scripts;
 ///
 /// let mut scripts = json!({});
 /// let root_dir = Path::new("/path/to/project");
@@ -195,13 +174,13 @@ fn initialize_package_json() -> Result<PathBuf, BoxError> {
 ///
 /// merge_scripts(&mut scripts, root_dir, relative_path, prefix).unwrap();
 ///
-///  If the original package.json had a "start" script,
-///  the merged scripts might now include:
-///  {
-///      "my-app:start": "cd apps/my-app && npm run start"
-///  }
+/// // If the original package.json had a "start" script,
+/// // the merged scripts might now include:
+/// // {
+/// //     "my-app:start": "cd apps/my-app && npm run start"
+/// // }
 /// ```
-fn merge_scripts(
+pub fn merge_scripts(
     scripts: &mut Value,
     root_dir: &Path,
     relative_path: &str,
@@ -237,36 +216,21 @@ fn merge_scripts(
     Ok(())
 }
 
-/// Creates a development script that runs all project components concurrently.
-///
-/// This function generates a command string that uses `concurrently` to run
-/// development scripts for all project components simultaneously.
-///
-/// # Arguments
-///
-/// * `root_dir` - A `Path` reference to the root directory of the project.
-///
-/// # Returns
-///
-/// * `Result<String, BoxError>` - A Result containing the
-///   generated command string or an error if something goes wrong.
-///
-/// # Behavior
-///
-/// 1. Adds a "libs:dev" script to run development for all libraries.
-/// 2. Scans the "apps" directory (defined by APPS_DIR) for subdirectories containing a package.json file.
-/// 3. For each valid app (excluding "organic-lever-web-e2e"), adds an "{app}:dev" script.
-/// 4. Combines all scripts into a single `concurrently` command.
-///
-/// # Example
+/// Example usage of create_dev_scripts
 ///
 /// ```
-/// let root_dir = Path::new("/path/to/project");
-/// let dev_script = create_dev_scripts(root_dir)?;
-/// // dev_script might look like:
-/// // "concurrently \"npm run libs:dev\" \"npm run app1:dev\" \"npm run app2:dev\""
+/// use std::path::Path;
+/// use mngr::init::create_dev_scripts;
+/// use mngr::BoxError;
+///
+/// fn example() -> Result<(), BoxError> {
+///     let root_dir = Path::new("/path/to/project");
+///     let dev_script = create_dev_scripts(root_dir)?;
+///     println!("Dev script created: {}", dev_script);
+///     Ok(())
+/// }
 /// ```
-fn create_dev_scripts(root_dir: &Path) -> Result<String, BoxError> {
+pub fn create_dev_scripts(root_dir: &Path) -> Result<String, BoxError> {
     let mut scripts = Vec::new();
 
     // Add libs dev script
@@ -278,17 +242,13 @@ fn create_dev_scripts(root_dir: &Path) -> Result<String, BoxError> {
             if let Ok(entry) = entry {
                 let path = entry.path();
                 if path.is_dir() && path.join(PACKAGE_JSON).exists() {
-                    match path.file_name() {
-                        Some(name) => match name.to_str() {
-                            Some(name_str) => {
-                                if name_str != "organic-lever-web-e2e" {
-                                    // Exclude e2e from dev script
-                                    scripts.push(format!("npm run {}:dev", name_str));
-                                }
+                    if let Some(name) = path.file_name() {
+                        if let Some(name_str) = name.to_str() {
+                            if name_str != "organic-lever-web-e2e" {
+                                // Exclude e2e from dev script
+                                scripts.push(format!("npm run {}:dev", name_str));
                             }
-                            None => continue,
-                        },
-                        None => continue,
+                        }
                     }
                 }
             }
@@ -305,32 +265,20 @@ fn create_dev_scripts(root_dir: &Path) -> Result<String, BoxError> {
     ))
 }
 
-/// Installs dependencies for all projects in the `libs` and `apps` directories.
-///
-/// This function traverses the `libs` (LIBS_DIR) and `apps` (APPS_DIR) directories,
-/// identifying npm projects and installing their dependencies.
-///
-/// # Arguments
-///
-/// * `root_dir` - A `Path` representing the root directory of the project.
-///
-/// # Returns
-///
-/// * `Result<(), BoxError>` - Ok(()) if all dependencies are installed successfully,
-///   or an error if something goes wrong during the installation process.
-///
-/// # Example
+/// Example usage of install_project_dependencies
 ///
 /// ```
 /// use std::path::Path;
+/// use mngr::init::install_project_dependencies;
 ///
 /// let root_dir = Path::new("/path/to/project");
 /// match install_project_dependencies(root_dir) {
-///     Ok(()) => println!("All dependencies installed successfully"),
-///     Err(e) => eprintln!("Error installing dependencies: {}", e),
+///     Ok(_) => println!("Project dependencies installed successfully."),
+///     Err(e) => eprintln!("Error installing project dependencies: {}", e),
 /// }
+/// # Ok::<(), Box<dyn std::error::Error>>(())
 /// ```
-fn install_project_dependencies(root_dir: &Path) -> Result<(), BoxError> {
+pub fn install_project_dependencies(root_dir: &Path) -> Result<(), BoxError> {
     println!("📚 Installing project dependencies...");
     let libs_dir = root_dir.join(LIBS_DIR);
     let apps_dir = root_dir.join(APPS_DIR);
@@ -463,36 +411,18 @@ fn is_npm_project(project_dir: &Path) -> bool {
     package_json_path.exists()
 }
 
-/// Runs `npm install` in the specified directory.
-///
-/// This function executes the `npm install` command in the given directory,
-/// which installs all dependencies specified in the `package.json` file.
-///
-/// # Arguments
-///
-/// * `dir` - A `&Path` representing the directory where `npm install` should be run.
-///
-/// # Returns
-///
-/// * `Result<(), BoxError>` - Ok(()) if the installation is successful,
-///   or an error if the installation fails.
-///
-/// # Errors
-///
-/// This function will return an error if:
-/// * The `npm install` command fails to execute
-/// * The command executes but returns a non-zero exit status
-///
-/// # Examples
+/// Example usage of run_npm_install
 ///
 /// ```
 /// use std::path::Path;
+/// use mngr::init::run_npm_install;
 ///
-/// let project_dir = Path::new("/path/to/your/project");
+/// let project_dir = Path::new("/path/to/project");
 /// match run_npm_install(project_dir) {
-///     Ok(()) => println!("npm install completed successfully"),
-///     Err(e) => eprintln!("npm install failed: {}", e),
+///     Ok(_) => println!("npm install completed successfully."),
+///     Err(e) => eprintln!("Error running npm install: {}", e),
 /// }
+/// # Ok::<(), Box<dyn std::error::Error>>(())
 /// ```
 pub fn run_npm_install(dir: &Path) -> Result<(), BoxError> {
     println!("🛠️ Running npm install in {}...", dir.display());

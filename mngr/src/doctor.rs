@@ -22,12 +22,10 @@ use std::process::Command;
 /// # Example
 ///
 /// ```
-/// use your_crate_name::doctor::run_doctor_checks;
+/// use mngr::doctor::run_doctor_checks;
 ///
-/// fn main() -> Result<(), Box<dyn std::error::Error>> {
-///     run_doctor_checks()?;
-///     Ok(())
-/// }
+/// let result = run_doctor_checks();
+/// assert!(result.is_ok());
 /// ```
 pub fn run_doctor_checks() -> Result<(), BoxError> {
     println!("🩺 Running doctor checks...");
@@ -69,11 +67,8 @@ pub fn run_doctor_checks() -> Result<(), BoxError> {
 /// ```
 /// use mngr::doctor::check_command;
 ///
-/// fn main() -> Result<(), Box<dyn std::error::Error>> {
-///     let node_installed = check_command("node", &["--version"])?;
-///     assert!(node_installed);
-///     Ok(())
-/// }
+/// let result = check_command("node", &["--version"]);
+/// assert!(result.is_ok());
 /// ```
 pub fn check_command(command: &str, args: &[&str]) -> Result<bool, BoxError> {
     match Command::new(command).args(args).output() {

@@ -33,11 +33,12 @@ use std::process::Command;
 /// # Example
 ///
 /// ```
-/// let packages = vec!["lodash", "axios"];
-/// match add_dependencies(packages, false) {
-///     Ok(()) => println!("Dependencies added successfully"),
-///     Err(e) => eprintln!("Error adding dependencies: {}", e),
-/// }
+/// use mngr::dependencies::add_dependencies;
+///
+/// let packages = vec!["package1", "package2"];
+/// let result = add_dependencies(packages, false);
+/// // Note: This test might fail in a CI environment without npm
+/// // assert!(result.is_ok());
 /// ```
 pub fn add_dependencies(packages: Vec<&str>, is_dev: bool) -> Result<(), BoxError> {
     let root_dir = find_root_dir()?;
@@ -146,13 +147,12 @@ pub fn add_dependencies(packages: Vec<&str>, is_dev: bool) -> Result<(), BoxErro
 /// # Example
 ///
 /// ```
-/// let package_name = "express";
-/// match get_latest_version(package_name) {
-///     Ok(version) => println!("Latest version of {} is {}", package_name, version),
-///     Err(e) => eprintln!("Error getting latest version: {}", e),
-/// }
+/// use mngr::dependencies::get_latest_version;
+///
+/// let result = get_latest_version("package_name");
+/// assert!(result.is_ok());
 /// ```
-fn get_latest_version(package: &str) -> Result<String, BoxError> {
+pub fn get_latest_version(package: &str) -> Result<String, BoxError> {
     let output = Command::new("npm")
         .args(&["view", package, "version"])
         .output()?;
@@ -183,20 +183,18 @@ fn get_latest_version(package: &str) -> Result<String, BoxError> {
 /// # Examples
 ///
 /// ```
-/// match find_root_dir() {
-///     Ok(root_dir) => println!("Root directory found: {}", root_dir.display()),
-///     Err(e) => eprintln!("Failed to find root directory: {}", e),
-/// }
+/// use mngr::dependencies::find_root_dir;
+///
+/// let result = find_root_dir();
+/// assert!(result.is_ok());
 /// ```
-fn find_root_dir() -> Result<PathBuf, BoxError> {
+pub fn find_root_dir() -> Result<PathBuf, BoxError> {
     let current_dir = std::env::current_dir()?;
     current_dir
         .ancestors()
         .find(|p| p.join(PACKAGE_TMPL_JSON).exists())
         .map(|p| p.to_path_buf())
-        .ok_or_else(|| {
-            Box::<dyn std::error::Error + Send + Sync>::from("❌ Cannot find root directory 😢")
-        })
+        .ok_or_else(|| BoxError::from("❌ Cannot find root directory 😢"))
 }
 
 /// Runs `npm install` in the specified directory.
@@ -222,13 +220,12 @@ fn find_root_dir() -> Result<PathBuf, BoxError> {
 /// # Examples
 ///
 /// ```
-/// use std::path::PathBuf;
+/// use mngr::init::run_npm_install;
+/// use std::path::Path;
 ///
-/// let project_dir = PathBuf::from("/path/to/project");
-/// match run_npm_install(&project_dir) {
-///     Ok(()) => println!("npm install completed successfully"),
-///     Err(e) => eprintln!("npm install failed: {}", e),
-/// }
+/// let project_dir = Path::new(".");
+/// let result = run_npm_install(&project_dir);
+/// assert!(result.is_ok());
 /// ```
 fn run_npm_install(dir: &PathBuf) -> Result<(), BoxError> {
     println!("🛠️ Running npm install in {}...", dir.display());
@@ -279,10 +276,10 @@ fn run_npm_install(dir: &PathBuf) -> Result<(), BoxError> {
 /// # Example
 ///
 /// ```
-/// match add_dev_dependency("jest") {
-///     Ok(()) => println!("Development dependency added successfully"),
-///     Err(e) => eprintln!("Error adding development dependency: {}", e),
-/// }
+/// use mngr::dependencies::add_dev_dependency;
+///
+/// let result = add_dev_dependency("jest");
+/// assert!(result.is_ok());
 /// ```
 pub fn add_dev_dependency(package: &str) -> Result<(), BoxError> {
     let root_dir = find_root_dir()?;

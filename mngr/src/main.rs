@@ -9,10 +9,9 @@ use std::process;
 extern crate num_cpus;
 extern crate rayon;
 
-// Add this line to import the constant
 use crate::config::PACKAGE_TMPL_JSON;
 
-type BoxError = Box<dyn std::error::Error + Send + Sync>;
+type BoxError = Box<dyn std::error::Error + Send + Sync + 'static>;
 
 fn main() -> Result<(), BoxError> {
     let reset_help = format!(
