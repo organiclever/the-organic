@@ -5,20 +5,7 @@ open System.Threading.Tasks
 open Config
 open Utils
 open PackageManager
-open Newtonsoft.Json.Linq
-
-let shouldInitialize (dir: string) =
-    let packageJsonPath = Path.Combine(dir, "package.json")
-
-    if File.Exists(packageJsonPath) then
-        let jsonContent = File.ReadAllText(packageJsonPath)
-        let json = JObject.Parse(jsonContent)
-
-        match json.SelectToken("project.kind") with
-        | null -> false
-        | token -> token.Value<string>().ToLower() = "npm"
-    else
-        false
+open Types
 
 let resetApps () =
     let currentDir = Directory.GetCurrentDirectory()
@@ -27,43 +14,38 @@ let resetApps () =
     let libsDir = Path.Combine(repoRoot, config.LibsDir)
     let appsDir = Path.Combine(repoRoot, config.AppsDir)
 
-    // Reset libs first
-    if Directory.Exists(libsDir) then
-        printfn "📂 Found libs directory: %s" libsDir
-        let libDirs = Directory.GetDirectories(libsDir)
+    let processDirectory (dirType: string) (dir: string) =
+        printfn $"📂 Found {dirType} directory: %s{dir}"
+        let subDirs = Directory.GetDirectories(dir)
 
-        libDirs
-        |> Array.filter shouldInitialize
-        |> Array.map (fun dir ->
+        subDirs
+        |> Array.iter (fun subDir ->
+            match fst (Commands.Initialize.getProjectKind subDir) with
+            | NPM -> printfn $"▶️ Processing {dirType}: %s{Path.GetFileName(subDir)}"
+            | Unknown -> printfn $"⏭️ Skipping {dirType}: %s{Path.GetFileName(subDir)}")
+
+        subDirs
+        |> Array.filter (fun subDir -> fst (Commands.Initialize.getProjectKind subDir) = NPM)
+        |> Array.map (fun subDir ->
             task {
-                do! NPM.deleteNodeModules dir
-                return dir
+                do! NPM.deleteNodeModules subDir
+                printfn $"✅ Finished resetting {dirType}: %s{Path.GetFileName(subDir)}"
+                return subDir
             })
         |> Task.WhenAll
         |> Async.AwaitTask
         |> Async.RunSynchronously
         |> ignore
 
-        printfn "🧹 Finished resetting libs"
+        printfn $"🧹 Finished resetting {dirType}s"
+
+    // Reset libs first
+    if Directory.Exists(libsDir) then
+        processDirectory "lib" libsDir
 
     // Then reset apps
     if Directory.Exists(appsDir) then
-        printfn "📂 Found apps directory: %s" appsDir
-        let appDirs = Directory.GetDirectories(appsDir)
-
-        appDirs
-        |> Array.filter shouldInitialize
-        |> Array.map (fun dir ->
-            task {
-                do! NPM.deleteNodeModules dir
-                return dir
-            })
-        |> Task.WhenAll
-        |> Async.AwaitTask
-        |> Async.RunSynchronously
-        |> ignore
-
-        printfn "🧹 Finished resetting apps"
+        processDirectory "app" appsDir
 
     // Run npm install
     Commands.Initialize.initializeApps ()
