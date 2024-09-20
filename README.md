@@ -10,7 +10,7 @@ This monorepo contains multiple projects including ayokoding-web, organic-lever-
   - `organic-lever-web-e2e/`: End-to-end tests for Organic Lever
 - `libs/`
   - `hello/`: Shared library
-- `mngr/`: Rust-based repository management tool
+- `mngr-rs/`: Rust-based repository management tool
 
 ## Getting Started
 
@@ -29,7 +29,7 @@ This monorepo contains multiple projects including ayokoding-web, organic-lever-
 
 ## Repository Management
 
-The `mngr` tool provides several commands to manage the monorepo:
+The `mngr-rs` tool provides several commands to manage the monorepo:
 
 - `cargo run -- --doctor`: Check if required tools are installed
 - `cargo run -- --init`: Initialize the project and install dependencies
@@ -67,7 +67,7 @@ Repo Manager is a command-line tool for managing repositories and dependencies.
 
 ## Usage
 
-`mngr [OPTIONS]`
+`mngr-rs [OPTIONS]`
 
 Options:
 --init Initialize package.json, run npm install, and install project dependencies
@@ -81,19 +81,19 @@ Options:
 ## Examples
 
 1. Initialize the project:
-   `mngr --init`
+   `mngr-rs --init`
 
 2. Run doctor checks:
-   `mngr --doctor`
+   `mngr-rs --doctor`
 
 3. Reset the project:
-   `mngr --reset`
+   `mngr-rs --reset`
 
 4. Add a dependency:
-   `mngr --deps lodash`
+   `mngr-rs --deps lodash`
 
 5. Add a dev dependency:
-   `mngr --deps-dev jest`
+   `mngr-rs --deps-dev jest`
 
 ## Contributing
 

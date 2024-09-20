@@ -22,7 +22,7 @@ use std::process::Command;
 /// # Example
 ///
 /// ```
-/// use mngr::doctor::run_doctor_checks;
+/// use mngr-rs::doctor::run_doctor_checks;
 ///
 /// let result = run_doctor_checks();
 /// assert!(result.is_ok());
@@ -65,7 +65,7 @@ pub fn run_doctor_checks() -> Result<(), BoxError> {
 /// # Examples
 ///
 /// ```
-/// use mngr::doctor::check_command;
+/// use mngr-rs::doctor::check_command;
 ///
 /// let result = check_command("node", &["--version"]);
 /// assert!(result.is_ok());

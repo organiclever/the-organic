@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Navigate to the mngr directory
-cd mngr
+# Navigate to the mngr-rs directory
+cd mngr-rs
 
 # Run the Rust program
 cargo run -- --doctor
