@@ -43,7 +43,9 @@
   },
   "name": "the-organic",
   "scripts": {
-    "format:fs": "dotnet tool run fantomas . --recurse"
+    "format:fs": "dotnet tool run fantomas . --recurse",
+    "build:mngr": "dotnet publish mngr/mngr.fsproj -c Release -o ./mngr-published && chmod +x ./tmngr",
+    "tmngr": "dotnet mngr-published/mngr.dll"
   },
   "version": "1.0.0",
   "volta": {

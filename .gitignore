@@ -63,3 +63,6 @@ Thumbs.db
 # .NET specific
 bin/
 obj/
+
+# mngr
+mngr-published
