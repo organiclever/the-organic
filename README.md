@@ -29,7 +29,7 @@ This monorepo contains multiple projects including ayokoding-web, organic-lever-
 
 ## Repository Management
 
-The `mngr` tool provides several commands to manage the monorepo.
+The `mngr` tool provides several commands to manage the monorepo. For more details, see the [mngr README](./mngr/README.md).
 
 ## F# Project: mngr
 
@@ -74,12 +74,12 @@ Repo Manager is a command-line tool for managing repositories and dependencies.
 `mngr [OPTIONS]`
 
 Options:
---init Initialize package.json, run npm install, and install project dependencies
---doctor Check if volta, npm, and node are installed
---reset Reset the project: delete package.json and node_modules, then reinitialize
---clean Remove node_modules and package-lock.json files
---help Print help information
---version Print version information
+`--init` Initialize package.json, run npm install, and install project dependencies
+`--doctor` Check if volta, npm, and node are installed
+`--reset` Reset the project: delete package.json and node_modules, then reinitialize
+`--clean` Remove node_modules and package-lock.json files
+`--help` Print help information
+`--version` Print version information
 
 ## Examples
 
