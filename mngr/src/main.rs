@@ -6,11 +6,15 @@ mod reset;
 
 use clap::{App, Arg};
 use std::process;
+extern crate num_cpus;
+extern crate rayon;
 
 // Add this line to import the constant
 use crate::config::PACKAGE_TMPL_JSON;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+type BoxError = Box<dyn std::error::Error + Send + Sync>;
+
+fn main() -> Result<(), BoxError> {
     let reset_help = format!(
         "Reset the project: delete package.json and node_modules, then reinitialize using {}",
         PACKAGE_TMPL_JSON
@@ -82,12 +86,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         match matches.values_of("deps") {
             Some(deps) => {
                 let deps: Vec<&str> = deps.collect();
-                dependencies::add_dependencies(deps, false)?;
+                dependencies::add_dependencies(deps, false).map_err(BoxError::from)?;
             }
             None => match matches.values_of("deps-dev") {
                 Some(deps_dev) => {
                     let deps_dev: Vec<&str> = deps_dev.collect();
-                    dependencies::add_dependencies(deps_dev, true)?;
+                    dependencies::add_dependencies(deps_dev, true).map_err(BoxError::from)?;
                 }
                 None => {
                     println!("No valid option provided. Use --help for usage information.");

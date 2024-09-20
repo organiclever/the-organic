@@ -1,5 +1,6 @@
 use crate::config::{APPS_DIR, LIBS_DIR, PACKAGE_JSON};
 use crate::init;
+use crate::BoxError;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -32,7 +33,7 @@ use std::path::{Path, PathBuf};
 ///     Err(e) => eprintln!("Failed to reset project: {}", e),
 /// }
 /// ```
-pub fn reset_project() -> Result<(), Box<dyn std::error::Error>> {
+pub fn reset_project() -> Result<(), BoxError> {
     println!("🔄 Resetting project...");
     let root_dir = find_root_dir()?;
 
@@ -61,7 +62,7 @@ pub fn reset_project() -> Result<(), Box<dyn std::error::Error>> {
 ///
 /// # Returns
 ///
-/// * `Result<PathBuf, Box<dyn std::error::Error>>` - The path to the root directory if found,
+/// * `Result<PathBuf, BoxError>` - The path to the root directory if found,
 ///   or an error if the root directory cannot be determined.
 ///
 /// # Errors
@@ -73,18 +74,23 @@ pub fn reset_project() -> Result<(), Box<dyn std::error::Error>> {
 /// # Examples
 ///
 /// ```
-/// match find_root_dir() {
-///     Ok(root_dir) => println!("Root directory found: {}", root_dir.display()),
-///     Err(e) => eprintln!("Failed to find root directory: {}", e),
+/// use mngr::reset::find_root_dir;
+///
+/// fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+///     match find_root_dir() {
+///         Ok(root_dir) => println!("Root directory found: {}", root_dir.display()),
+///         Err(e) => eprintln!("Failed to find root directory: {}", e),
+///     }
+///     Ok(())
 /// }
 /// ```
-fn find_root_dir() -> Result<PathBuf, Box<dyn std::error::Error>> {
+fn find_root_dir() -> Result<PathBuf, BoxError> {
     let current_dir = std::env::current_dir()?;
     current_dir
         .ancestors()
         .find(|p| p.join("package-tmpl.json").exists())
         .map(|p| p.to_path_buf())
-        .ok_or_else(|| Box::<dyn std::error::Error>::from("❌ Cannot find root directory 😢"))
+        .ok_or_else(|| BoxError::from("❌ Cannot find root directory 😢"))
 }
 
 /// Recursively deletes 'node_modules' directories within the given directory and its subdirectories.
@@ -120,7 +126,7 @@ fn find_root_dir() -> Result<PathBuf, Box<dyn std::error::Error>> {
 ///     Err(e) => eprintln!("Error deleting node_modules: {}", e),
 /// }
 /// ```
-fn delete_node_modules(dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
+fn delete_node_modules(dir: &Path) -> Result<(), BoxError> {
     let node_modules = dir.join("node_modules");
     if node_modules.exists() {
         fs::remove_dir_all(&node_modules)?;

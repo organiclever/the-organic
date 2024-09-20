@@ -1,11 +1,16 @@
 use crate::dependencies::add_dev_dependency;
+use rayon::prelude::*;
 use serde_json::{json, Value};
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::Arc;
 
 use crate::config::{APPS_DIR, LIBS_DIR, PACKAGE_JSON, PACKAGE_TMPL_JSON};
+
+pub type BoxError = Box<dyn std::error::Error + Send + Sync>;
 
 /// Initializes the project and installs all dependencies.
 ///
@@ -17,7 +22,7 @@ use crate::config::{APPS_DIR, LIBS_DIR, PACKAGE_JSON, PACKAGE_TMPL_JSON};
 ///
 /// # Returns
 ///
-/// * `Result<(), Box<dyn std::error::Error>>` - Ok(()) if all operations are successful,
+/// * `Result<(), BoxError>` - Ok(()) if all operations are successful,
 ///   or an error if any step fails.
 ///
 /// # Errors
@@ -27,12 +32,12 @@ use crate::config::{APPS_DIR, LIBS_DIR, PACKAGE_JSON, PACKAGE_TMPL_JSON};
 /// * Adding the 'concurrently' dev dependency fails
 /// * The npm install process fails
 /// * Installing project dependencies fails
-pub fn initialize_and_install_all() -> Result<(), Box<dyn std::error::Error>> {
+pub fn initialize_and_install_all() -> Result<(), BoxError> {
     println!("🚀 Initializing and installing all dependencies...");
     let root_dir = initialize_package_json()?;
 
     // we use concurrently to run multiple npm scripts concurrently
-    add_dev_dependency("concurrently")?;
+    add_dev_dependency("concurrently").map_err(BoxError::from)?;
 
     run_npm_install(&root_dir)?;
     install_project_dependencies(&root_dir)?;
@@ -52,7 +57,7 @@ pub fn initialize_and_install_all() -> Result<(), Box<dyn std::error::Error>> {
 ///
 /// # Returns
 ///
-/// * `Result<PathBuf, Box<dyn std::error::Error>>` - The path to the root directory if successful,
+/// * `Result<PathBuf, BoxError>` - The path to the root directory if successful,
 ///   or an error if any step fails.
 ///
 /// # Errors
@@ -71,13 +76,13 @@ pub fn initialize_and_install_all() -> Result<(), Box<dyn std::error::Error>> {
 ///     Err(e) => eprintln!("Failed to initialize package.json: {}", e),
 /// }
 /// ```
-fn initialize_package_json() -> Result<PathBuf, Box<dyn std::error::Error>> {
+fn initialize_package_json() -> Result<PathBuf, BoxError> {
     println!("📦 Initializing package.json...");
-    let current_dir = env::current_dir()?;
+    let current_dir = env::current_dir().map_err(BoxError::from)?;
     let root_dir = current_dir
         .ancestors()
         .nth(1)
-        .ok_or_else(|| Box::<dyn std::error::Error>::from("❌ Cannot find root directory 😢"))?
+        .ok_or_else(|| BoxError::from("❌ Cannot find root directory 😢"))?
         .to_path_buf();
 
     let template_path = root_dir.join(PACKAGE_TMPL_JSON);
@@ -92,16 +97,16 @@ fn initialize_package_json() -> Result<PathBuf, Box<dyn std::error::Error>> {
         .into());
     }
 
-    let template_content = fs::read_to_string(&template_path)?;
-    let mut template: Value = serde_json::from_str(&template_content)?;
+    let template_content = fs::read_to_string(&template_path).map_err(BoxError::from)?;
+    let mut template: Value = serde_json::from_str(&template_content).map_err(BoxError::from)?;
 
     let mut scripts = json!({});
 
     // Dynamically find and merge scripts from all apps
     let apps_dir = root_dir.join(APPS_DIR);
     if apps_dir.is_dir() {
-        for entry in fs::read_dir(apps_dir)? {
-            let entry = entry?;
+        for entry in fs::read_dir(apps_dir).map_err(BoxError::from)? {
+            let entry = entry.map_err(BoxError::from)?;
             let path = entry.path();
             if path.is_dir() {
                 let package_json_path = path.join(PACKAGE_JSON);
@@ -127,8 +132,8 @@ fn initialize_package_json() -> Result<PathBuf, Box<dyn std::error::Error>> {
     // Dynamically find and merge scripts from all libs
     let libs_dir = root_dir.join(LIBS_DIR);
     if libs_dir.is_dir() {
-        for entry in fs::read_dir(libs_dir)? {
-            let entry = entry?;
+        for entry in fs::read_dir(libs_dir).map_err(BoxError::from)? {
+            let entry = entry.map_err(BoxError::from)?;
             let path = entry.path();
             if path.is_dir() {
                 let package_json_path = path.join(PACKAGE_JSON);
@@ -157,8 +162,8 @@ fn initialize_package_json() -> Result<PathBuf, Box<dyn std::error::Error>> {
 
     template["scripts"] = scripts;
 
-    let output_content = serde_json::to_string_pretty(&template)?;
-    fs::write(output_path, output_content)?;
+    let output_content = serde_json::to_string_pretty(&template).map_err(BoxError::from)?;
+    fs::write(output_path, output_content).map_err(BoxError::from)?;
 
     println!("✅ Successfully created package.json in the root directory 📄");
     Ok(root_dir)
@@ -201,26 +206,22 @@ fn merge_scripts(
     root_dir: &Path,
     relative_path: &str,
     prefix: &str,
-) -> Result<(), Box<dyn std::error::Error>> {
+) -> Result<(), BoxError> {
     let file_path = root_dir.join(relative_path);
     if !file_path.exists() {
         println!("⚠️ {} not found, skipping", relative_path);
         return Ok(());
     }
 
-    let content = fs::read_to_string(&file_path)?;
-    let package: Value = serde_json::from_str(&content)?;
+    let content = fs::read_to_string(&file_path).map_err(BoxError::from)?;
+    let package: Value = serde_json::from_str(&content).map_err(BoxError::from)?;
 
     if let Some(package_scripts) = package["scripts"].as_object() {
         for (key, value) in package_scripts {
             let new_key = format!("{}:{}", prefix, key);
             let parent_path = match Path::new(relative_path).parent() {
                 Some(path) => path,
-                None => {
-                    return Err(Box::<dyn std::error::Error>::from(
-                        "❌ Invalid file path 😢",
-                    ))
-                }
+                None => return Err(BoxError::from("❌ Invalid file path 😢")),
             };
 
             let script_value = format!(
@@ -247,7 +248,7 @@ fn merge_scripts(
 ///
 /// # Returns
 ///
-/// * `Result<String, Box<dyn std::error::Error>>` - A Result containing the
+/// * `Result<String, BoxError>` - A Result containing the
 ///   generated command string or an error if something goes wrong.
 ///
 /// # Behavior
@@ -265,7 +266,7 @@ fn merge_scripts(
 /// // dev_script might look like:
 /// // "concurrently \"npm run libs:dev\" \"npm run app1:dev\" \"npm run app2:dev\""
 /// ```
-fn create_dev_scripts(root_dir: &Path) -> Result<String, Box<dyn std::error::Error>> {
+fn create_dev_scripts(root_dir: &Path) -> Result<String, BoxError> {
     let mut scripts = Vec::new();
 
     // Add libs dev script
@@ -315,7 +316,7 @@ fn create_dev_scripts(root_dir: &Path) -> Result<String, Box<dyn std::error::Err
 ///
 /// # Returns
 ///
-/// * `Result<(), Box<dyn std::error::Error>>` - Ok(()) if all dependencies are installed successfully,
+/// * `Result<(), BoxError>` - Ok(()) if all dependencies are installed successfully,
 ///   or an error if something goes wrong during the installation process.
 ///
 /// # Example
@@ -329,14 +330,16 @@ fn create_dev_scripts(root_dir: &Path) -> Result<String, Box<dyn std::error::Err
 ///     Err(e) => eprintln!("Error installing dependencies: {}", e),
 /// }
 /// ```
-fn install_project_dependencies(root_dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
+fn install_project_dependencies(root_dir: &Path) -> Result<(), BoxError> {
     println!("📚 Installing project dependencies...");
     let libs_dir = root_dir.join(LIBS_DIR);
     let apps_dir = root_dir.join(APPS_DIR);
 
-    // TODO: install dependencies based on dependecy graph for monorepo
+    // Install dependencies for libs sequentially
     install_dependencies_in_dir(&libs_dir)?;
-    install_dependencies_in_dir(&apps_dir)?;
+
+    // Install dependencies for apps in parallel
+    install_dependencies_in_apps_parallel(&apps_dir)?;
 
     println!("✅ All project dependencies installed successfully! 🎉");
     Ok(())
@@ -353,7 +356,7 @@ fn install_project_dependencies(root_dir: &Path) -> Result<(), Box<dyn std::erro
 ///
 /// # Returns
 ///
-/// * `Result<(), Box<dyn std::error::Error>>` - Ok(()) if all dependencies are installed successfully,
+/// * `Result<(), BoxError>` - Ok(()) if all dependencies are installed successfully,
 ///   or an error if something goes wrong during the installation process.
 ///
 /// # Errors
@@ -362,10 +365,10 @@ fn install_project_dependencies(root_dir: &Path) -> Result<(), Box<dyn std::erro
 /// * The directory cannot be read
 /// * There's an issue accessing a subdirectory
 /// * The `install_project_if_npm` function returns an error
-fn install_dependencies_in_dir(dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
+fn install_dependencies_in_dir(dir: &Path) -> Result<(), BoxError> {
     if dir.is_dir() {
-        for entry in fs::read_dir(dir)? {
-            let entry = entry?;
+        for entry in fs::read_dir(dir).map_err(BoxError::from)? {
+            let entry = entry.map_err(BoxError::from)?;
             let path = entry.path();
             if path.is_dir() {
                 if is_npm_project(&path) {
@@ -376,6 +379,70 @@ fn install_dependencies_in_dir(dir: &Path) -> Result<(), Box<dyn std::error::Err
         }
     }
     Ok(())
+}
+
+/// Installs dependencies for all npm projects in the "apps" directory in parallel.
+///
+/// This function uses the `rayon` crate to install dependencies for all npm projects
+/// in the "apps" directory in parallel, with a maximum number of workers based
+/// on the available CPU cores.
+///
+/// # Arguments
+///
+/// * `dir` - A `&Path` representing the directory to search for npm projects.
+///
+/// # Returns
+///
+/// * `Result<(), BoxError>` - Ok(()) if all dependencies are installed successfully,
+///   or an error if something goes wrong during the installation process.
+///
+/// # Errors
+///
+/// This function will return an error if:
+/// * The directory cannot be read
+/// * There's an issue accessing a subdirectory
+/// * The `run_npm_install` function returns an error
+fn install_dependencies_in_apps_parallel(dir: &Path) -> Result<(), BoxError> {
+    if !dir.is_dir() {
+        return Ok(());
+    }
+
+    let cpu_count = num_cpus::get();
+    let max_workers = std::cmp::max(1, cpu_count - 1); // Use all cores except one
+    println!(
+        "🚀 Installing app dependencies in parallel (max {} workers)",
+        max_workers
+    );
+
+    let pool = rayon::ThreadPoolBuilder::new()
+        .num_threads(max_workers)
+        .build()
+        .map_err(BoxError::from)?;
+
+    let completed_count = Arc::new(AtomicUsize::new(0));
+    let total_count = Arc::new(AtomicUsize::new(0));
+
+    let result: Result<(), BoxError> = pool.install(|| {
+        fs::read_dir(dir)
+            .map_err(BoxError::from)?
+            .filter_map(Result::ok)
+            .filter(|entry| entry.path().is_dir())
+            .collect::<Vec<_>>()
+            .par_iter()
+            .try_for_each(|entry| -> Result<(), BoxError> {
+                let path = entry.path();
+                total_count.fetch_add(1, Ordering::SeqCst);
+                if is_npm_project(&path) {
+                    run_npm_install(&path)?;
+                    let completed = completed_count.fetch_add(1, Ordering::SeqCst) + 1;
+                    let total = total_count.load(Ordering::SeqCst);
+                    println!("Progress: {}/{} apps completed", completed, total);
+                }
+                Ok(())
+            })
+    });
+
+    result
 }
 
 /// Determines if a given directory is an npm project.
@@ -407,7 +474,7 @@ fn is_npm_project(project_dir: &Path) -> bool {
 ///
 /// # Returns
 ///
-/// * `Result<(), Box<dyn std::error::Error>>` - Ok(()) if the installation is successful,
+/// * `Result<(), BoxError>` - Ok(()) if the installation is successful,
 ///   or an error if the installation fails.
 ///
 /// # Errors
@@ -420,7 +487,6 @@ fn is_npm_project(project_dir: &Path) -> bool {
 ///
 /// ```
 /// use std::path::Path;
-/// use your_crate::run_npm_install;
 ///
 /// let project_dir = Path::new("/path/to/your/project");
 /// match run_npm_install(project_dir) {
@@ -428,12 +494,13 @@ fn is_npm_project(project_dir: &Path) -> bool {
 ///     Err(e) => eprintln!("npm install failed: {}", e),
 /// }
 /// ```
-pub fn run_npm_install(dir: &Path) -> Result<(), Box<dyn std::error::Error>> {
+pub fn run_npm_install(dir: &Path) -> Result<(), BoxError> {
     println!("🛠️ Running npm install in {}...", dir.display());
     let output = Command::new("npm")
         .arg("install")
         .current_dir(dir)
-        .output()?;
+        .output()
+        .map_err(BoxError::from)?;
 
     if output.status.success() {
         println!(

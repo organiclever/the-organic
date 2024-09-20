@@ -1,4 +1,5 @@
 use crate::config::{PACKAGE_JSON, PACKAGE_TMPL_JSON};
+use crate::BoxError;
 use serde_json::{json, Value};
 use std::fs;
 use std::path::PathBuf;
@@ -19,7 +20,7 @@ use std::process::Command;
 ///
 /// # Returns
 ///
-/// * `Result<(), Box<dyn std::error::Error>>` - Ok(()) if the dependencies are
+/// * `Result<(), BoxError>` - Ok(()) if the dependencies are
 ///   added successfully, or an error if any part of the process fails.
 ///
 /// # Errors
@@ -38,10 +39,7 @@ use std::process::Command;
 ///     Err(e) => eprintln!("Error adding dependencies: {}", e),
 /// }
 /// ```
-pub fn add_dependencies(
-    packages: Vec<&str>,
-    is_dev: bool,
-) -> Result<(), Box<dyn std::error::Error>> {
+pub fn add_dependencies(packages: Vec<&str>, is_dev: bool) -> Result<(), BoxError> {
     let root_dir = find_root_dir()?;
     let package_json_path = root_dir.join(PACKAGE_JSON);
     let package_tmpl_json_path = root_dir.join(PACKAGE_TMPL_JSON);
@@ -134,9 +132,9 @@ pub fn add_dependencies(
 ///
 /// # Returns
 ///
-/// * `Result<String, Box<dyn std::error::Error>>` - A Result containing either:
+/// * `Result<String, BoxError>` - A Result containing either:
 ///   - `Ok(String)`: The latest version of the package as a String.
-///   - `Err(Box<dyn std::error::Error>)`: An error if the version couldn't be retrieved.
+///   - `Err(BoxError)`: An error if the version couldn't be retrieved.
 ///
 /// # Errors
 ///
@@ -154,7 +152,7 @@ pub fn add_dependencies(
 ///     Err(e) => eprintln!("Error getting latest version: {}", e),
 /// }
 /// ```
-fn get_latest_version(package: &str) -> Result<String, Box<dyn std::error::Error>> {
+fn get_latest_version(package: &str) -> Result<String, BoxError> {
     let output = Command::new("npm")
         .args(&["view", package, "version"])
         .output()?;
@@ -173,7 +171,7 @@ fn get_latest_version(package: &str) -> Result<String, Box<dyn std::error::Error
 ///
 /// # Returns
 ///
-/// * `Result<PathBuf, Box<dyn std::error::Error>>` - The path to the root directory if found,
+/// * `Result<PathBuf, BoxError>` - The path to the root directory if found,
 ///   or an error if the root directory cannot be determined.
 ///
 /// # Errors
@@ -190,13 +188,15 @@ fn get_latest_version(package: &str) -> Result<String, Box<dyn std::error::Error
 ///     Err(e) => eprintln!("Failed to find root directory: {}", e),
 /// }
 /// ```
-fn find_root_dir() -> Result<PathBuf, Box<dyn std::error::Error>> {
+fn find_root_dir() -> Result<PathBuf, BoxError> {
     let current_dir = std::env::current_dir()?;
     current_dir
         .ancestors()
         .find(|p| p.join(PACKAGE_TMPL_JSON).exists())
         .map(|p| p.to_path_buf())
-        .ok_or_else(|| Box::<dyn std::error::Error>::from("❌ Cannot find root directory 😢"))
+        .ok_or_else(|| {
+            Box::<dyn std::error::Error + Send + Sync>::from("❌ Cannot find root directory 😢")
+        })
 }
 
 /// Runs `npm install` in the specified directory.
@@ -210,7 +210,7 @@ fn find_root_dir() -> Result<PathBuf, Box<dyn std::error::Error>> {
 ///
 /// # Returns
 ///
-/// * `Result<(), Box<dyn std::error::Error>>` - Ok(()) if the installation is successful,
+/// * `Result<(), BoxError>` - Ok(()) if the installation is successful,
 ///   or an error if the installation fails.
 ///
 /// # Errors
@@ -230,7 +230,7 @@ fn find_root_dir() -> Result<PathBuf, Box<dyn std::error::Error>> {
 ///     Err(e) => eprintln!("npm install failed: {}", e),
 /// }
 /// ```
-fn run_npm_install(dir: &PathBuf) -> Result<(), Box<dyn std::error::Error>> {
+fn run_npm_install(dir: &PathBuf) -> Result<(), BoxError> {
     println!("🛠️ Running npm install in {}...", dir.display());
     let output = Command::new("npm")
         .arg("install")
@@ -266,7 +266,7 @@ fn run_npm_install(dir: &PathBuf) -> Result<(), Box<dyn std::error::Error>> {
 ///
 /// # Returns
 ///
-/// * `Result<(), Box<dyn std::error::Error>>` - Ok(()) if the dependency is added successfully,
+/// * `Result<(), BoxError>` - Ok(()) if the dependency is added successfully,
 ///   or an error if any part of the process fails.
 ///
 /// # Errors
@@ -284,7 +284,7 @@ fn run_npm_install(dir: &PathBuf) -> Result<(), Box<dyn std::error::Error>> {
 ///     Err(e) => eprintln!("Error adding development dependency: {}", e),
 /// }
 /// ```
-pub fn add_dev_dependency(package: &str) -> Result<(), Box<dyn std::error::Error>> {
+pub fn add_dev_dependency(package: &str) -> Result<(), BoxError> {
     let root_dir = find_root_dir()?;
     let package_json_path = root_dir.join(PACKAGE_JSON);
     let package_tmpl_json_path = root_dir.join(PACKAGE_TMPL_JSON);

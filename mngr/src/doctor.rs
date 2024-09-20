@@ -1,3 +1,4 @@
+use crate::BoxError;
 use std::process::Command;
 
 /// Runs a series of checks to ensure the development environment is properly set up.
@@ -28,7 +29,7 @@ use std::process::Command;
 ///     Ok(())
 /// }
 /// ```
-pub fn run_doctor_checks() -> Result<(), Box<dyn std::error::Error>> {
+pub fn run_doctor_checks() -> Result<(), BoxError> {
     println!("🩺 Running doctor checks...");
     let mut all_checks_passed = true;
 
@@ -74,7 +75,7 @@ pub fn run_doctor_checks() -> Result<(), Box<dyn std::error::Error>> {
 ///     Ok(())
 /// }
 /// ```
-pub fn check_command(command: &str, args: &[&str]) -> Result<bool, Box<dyn std::error::Error>> {
+pub fn check_command(command: &str, args: &[&str]) -> Result<bool, BoxError> {
     match Command::new(command).args(args).output() {
         Ok(output) => {
             if output.status.success() {
