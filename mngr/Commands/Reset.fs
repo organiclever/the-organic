@@ -5,6 +5,20 @@ open System.Threading.Tasks
 open Config
 open Utils
 open PackageManager
+open Newtonsoft.Json.Linq
+
+let shouldInitialize (dir: string) =
+    let packageJsonPath = Path.Combine(dir, "package.json")
+
+    if File.Exists(packageJsonPath) then
+        let jsonContent = File.ReadAllText(packageJsonPath)
+        let json = JObject.Parse(jsonContent)
+
+        match json.SelectToken("project.kind") with
+        | null -> false
+        | token -> token.Value<string>().ToLower() = "npm"
+    else
+        false
 
 let resetApps () =
     let currentDir = Directory.GetCurrentDirectory()
@@ -19,6 +33,7 @@ let resetApps () =
         let libDirs = Directory.GetDirectories(libsDir)
 
         libDirs
+        |> Array.filter shouldInitialize
         |> Array.map (fun dir ->
             task {
                 do! NPM.deleteNodeModules dir
@@ -37,6 +52,7 @@ let resetApps () =
         let appDirs = Directory.GetDirectories(appsDir)
 
         appDirs
+        |> Array.filter shouldInitialize
         |> Array.map (fun dir ->
             task {
                 do! NPM.deleteNodeModules dir

@@ -2,6 +2,7 @@
 open Types
 open Commands.Initialize
 open Commands.Reset
+open Commands.Clean
 open Commands.Help
 
 [<EntryPoint>]
@@ -21,6 +22,10 @@ let main argv =
         elif opts.Reset then
             printfn "🔄 Resetting apps..."
             resetApps ()
+            0
+        elif opts.Clean then
+            printfn "🧹 Cleaning node_modules..."
+            cleanApps ()
             0
         else
             printHelp ()
