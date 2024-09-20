@@ -7,7 +7,15 @@ mod reset;
 use clap::{App, Arg};
 use std::process;
 
+// Add this line to import the constant
+use crate::config::PACKAGE_TMPL_JSON;
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let reset_help = format!(
+        "Reset the project: delete package.json and node_modules, then reinitialize using {}",
+        PACKAGE_TMPL_JSON
+    );
+
     let matches = App::new("Repo Manager")
         .version("1.0")
         .author("Your Name")
@@ -27,7 +35,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .arg(
             Arg::with_name("reset")
                 .long("reset")
-                .help("Reset the project: delete package.json and node_modules, then reinitialize")
+                .help(reset_help.as_str())
                 .takes_value(false),
         )
         .arg(
