@@ -3,6 +3,14 @@ open System.IO
 open System.Diagnostics
 open System.Threading
 open System.Threading.Tasks
+open CommandLine
+
+// Define command-line options
+type Options =
+    { [<Option('i', "init", Required = false, HelpText = "Initialize all apps in the monorepo")>]
+      Init: bool
+      [<Option('r', "reset", Required = false, HelpText = "Delete all node_modules and reinitialize apps")>]
+      Reset: bool }
 
 let runNpmInstall (dir: string) =
     task {
@@ -139,20 +147,24 @@ let printHelp () =
 let main argv =
     printfn "🚀 mngr - The Organic Monorepo Manager"
 
-    match argv with
-    | [| "--init" |] ->
-        printfn "🏗️  Initializing apps..."
-        initializeApps ()
-        0
-    | [| "--reset" |] ->
-        printfn "🔄 Resetting apps..."
-        resetApps ()
-        0
-    | [| "--help" |]
-    | [| "-h" |] ->
-        printHelp ()
-        0
-    | _ ->
-        printfn "❓ Unknown command or option"
-        printHelp ()
+    let result = Parser.Default.ParseArguments<Options>(argv)
+
+    match result with
+    | :? Parsed<Options> as parsed ->
+        let opts = parsed.Value
+
+        if opts.Init then
+            printfn "🏗️  Initializing apps..."
+            initializeApps ()
+            0
+        elif opts.Reset then
+            printfn "🔄 Resetting apps..."
+            resetApps ()
+            0
+        else
+            printfn "No action specified. Use --help to see available options."
+            0
+    | :? NotParsed<Options> as notParsed ->
+        printfn "Error: %A" (notParsed.Errors |> Seq.map (fun e -> e.Tag.ToString()))
         1
+    | _ -> 1
