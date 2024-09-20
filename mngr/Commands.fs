@@ -1,34 +1,11 @@
 module Commands
 
-open System
 open System.IO
-open System.Diagnostics
 open System.Threading
 open System.Threading.Tasks
 open Config
 open Utils
-
-let runNpmInstall (dir: string) =
-    task {
-        let psi = ProcessStartInfo()
-        psi.FileName <- "npm"
-        psi.Arguments <- "install"
-        psi.WorkingDirectory <- dir
-        psi.RedirectStandardOutput <- true
-        psi.RedirectStandardError <- true
-        psi.UseShellExecute <- false
-        psi.CreateNoWindow <- true
-
-        use p = new Process()
-        p.StartInfo <- psi
-        p.Start() |> ignore
-
-        let! output = p.StandardOutput.ReadToEndAsync()
-        let! error = p.StandardError.ReadToEndAsync()
-        do! p.WaitForExitAsync()
-
-        return (dir, p.ExitCode, output, error)
-    }
+open PackageManager
 
 let initializeProjects (dir: string) =
     if Directory.Exists(dir) then
@@ -45,14 +22,14 @@ let initializeProjects (dir: string) =
                 do! semaphore.WaitAsync()
 
                 try
-                    return! runNpmInstall projectDir
+                    return! NPM.install projectDir
                 finally
                     semaphore.Release() |> ignore
             })
         |> Task.WhenAll
         |> Async.AwaitTask
         |> Async.RunSynchronously
-        |> Array.iter (fun (dir, exitCode, output, error) ->
+        |> Array.iter (fun (dir, exitCode, _output, error) ->
             if exitCode = 0 then
                 printfn $"✅ Finished npm install in %s{dir}"
             else
@@ -76,17 +53,6 @@ let initializeApps () =
     // Then initialize apps
     initializeProjects appsDir
 
-let deleteNodeModules (dir: string) =
-    task {
-        let nodeModulesPath = Path.Combine(dir, "node_modules")
-
-        if Directory.Exists(nodeModulesPath) then
-            Directory.Delete(nodeModulesPath, true)
-            printfn "🗑️  Deleted node_modules in %s" dir
-        else
-            printfn "ℹ️  No node_modules found in %s" dir
-    }
-
 let resetApps () =
     let currentDir = Directory.GetCurrentDirectory()
     let repoRoot = findRepoRoot currentDir
@@ -102,7 +68,7 @@ let resetApps () =
         libDirs
         |> Array.map (fun dir ->
             task {
-                do! deleteNodeModules dir
+                do! NPM.deleteNodeModules dir
                 return dir
             })
         |> Task.WhenAll
@@ -120,7 +86,7 @@ let resetApps () =
         appDirs
         |> Array.map (fun dir ->
             task {
-                do! deleteNodeModules dir
+                do! NPM.deleteNodeModules dir
                 return dir
             })
         |> Task.WhenAll
@@ -132,3 +98,14 @@ let resetApps () =
 
     // Run npm install
     initializeApps ()
+
+let printHelp () =
+    printfn "Usage: mngr [command] [options]"
+    printfn ""
+    printfn "Commands:"
+    printfn "  --init         Initialize all apps in the monorepo"
+    printfn "  --reset        Delete all node_modules and reinitialize apps"
+    printfn "  --help, -h     Show this help message"
+    printfn ""
+    printfn "Options:"
+    printfn "  None currently available"
