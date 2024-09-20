@@ -7,6 +7,7 @@ open Utils.Commons
 open PackageManager
 open PackageManager.ProjectKind
 open Newtonsoft.Json.Linq
+open System.Diagnostics
 
 let getProjectKind (dir: string) : ProjectKind * string =
     let packageJsonPath = Path.Combine(dir, "package.json")
@@ -34,7 +35,24 @@ let shouldInitialize (dir: string) =
         printfn "   project.kind value: %s" value
         false
 
+let ensureFantomasInstalled () =
+    printfn "🔧 Ensuring Fantomas is installed..."
+    let psi = ProcessStartInfo("dotnet", "tool restore")
+    psi.RedirectStandardOutput <- true
+    psi.RedirectStandardError <- true
+    psi.UseShellExecute <- false
+    psi.CreateNoWindow <- true
+
+    use p = Process.Start(psi)
+    p.WaitForExit()
+
+    if p.ExitCode <> 0 then
+        printfn "❌ Failed to restore dotnet tools. Please run 'dotnet tool restore' manually."
+    else
+        printfn "✅ Fantomas installation check completed successfully."
+
 let initializeApps () =
+    ensureFantomasInstalled ()
     let currentDir = Directory.GetCurrentDirectory()
     let repoRoot = findRepoRoot currentDir
     let config = readConfig ()

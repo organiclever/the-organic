@@ -11,4 +11,6 @@ type Options =
       [<Option('c', "clean", Required = false, HelpText = "Delete all node_modules in apps and libs")>]
       Clean: bool
       [<Option('d', "doctor", Required = false, HelpText = "Check if required tools are installed")>]
-      Doctor: bool }
+      Doctor: bool
+      [<Option('v', "version", Required = false, HelpText = "Display the version information.")>]
+      Version: bool }

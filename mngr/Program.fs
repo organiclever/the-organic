@@ -8,28 +8,32 @@ open Commands.Clean
 open Commands.Help
 open Commands.Doctor
 open System.Diagnostics
+open System.Reflection
 
-let ensureFantomasInstalled () =
-    printfn "🔧 Ensuring Fantomas is installed..."
-    let psi = ProcessStartInfo("dotnet", "tool restore")
-    psi.RedirectStandardOutput <- true
-    psi.RedirectStandardError <- true
-    psi.UseShellExecute <- false
-    psi.CreateNoWindow <- true
+let getVersion () =
+    let assembly = Assembly.GetExecutingAssembly()
+    let version = assembly.GetName().Version
+    let attribute = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
 
-    use p = Process.Start(psi)
-    p.WaitForExit()
+    let gitHash =
+        if attribute <> null then
+            attribute.InformationalVersion
+        else
+            null
 
-    if p.ExitCode <> 0 then
-        printfn "❌ Failed to restore dotnet tools. Please run 'dotnet tool restore' manually."
-    else
-        printfn "✅ Fantomas installation check completed successfully."
+    match gitHash with
+    | null -> sprintf "mngr %d.%d.%d" version.Major version.Minor version.Build
+    | _ ->
+        let hashParts = gitHash.Split('+')
+
+        if hashParts.Length > 1 then
+            sprintf "mngr %d.%d.%d+%s" version.Major version.Minor version.Build hashParts.[1]
+        else
+            sprintf "mngr %d.%d.%d" version.Major version.Minor version.Build
 
 [<EntryPoint>]
 let main argv =
     printfn "🚀 mngr - The Organic Monorepo Manager"
-
-    ensureFantomasInstalled ()
 
     let result = Parser.Default.ParseArguments<Options>(argv)
 
@@ -37,7 +41,10 @@ let main argv =
     | :? Parsed<Options> as parsed ->
         let opts = parsed.Value
 
-        if opts.Reset then
+        if opts.Version then
+            printfn "%s" (getVersion ())
+            0
+        elif opts.Reset then
             printfn "🔄 Resetting apps..."
             resetApps ()
             0
@@ -56,8 +63,13 @@ let main argv =
             printHelp ()
             0
     | :? NotParsed<Options> as notParsed ->
-        printfn "Error: %A" (notParsed.Errors |> Seq.map (fun e -> e.Tag.ToString()))
-        1
+        match notParsed.Errors |> Seq.tryHead with
+        | Some error when error.Tag = ErrorType.VersionRequestedError ->
+            printfn "%s" (getVersion ())
+            0
+        | _ ->
+            printfn "Error: %A" (notParsed.Errors |> Seq.map (fun e -> e.Tag.ToString()))
+            1
     | _ ->
         printfn "Unexpected error occurred"
         1
