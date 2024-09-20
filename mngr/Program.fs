@@ -15,11 +15,7 @@ let main argv =
     | :? Parsed<Options> as parsed ->
         let opts = parsed.Value
 
-        if opts.Init then
-            printfn "🏗️  Initializing apps..."
-            initializeApps ()
-            0
-        elif opts.Reset then
+        if opts.Reset then
             printfn "🔄 Resetting apps..."
             resetApps ()
             0
@@ -27,10 +23,16 @@ let main argv =
             printfn "🧹 Cleaning node_modules..."
             cleanApps ()
             0
+        elif opts.Init then
+            printfn "🏗️ Initializing apps..."
+            initializeApps ()
+            0
         else
             printHelp ()
             0
     | :? NotParsed<Options> as notParsed ->
         printfn "Error: %A" (notParsed.Errors |> Seq.map (fun e -> e.Tag.ToString()))
         1
-    | _ -> 1
+    | _ ->
+        printfn "Unexpected error occurred"
+        1

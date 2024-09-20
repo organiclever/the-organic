@@ -2,7 +2,7 @@ module Commands.Clean
 
 open System.IO
 open Config
-open Utils
+open Utils.Commons
 open PackageManager
 
 let cleanApps () =

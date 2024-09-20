@@ -3,7 +3,7 @@ module Commands.Reset
 open System.IO
 open System.Threading.Tasks
 open Config
-open Utils
+open Utils.Commons
 open PackageManager
 open PackageManager.ProjectKind
 
