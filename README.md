@@ -1,6 +1,6 @@
 # The Organic Monorepo
 
-This monorepo contains multiple projects including ayokoding-web, organic-lever-web, associated libraries, and a new F# project called mngr.
+This monorepo contains multiple projects including ayokoding-web, organic-lever-web, associated libraries, and an F# project called mngr.
 
 ## Project Structure
 
@@ -10,7 +10,6 @@ This monorepo contains multiple projects including ayokoding-web, organic-lever-
   - `organic-lever-web-e2e/`: End-to-end tests for Organic Lever
 - `libs/`
   - `hello/`: Shared library
-- `mngr-rs/`: Rust-based repository management tool
 - `mngr/`: F# project for repository management
 
 ## Getting Started
@@ -30,7 +29,7 @@ This monorepo contains multiple projects including ayokoding-web, organic-lever-
 
 ## Repository Management
 
-The `mngr-rs` tool provides several commands to manage the monorepo. Additionally, the new F# project `mngr` has been added for future management tasks.
+The `mngr` tool provides several commands to manage the monorepo.
 
 ## F# Project: mngr
 
@@ -72,33 +71,29 @@ Repo Manager is a command-line tool for managing repositories and dependencies.
 
 ## Usage
 
-`mngr-rs [OPTIONS]`
+`mngr [OPTIONS]`
 
 Options:
 --init Initialize package.json, run npm install, and install project dependencies
 --doctor Check if volta, npm, and node are installed
 --reset Reset the project: delete package.json and node_modules, then reinitialize
---deps Add dependencies to root package.json and package-tmpl.json
---deps-dev Add dev dependencies to root package.json and package-tmpl.json
+--clean Remove node_modules and package-lock.json files
 --help Print help information
 --version Print version information
 
 ## Examples
 
 1. Initialize the project:
-   `mngr-rs --init`
+   `mngr --init`
 
 2. Run doctor checks:
-   `mngr-rs --doctor`
+   `mngr --doctor`
 
 3. Reset the project:
-   `mngr-rs --reset`
+   `mngr --reset`
 
-4. Add a dependency:
-   `mngr-rs --deps lodash`
-
-5. Add a dev dependency:
-   `mngr-rs --deps-dev jest`
+4. Clean the project:
+   `mngr --clean`
 
 ## Contributing
 

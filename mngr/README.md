@@ -11,39 +11,39 @@ A CLI tool for managing the monorepo, written in F#.
 
 To build the project, run the following command in the `mngr` directory:
 
-'''
-dotnet build
-'''
+`dotnet build`
 
 ## Running the Project
 
 To see all available commands, use:
 
-'''
-dotnet run -- --help
-'''
+`dotnet run -- --help`
 
 or
 
-'''
-dotnet run -- -h
-'''
+`dotnet run -- -h`
 
 To initialize all apps in the monorepo, use:
 
-'''
-dotnet run -- --init
-'''
+`dotnet run -- --init`
 
 This will run `npm install` in parallel for each subdirectory in the `./apps` folder.
 
 To reset all apps (delete node_modules and reinstall dependencies), use:
 
-'''
-dotnet run -- --reset
-'''
+`dotnet run -- --reset`
 
 This will delete all `node_modules` directories in the projects under the `apps` folder and then run `npm install` for each project.
+
+To clean all `node_modules` directories without reinstalling, use:
+
+`dotnet run -- --clean`
+
+To check if required tools are installed, use:
+
+`dotnet run -- --doctor`
+
+This will check for the installation of dotnet, Fantomas, Volta, npm, and Cargo.
 
 ## Development
 
