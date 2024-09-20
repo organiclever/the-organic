@@ -14,6 +14,10 @@ let resetApps () =
     let libsDir = Path.Combine(repoRoot, config.LibsDir)
     let appsDir = Path.Combine(repoRoot, config.AppsDir)
 
+    // Reset root dependencies
+    printfn "🔄 Resetting root dependencies"
+    NPM.deleteNodeModules repoRoot |> Async.AwaitTask |> Async.RunSynchronously
+
     let processDirectory (dirType: string) (dir: string) =
         printfn $"📂 Found {dirType} directory: %s{dir}"
         let subDirs = Directory.GetDirectories(dir)
@@ -47,5 +51,5 @@ let resetApps () =
     if Directory.Exists(appsDir) then
         processDirectory "app" appsDir
 
-    // Run npm install
+    // Run npm install (including root)
     Commands.Initialize.initializeApps ()

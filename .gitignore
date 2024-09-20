@@ -52,8 +52,6 @@ Thumbs.db
 # Backup files
 *.bak
 
-/package.json
-
 .rustc_info.json
 
 # F# specific

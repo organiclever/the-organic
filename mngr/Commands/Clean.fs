@@ -12,6 +12,11 @@ let cleanApps () =
     let libsDir = Path.Combine(repoRoot, config.LibsDir)
     let appsDir = Path.Combine(repoRoot, config.AppsDir)
 
+    // Clean root
+    printfn "📂 Cleaning root directory: %s" repoRoot
+    NPM.deleteNodeModules repoRoot |> Async.AwaitTask |> Async.RunSynchronously
+    printfn "🧹 Finished cleaning root"
+
     // Clean libs
     if Directory.Exists(libsDir) then
         printfn "📂 Cleaning libs directory: %s" libsDir

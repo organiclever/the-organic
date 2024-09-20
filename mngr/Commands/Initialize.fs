@@ -42,6 +42,11 @@ let initializeApps () =
     let libsDir = Path.Combine(repoRoot, config.LibsDir)
     let appsDir = Path.Combine(repoRoot, config.AppsDir)
 
+    // Install dependencies at the root level first
+    printfn "📦 Installing dependencies at the root level"
+    NPM.install repoRoot |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+    printfn "✅ Finished installing root dependencies"
+
     let processDirectory (dirType: string) (dir: string) =
         printfn $"📂 Found {dirType} directory: %s{dir}"
         let subDirs = Directory.GetDirectories(dir)
