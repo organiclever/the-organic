@@ -7,10 +7,28 @@ open Commands.Reset
 open Commands.Clean
 open Commands.Help
 open Commands.Doctor
+open System.Diagnostics
+
+let ensureFantomasInstalled () =
+    let psi = ProcessStartInfo("dotnet", "tool restore")
+    psi.RedirectStandardOutput <- true
+    psi.RedirectStandardError <- true
+    psi.UseShellExecute <- false
+    psi.CreateNoWindow <- true
+
+    use p = Process.Start(psi)
+    p.WaitForExit()
+
+    if p.ExitCode <> 0 then
+        printfn "Failed to restore dotnet tools. Please run 'dotnet tool restore' manually."
+
+// test
 
 [<EntryPoint>]
 let main argv =
     printfn "🚀 mngr - The Organic Monorepo Manager"
+
+    ensureFantomasInstalled ()
 
     let result = Parser.Default.ParseArguments<Options>(argv)
 

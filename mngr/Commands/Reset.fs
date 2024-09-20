@@ -51,5 +51,10 @@ let resetApps () =
     if Directory.Exists(appsDir) then
         processDirectory "app" appsDir
 
-    // Run npm install (including root)
+    // Run npm install for the root
+    printfn "📦 Installing dependencies at the root level"
+    NPM.install repoRoot |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+    printfn "✅ Finished installing root dependencies"
+
+    // Run npm install for libs and apps
     Commands.Initialize.initializeApps ()
