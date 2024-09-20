@@ -2,12 +2,14 @@ module PackageManager.NPM
 
 open System.IO
 open System.Diagnostics
+open System.Threading.Tasks
+open Config
 
-let install (dir: string) =
+let private runCommand (command: string) (args: string) (dir: string) =
     task {
         let psi = ProcessStartInfo()
-        psi.FileName <- "npm"
-        psi.Arguments <- "install"
+        psi.FileName <- command
+        psi.Arguments <- args
         psi.WorkingDirectory <- dir
         psi.RedirectStandardOutput <- true
         psi.RedirectStandardError <- true
@@ -25,13 +27,43 @@ let install (dir: string) =
         return (dir, p.ExitCode, output, error)
     }
 
-let deleteNodeModules (dir: string) =
-    task {
-        let nodeModulesPath = Path.Combine(dir, "node_modules")
+let install (dirs: string seq) =
+    let config = readConfig ()
+    let maxWorkers = config.MaxParallelism
+    printfn "🚀 Using %d parallel workers for npm install" maxWorkers
 
-        if Directory.Exists(nodeModulesPath) then
-            Directory.Delete(nodeModulesPath, true)
-            printfn "🗑️  Deleted node_modules in %s" dir
-        else
-            printfn "ℹ️  No node_modules found in %s" dir
-    }
+    let installDir (dir: string) =
+        task {
+            printfn "📦 Starting npm install in %s" (Path.GetFileName dir)
+            let! (_, exitCode, _, _) = runCommand "npm" "install" dir
+
+            if exitCode = 0 then
+                printfn "✅ Finished npm install in %s" (Path.GetFileName dir)
+            else
+                printfn "❌ npm install failed in %s" (Path.GetFileName dir)
+        }
+
+    dirs |> Seq.map installDir |> (fun tasks -> Task.WhenAll(tasks))
+
+let deleteNodeModules (dirs: string seq) =
+    let config = readConfig ()
+    let maxWorkers = config.MaxParallelism
+    printfn "🚀 Using %d parallel workers for deleting node_modules" maxWorkers
+
+    let deleteNodeModulesDir (dir: string) =
+        task {
+            let nodeModulesPath = Path.Combine(dir, "node_modules")
+
+            if Directory.Exists(nodeModulesPath) then
+                printfn "🗑️  Starting deletion of node_modules in %s" (Path.GetFileName dir)
+
+                try
+                    Directory.Delete(nodeModulesPath, true)
+                    printfn "✅ Finished deleting node_modules in %s" (Path.GetFileName dir)
+                with ex ->
+                    printfn "❌ Failed to delete node_modules in %s: %s" (Path.GetFileName dir) ex.Message
+            else
+                printfn "ℹ️  No node_modules found in %s" (Path.GetFileName dir)
+        }
+
+    dirs |> Seq.map deleteNodeModulesDir |> (fun tasks -> Task.WhenAll(tasks))

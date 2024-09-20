@@ -43,36 +43,21 @@ let initializeApps () =
 
     // Install dependencies at the root level first
     printfn "📦 Installing dependencies at the root level"
-    NPM.install repoRoot |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+    NPM.install [ repoRoot ] |> Async.AwaitTask |> Async.RunSynchronously |> ignore
     printfn "✅ Finished installing root dependencies"
 
-    let processDirectory (dirType: string) (dir: string) =
-        printfn $"📂 Found {dirType} directory: %s{dir}"
-        let subDirs = Directory.GetDirectories(dir)
+    let dirsToInitialize =
+        [| if Directory.Exists(libsDir) then
+               yield! Directory.GetDirectories(libsDir) |> Array.filter shouldInitialize
+           if Directory.Exists(appsDir) then
+               yield! Directory.GetDirectories(appsDir) |> Array.filter shouldInitialize |]
 
-        subDirs
-        |> Array.iter (fun subDir ->
-            match shouldInitialize subDir with
-            | true -> printfn $"▶️ Processing {dirType}: %s{Path.GetFileName(subDir)}"
-            | false -> printfn $"⏭️ Skipping {dirType}: %s{Path.GetFileName(subDir)}")
+    // Initialize apps and libs
+    printfn "📦 Initializing apps and libs"
 
-        subDirs
-        |> Array.filter shouldInitialize
-        |> Array.map (fun subDir ->
-            task {
-                let! result = NPM.install subDir
-                printfn $"✅ Finished {dirType}: %s{Path.GetFileName(subDir)}"
-                return (subDir, result)
-            })
-        |> Task.WhenAll
-        |> Async.AwaitTask
-        |> Async.RunSynchronously
-        |> ignore
+    NPM.install dirsToInitialize
+    |> Async.AwaitTask
+    |> Async.RunSynchronously
+    |> ignore
 
-    if Directory.Exists(libsDir) then
-        processDirectory "lib" libsDir
-
-    if Directory.Exists(appsDir) then
-        processDirectory "app" appsDir
-
-    printfn "🚀 Finished initializing all apps"
+    printfn "🚀 Finished initializing all apps and libs"

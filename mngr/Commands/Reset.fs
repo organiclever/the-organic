@@ -16,45 +16,37 @@ let resetApps () =
 
     // Reset root dependencies
     printfn "🔄 Resetting root dependencies"
-    NPM.deleteNodeModules repoRoot |> Async.AwaitTask |> Async.RunSynchronously
 
-    let processDirectory (dirType: string) (dir: string) =
-        printfn $"📂 Found {dirType} directory: %s{dir}"
-        let subDirs = Directory.GetDirectories(dir)
+    NPM.deleteNodeModules [ repoRoot ]
+    |> Async.AwaitTask
+    |> Async.RunSynchronously
+    |> ignore
 
-        subDirs
-        |> Array.iter (fun subDir ->
-            match fst (Initialize.getProjectKind subDir) with
-            | NPM -> printfn $"▶️ Processing {dirType}: %s{Path.GetFileName(subDir)}"
-            | Unknown -> printfn $"⏭️ Skipping {dirType}: %s{Path.GetFileName(subDir)}")
+    let dirsToReset =
+        [| if Directory.Exists(libsDir) then
+               yield!
+                   Directory.GetDirectories(libsDir)
+                   |> Array.filter (fun dir -> fst (Initialize.getProjectKind dir) = NPM)
+           if Directory.Exists(appsDir) then
+               yield!
+                   Directory.GetDirectories(appsDir)
+                   |> Array.filter (fun dir -> fst (Initialize.getProjectKind dir) = NPM) |]
 
-        subDirs
-        |> Array.filter (fun subDir -> fst (Initialize.getProjectKind subDir) = NPM)
-        |> Array.map (fun subDir ->
-            task {
-                do! NPM.deleteNodeModules subDir
-                printfn $"✅ Finished resetting {dirType}: %s{Path.GetFileName(subDir)}"
-                return subDir
-            })
-        |> Task.WhenAll
-        |> Async.AwaitTask
-        |> Async.RunSynchronously
-        |> ignore
+    // Reset apps and libs
+    printfn "🔄 Resetting apps and libs"
 
-        printfn $"🧹 Finished resetting {dirType}s"
-
-    // Reset libs first
-    if Directory.Exists(libsDir) then
-        processDirectory "lib" libsDir
-
-    // Then reset apps
-    if Directory.Exists(appsDir) then
-        processDirectory "app" appsDir
+    NPM.deleteNodeModules dirsToReset
+    |> Async.AwaitTask
+    |> Async.RunSynchronously
+    |> ignore
 
     // Run npm install for the root
     printfn "📦 Installing dependencies at the root level"
-    NPM.install repoRoot |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+    NPM.install [ repoRoot ] |> Async.AwaitTask |> Async.RunSynchronously |> ignore
     printfn "✅ Finished installing root dependencies"
 
     // Run npm install for libs and apps
-    Initialize.initializeApps ()
+    printfn "📦 Installing dependencies for apps and libs"
+    NPM.install dirsToReset |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+
+    printfn "🚀 Finished resetting all apps and libs"

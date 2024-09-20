@@ -14,27 +14,26 @@ let cleanApps () =
 
     // Clean root
     printfn "📂 Cleaning root directory: %s" repoRoot
-    NPM.deleteNodeModules repoRoot |> Async.AwaitTask |> Async.RunSynchronously
+
+    NPM.deleteNodeModules [ repoRoot ]
+    |> Async.AwaitTask
+    |> Async.RunSynchronously
+    |> ignore
+
     printfn "🧹 Finished cleaning root"
 
-    // Clean apps
-    printfn "📂 Cleaning apps directory: %s" appsDir
+    let dirsToClean =
+        [| if Directory.Exists(libsDir) then
+               yield! Directory.GetDirectories(libsDir)
+           if Directory.Exists(appsDir) then
+               yield! Directory.GetDirectories(appsDir) |]
 
-    Directory.GetDirectories(appsDir)
-    |> Array.iter (fun appDir ->
-        printfn "  🗑️  Cleaning %s" (Path.GetFileName appDir)
-        NPM.deleteNodeModules appDir |> Async.AwaitTask |> Async.RunSynchronously)
+    // Clean apps and libs
+    printfn "📂 Cleaning apps and libs directories"
 
-    printfn "🧹 Finished cleaning apps"
+    NPM.deleteNodeModules dirsToClean
+    |> Async.AwaitTask
+    |> Async.RunSynchronously
+    |> ignore
 
-    // Clean libs
-    printfn "📂 Cleaning libs directory: %s" libsDir
-
-    Directory.GetDirectories(libsDir)
-    |> Array.iter (fun libDir ->
-        printfn "  🗑️  Cleaning %s" (Path.GetFileName libDir)
-        NPM.deleteNodeModules libDir |> Async.AwaitTask |> Async.RunSynchronously)
-
-    printfn "🧹 Finished cleaning libs"
-
-// ... (keep the rest of the existing code)
+    printfn "🎉 All cleaning tasks completed"
