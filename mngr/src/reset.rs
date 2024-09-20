@@ -1,8 +1,11 @@
 use crate::config::{APPS_DIR, LIBS_DIR, PACKAGE_JSON};
 use crate::init;
 use crate::BoxError;
+use rayon::prelude::*;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::Arc;
 
 /// Resets the project by removing existing configuration and dependencies,
 /// then reinitializing the project.
@@ -10,12 +13,12 @@ use std::path::{Path, PathBuf};
 /// This function performs the following steps:
 /// 1. Finds the root directory of the project.
 /// 2. Deletes the package.json file if it exists.
-/// 3. Removes node_modules directories from the root, apps (APPS_DIR), and libs (LIBS_DIR) directories.
+/// 3. Removes node_modules directories from the root, apps (APPS_DIR), and libs (LIBS_DIR) directories in parallel.
 /// 4. Recreates the package.json file and reinstalls all dependencies.
 ///
 /// # Returns
 ///
-/// * `Result<(), Box<dyn std::error::Error>>` - Ok(()) if the reset is successful,
+/// * `Result<(), BoxError>` - Ok(()) if the reset is successful,
 ///   or an error if any step fails.
 ///
 /// # Errors
@@ -43,10 +46,38 @@ pub fn reset_project() -> Result<(), BoxError> {
         println!("Removed {}", PACKAGE_JSON);
     }
 
-    // Delete node_modules in root, apps, and libs
-    delete_node_modules(&root_dir)?;
-    delete_node_modules(&root_dir.join(APPS_DIR))?;
-    delete_node_modules(&root_dir.join(LIBS_DIR))?;
+    // Delete node_modules in root, apps, and libs in parallel
+    let dirs_to_clean = vec![
+        root_dir.clone(),
+        root_dir.join(APPS_DIR),
+        root_dir.join(LIBS_DIR),
+    ];
+
+    let cpu_count = num_cpus::get();
+    let max_workers = std::cmp::max(1, cpu_count - 1); // Use all cores except one
+    println!(
+        "🚀 Deleting node_modules in parallel (max {} workers)",
+        max_workers
+    );
+
+    let pool = rayon::ThreadPoolBuilder::new()
+        .num_threads(max_workers)
+        .build()
+        .map_err(BoxError::from)?;
+
+    let completed_count = Arc::new(AtomicUsize::new(0));
+    let total_count = Arc::new(AtomicUsize::new(dirs_to_clean.len()));
+
+    pool.install(|| {
+        dirs_to_clean.par_iter().for_each(|dir| {
+            if let Err(e) = delete_node_modules(dir) {
+                eprintln!("Error deleting node_modules in {}: {}", dir.display(), e);
+            }
+            let completed = completed_count.fetch_add(1, Ordering::SeqCst) + 1;
+            let total = total_count.load(Ordering::SeqCst);
+            println!("Progress: {}/{} directories cleaned", completed, total);
+        });
+    });
 
     // Recreate package.json and install dependencies
     init::initialize_and_install_all()?;
@@ -105,7 +136,7 @@ fn find_root_dir() -> Result<PathBuf, BoxError> {
 ///
 /// # Returns
 ///
-/// * `Result<(), Box<dyn std::error::Error>>` - Ok(()) if all operations are successful,
+/// * `Result<(), BoxError>` - Ok(()) if all operations are successful,
 ///   or an error if any deletion fails.
 ///
 /// # Errors
@@ -135,13 +166,16 @@ fn delete_node_modules(dir: &Path) -> Result<(), BoxError> {
 
     // Recursively delete node_modules in subdirectories
     if dir.is_dir() {
-        for entry in fs::read_dir(dir)? {
-            let entry = entry?;
-            let path = entry.path();
-            if path.is_dir() && path.file_name() != Some(std::ffi::OsStr::new("node_modules")) {
-                delete_node_modules(&path)?;
-            }
-        }
+        dir.read_dir()?
+            .par_bridge()
+            .try_for_each(|entry| -> Result<(), BoxError> {
+                let entry = entry?;
+                let path = entry.path();
+                if path.is_dir() && path.file_name() != Some(std::ffi::OsStr::new("node_modules")) {
+                    delete_node_modules(&path)?;
+                }
+                Ok(())
+            })?;
     }
 
     Ok(())
