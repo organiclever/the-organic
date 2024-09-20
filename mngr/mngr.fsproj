@@ -10,7 +10,6 @@
     <Compile Include="Types.fs" />
     <Compile Include="Config.fs" />
     <Compile Include="Utils/Commons.fs" />
-    <Compile Include="Utils/Spinner.fs" />
     <Compile Include="PackageManager/NPM.fs" />
     <Compile Include="Commands/Initialize.fs" />
     <Compile Include="Commands/Reset.fs" />
