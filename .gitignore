@@ -55,3 +55,13 @@ Thumbs.db
 /package.json
 
 .rustc_info.json
+
+# F# specific
+*.fsproj.user
+*.fsharplint
+.fake
+.ionide
+
+# .NET specific
+bin/
+obj/

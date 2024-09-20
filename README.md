@@ -1,6 +1,6 @@
 # The Organic Monorepo
 
-This monorepo contains multiple projects including ayokoding-web, organic-lever-web, and associated libraries.
+This monorepo contains multiple projects including ayokoding-web, organic-lever-web, associated libraries, and a new F# project called mngr.
 
 ## Project Structure
 
@@ -11,10 +11,11 @@ This monorepo contains multiple projects including ayokoding-web, organic-lever-
 - `libs/`
   - `hello/`: Shared library
 - `mngr-rs/`: Rust-based repository management tool
+- `mngr/`: F# project for repository management
 
 ## Getting Started
 
-1. Ensure you have [Volta](https://volta.sh/), [Node.js](https://nodejs.org/), and [npm](https://www.npmjs.com/) installed.
+1. Ensure you have [Volta](https://volta.sh/), [Node.js](https://nodejs.org/), [npm](https://www.npmjs.com/), and [.NET SDK](https://dotnet.microsoft.com/download) installed.
 
 2. Clone the repository:
    `git clone https://github.com/your-username/the-organic.git`
@@ -25,26 +26,30 @@ This monorepo contains multiple projects including ayokoding-web, organic-lever-
 4. Run the initialization script:
    `./init.sh`
 
-   This script will check if required tools are installed, initialize the project, and install dependencies for all sub-projects.
+   This script will build and run the F# project, along with other initialization tasks.
 
 ## Repository Management
 
-The `mngr-rs` tool provides several commands to manage the monorepo:
+The `mngr-rs` tool provides several commands to manage the monorepo. Additionally, the new F# project `mngr` has been added for future management tasks.
 
-- `cargo run -- --doctor`: Check if required tools are installed
-- `cargo run -- --init`: Initialize the project and install dependencies
-- `cargo run -- --reset`: Reset the project (delete node_modules, recreate package.json, reinstall dependencies)
-- `cargo run -- --deps <package-name>`: Add dependencies to root package.json and package-tmpl.json
-- `cargo run -- --deps-dev <package-name>`: Add dev dependencies to root package.json and package-tmpl.json
+## F# Project: mngr
+
+To run the F# project:
+
+1. Navigate to the mngr directory:
+   `cd mngr`
+
+2. Build the project:
+   `dotnet build`
+
+3. Run the project:
+   `dotnet run`
+
+For more details about the `mngr` project, see its [README](./mngr/README.md).
 
 ## Available Scripts
 
-Check the `scripts` section in the root `package.json` file for a full list of available commands. Some key scripts include:
-
-- `npm run ayokoding-web:dev`: Start the AyoKoding web development server
-- `npm run organic-lever-web:dev`: Start the Organic Lever web development server
-- `npm run organic-lever-web-e2e:test`: Run end-to-end tests for Organic Lever web
-- `npm run libs:build`: Build the shared libraries
+Check the `scripts` section in the root `package.json` file for a full list of available commands.
 
 ## Contributing
 

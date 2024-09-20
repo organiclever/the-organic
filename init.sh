@@ -1,11 +1,16 @@
 #!/bin/bash
 
-# Navigate to the mngr-rs directory
-cd mngr-rs
+# Store the original directory
+ORIGINAL_DIR=$(pwd)
 
-# Run the Rust program
-cargo run -- --doctor
-cargo run -- --init
+# Navigate to the repository root (assuming init.sh is in the root)
+cd "$(dirname "$0")"
+
+# Navigate to the mngr directory
+cd mngr
+
+# Run the F# program with the --init flag
+dotnet run -- --init
 
 # Return to the original directory
-cd ..
+cd "$ORIGINAL_DIR"
