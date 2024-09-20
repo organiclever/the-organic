@@ -13,11 +13,18 @@ type Options =
       [<Option('r', "reset", Required = false, HelpText = "Delete all node_modules and reinitialize apps")>]
       Reset: bool }
 
-type Config = { MaxParallelism: int }
+type Config =
+    { MaxParallelism: int
+      LibsDir: string
+      AppsDir: string }
 
 let readConfig () =
     let configPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json")
-    let defaultConfig = { MaxParallelism = Math.Max(1, Environment.ProcessorCount - 1) }
+
+    let defaultConfig =
+        { MaxParallelism = Math.Max(1, Environment.ProcessorCount - 1)
+          LibsDir = "libs"
+          AppsDir = "apps" }
 
     if File.Exists(configPath) then
         try
@@ -29,7 +36,17 @@ let readConfig () =
                     if config.MaxParallelism > 0 then
                         config.MaxParallelism
                     else
-                        defaultConfig.MaxParallelism }
+                        defaultConfig.MaxParallelism
+                LibsDir =
+                    if String.IsNullOrWhiteSpace(config.LibsDir) then
+                        defaultConfig.LibsDir
+                    else
+                        config.LibsDir
+                AppsDir =
+                    if String.IsNullOrWhiteSpace(config.AppsDir) then
+                        defaultConfig.AppsDir
+                    else
+                        config.AppsDir }
         with _ ->
             defaultConfig
     else
@@ -71,26 +88,22 @@ let findRepoRoot (startDir: string) =
 
     findRoot startDir
 
-let initializeApps () =
-    let currentDir = Directory.GetCurrentDirectory()
-    let repoRoot = findRepoRoot currentDir
-    let appsDir = Path.Combine(repoRoot, "apps")
-
-    if Directory.Exists(appsDir) then
-        printfn "📂 Found apps directory: %s" appsDir
-        let appDirs = Directory.GetDirectories(appsDir)
+let initializeProjects (dir: string) =
+    if Directory.Exists(dir) then
+        printfn $"📂 Found directory: %s{dir}"
+        let projectDirs = Directory.GetDirectories(dir)
         let config = readConfig ()
-        printfn "🖥️  Running with max parallelism: %d" config.MaxParallelism
+        printfn $"🖥️  Running with max parallelism: %d{config.MaxParallelism}"
 
         use semaphore = new SemaphoreSlim(config.MaxParallelism)
 
-        appDirs
-        |> Array.map (fun dir ->
+        projectDirs
+        |> Array.map (fun projectDir ->
             task {
                 do! semaphore.WaitAsync()
 
                 try
-                    return! runNpmInstall dir
+                    return! runNpmInstall projectDir
                 finally
                     semaphore.Release() |> ignore
             })
@@ -99,14 +112,27 @@ let initializeApps () =
         |> Async.RunSynchronously
         |> Array.iter (fun (dir, exitCode, output, error) ->
             if exitCode = 0 then
-                printfn "✅ Finished npm install in %s" dir
+                printfn $"✅ Finished npm install in %s{dir}"
             else
-                printfn "❌ npm install failed in %s with exit code %d" dir exitCode
-                printfn "Error output: %s" error)
+                printfn $"❌ npm install failed in %s{dir} with exit code %d{exitCode}"
+                printfn $"Error output: %s{error}")
 
-        printfn "🎉 All apps initialized successfully!"
+        printfn $"🎉 All projects in %s{dir} initialized successfully!"
     else
-        printfn "❓ Apps directory not found: %s" appsDir
+        printfn $"❓ Directory not found: %s{dir}"
+
+let initializeApps () =
+    let currentDir = Directory.GetCurrentDirectory()
+    let repoRoot = findRepoRoot currentDir
+    let config = readConfig ()
+    let libsDir = Path.Combine(repoRoot, config.LibsDir)
+    let appsDir = Path.Combine(repoRoot, config.AppsDir)
+
+    // Initialize libs first
+    initializeProjects libsDir
+
+    // Then initialize apps
+    initializeProjects appsDir
 
 let deleteNodeModules (dir: string) =
     task {
@@ -122,38 +148,48 @@ let deleteNodeModules (dir: string) =
 let resetApps () =
     let currentDir = Directory.GetCurrentDirectory()
     let repoRoot = findRepoRoot currentDir
-    let appsDir = Path.Combine(repoRoot, "apps")
+    let config = readConfig ()
+    let libsDir = Path.Combine(repoRoot, config.LibsDir)
+    let appsDir = Path.Combine(repoRoot, config.AppsDir)
 
-    if Directory.Exists(appsDir) then
-        printfn "📂 Found apps directory: %s" appsDir
-        let appDirs = Directory.GetDirectories(appsDir)
-        let config = readConfig ()
-        printfn "🖥️  Running with max parallelism: %d" config.MaxParallelism
+    // Reset libs first
+    if Directory.Exists(libsDir) then
+        printfn "📂 Found libs directory: %s" libsDir
+        let libDirs = Directory.GetDirectories(libsDir)
 
-        use semaphore = new SemaphoreSlim(config.MaxParallelism)
-
-        // Delete node_modules in parallel
-        appDirs
+        libDirs
         |> Array.map (fun dir ->
             task {
-                do! semaphore.WaitAsync()
-
-                try
-                    do! deleteNodeModules dir
-                finally
-                    semaphore.Release() |> ignore
+                do! deleteNodeModules dir
+                return dir
             })
         |> Task.WhenAll
         |> Async.AwaitTask
         |> Async.RunSynchronously
-        |> ignore // Add this line to ignore the result
+        |> ignore
 
-        printfn "🧹 All node_modules directories deleted"
+        printfn "🧹 Finished resetting libs"
 
-        // Run npm install
-        initializeApps ()
-    else
-        printfn "❓ Apps directory not found: %s" appsDir
+    // Then reset apps
+    if Directory.Exists(appsDir) then
+        printfn "📂 Found apps directory: %s" appsDir
+        let appDirs = Directory.GetDirectories(appsDir)
+
+        appDirs
+        |> Array.map (fun dir ->
+            task {
+                do! deleteNodeModules dir
+                return dir
+            })
+        |> Task.WhenAll
+        |> Async.AwaitTask
+        |> Async.RunSynchronously
+        |> ignore
+
+        printfn "🧹 Finished resetting apps"
+
+    // Run npm install
+    initializeApps ()
 
 let printHelp () =
     printfn "Usage: mngr [command] [options]"

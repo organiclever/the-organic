@@ -1,3 +1,5 @@
 {
-  "maxParallelism": 0
+  "maxParallelism": 0,
+  "libsDir": "libs",
+  "appsDir": "apps"
 }
