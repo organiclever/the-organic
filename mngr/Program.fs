@@ -4,6 +4,7 @@ open System.Diagnostics
 open System.Threading
 open System.Threading.Tasks
 open CommandLine
+open System.Text.Json
 
 // Define command-line options
 type Options =
@@ -11,6 +12,28 @@ type Options =
       Init: bool
       [<Option('r', "reset", Required = false, HelpText = "Delete all node_modules and reinitialize apps")>]
       Reset: bool }
+
+type Config = { MaxParallelism: int }
+
+let readConfig () =
+    let configPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json")
+    let defaultConfig = { MaxParallelism = Math.Max(1, Environment.ProcessorCount - 1) }
+
+    if File.Exists(configPath) then
+        try
+            let jsonString = File.ReadAllText(configPath)
+            let config = JsonSerializer.Deserialize<Config>(jsonString)
+
+            { config with
+                MaxParallelism =
+                    if config.MaxParallelism > 0 then
+                        config.MaxParallelism
+                    else
+                        defaultConfig.MaxParallelism }
+        with _ ->
+            defaultConfig
+    else
+        defaultConfig
 
 let runNpmInstall (dir: string) =
     task {
@@ -56,10 +79,10 @@ let initializeApps () =
     if Directory.Exists(appsDir) then
         printfn "📂 Found apps directory: %s" appsDir
         let appDirs = Directory.GetDirectories(appsDir)
-        let maxParallelism = Math.Max(1, Environment.ProcessorCount - 1)
-        printfn "🖥️  Running with max parallelism: %d" maxParallelism
+        let config = readConfig ()
+        printfn "🖥️  Running with max parallelism: %d" config.MaxParallelism
 
-        use semaphore = new SemaphoreSlim(maxParallelism)
+        use semaphore = new SemaphoreSlim(config.MaxParallelism)
 
         appDirs
         |> Array.map (fun dir ->
@@ -104,10 +127,10 @@ let resetApps () =
     if Directory.Exists(appsDir) then
         printfn "📂 Found apps directory: %s" appsDir
         let appDirs = Directory.GetDirectories(appsDir)
-        let maxParallelism = Math.Max(1, Environment.ProcessorCount - 1)
-        printfn "🖥️  Running with max parallelism: %d" maxParallelism
+        let config = readConfig ()
+        printfn "🖥️  Running with max parallelism: %d" config.MaxParallelism
 
-        use semaphore = new SemaphoreSlim(maxParallelism)
+        use semaphore = new SemaphoreSlim(config.MaxParallelism)
 
         // Delete node_modules in parallel
         appDirs
