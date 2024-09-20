@@ -16,6 +16,7 @@
     <Compile Include="Commands/Reset.fs" />
     <Compile Include="Commands/Clean.fs" />
     <Compile Include="Commands/Help.fs" />
+    <Compile Include="Commands/Doctor.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

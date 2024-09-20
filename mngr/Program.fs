@@ -1,9 +1,12 @@
-﻿open CommandLine
+﻿module Mngr.Program
+
+open CommandLine
 open Types
 open Commands.Initialize
 open Commands.Reset
 open Commands.Clean
 open Commands.Help
+open Commands.Doctor
 
 [<EntryPoint>]
 let main argv =
@@ -26,6 +29,9 @@ let main argv =
         elif opts.Init then
             printfn "🏗️ Initializing apps..."
             initializeApps ()
+            0
+        elif opts.Doctor then
+            runDoctor ()
             0
         else
             printHelp ()
