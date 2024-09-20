@@ -1,10 +1,7 @@
 module Types
 
 open CommandLine
-
-type ProjectKind =
-    | NPM
-    | Unknown
+open PackageManager.ProjectKind
 
 type Options =
     { [<Option('i', "init", Required = false, HelpText = "Initialize all apps in the monorepo")>]

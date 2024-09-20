@@ -5,7 +5,7 @@ open System.Threading.Tasks
 open Config
 open Utils
 open PackageManager
-open Types
+open PackageManager.ProjectKind
 
 let resetApps () =
     let currentDir = Directory.GetCurrentDirectory()

@@ -5,6 +5,7 @@ open System.Threading.Tasks
 open Config
 open Utils
 open PackageManager
+open PackageManager.ProjectKind
 open Newtonsoft.Json.Linq
 open Types
 
