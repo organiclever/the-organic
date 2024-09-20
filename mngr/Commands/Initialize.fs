@@ -46,18 +46,29 @@ let initializeApps () =
     NPM.install [ repoRoot ] |> Async.AwaitTask |> Async.RunSynchronously |> ignore
     printfn "✅ Finished installing root dependencies"
 
-    let dirsToInitialize =
+    let libsDirsToInitialize =
         [| if Directory.Exists(libsDir) then
-               yield! Directory.GetDirectories(libsDir) |> Array.filter shouldInitialize
-           if Directory.Exists(appsDir) then
+               yield! Directory.GetDirectories(libsDir) |> Array.filter shouldInitialize |]
+
+    // Initialize apps and libs
+    printfn "📦 Initializing apps and libs"
+
+    NPM.install libsDirsToInitialize
+    |> Async.AwaitTask
+    |> Async.RunSynchronously
+    |> ignore
+
+    let appsDirsToInitialize =
+        [| if Directory.Exists(appsDir) then
                yield! Directory.GetDirectories(appsDir) |> Array.filter shouldInitialize |]
 
     // Initialize apps and libs
     printfn "📦 Initializing apps and libs"
 
-    NPM.install dirsToInitialize
+    NPM.install appsDirsToInitialize
     |> Async.AwaitTask
     |> Async.RunSynchronously
     |> ignore
+
 
     printfn "🚀 Finished initializing all apps and libs"
