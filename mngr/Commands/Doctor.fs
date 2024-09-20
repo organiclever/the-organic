@@ -14,7 +14,7 @@ let checkCommand (command: string) =
     processInfo.CreateNoWindow <- true
 
     use proc = Process.Start(processInfo)
-    let output = proc.StandardOutput.ReadToEnd()
+    let _output = proc.StandardOutput.ReadToEnd()
     proc.WaitForExit()
 
     proc.ExitCode = 0

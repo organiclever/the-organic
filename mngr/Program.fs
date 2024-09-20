@@ -7,7 +7,6 @@ open Commands.Reset
 open Commands.Clean
 open Commands.Help
 open Commands.Doctor
-open System.Diagnostics
 open System.Reflection
 
 let getVersion () =

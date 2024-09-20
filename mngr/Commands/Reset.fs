@@ -1,7 +1,6 @@
 module Commands.Reset
 
 open System.IO
-open System.Threading.Tasks
 open Config
 open Utils.Commons
 open PackageManager
