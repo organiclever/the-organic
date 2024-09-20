@@ -27,6 +27,21 @@ let private runCommand (command: string) (args: string) (dir: string) =
         return (dir, p.ExitCode, output, error)
     }
 
+let runScript (dir: string) (scriptName: string) =
+    task {
+        printfn "🚀 Running npm script '%s' in %s" scriptName (Path.GetFileName dir)
+        let! (_, exitCode, output, error) = runCommand "npm" ("run " + scriptName) dir
+
+        if exitCode = 0 then
+            printfn "✅ Finished running npm script '%s' in %s" scriptName (Path.GetFileName dir)
+        else
+            printfn "❌ npm script '%s' failed in %s" scriptName (Path.GetFileName dir)
+            printfn "Error output:"
+            printfn "%s" error
+
+        return exitCode
+    }
+
 let install (dirs: string seq) =
     let config = readConfig ()
     let maxWorkers = config.MaxParallelism

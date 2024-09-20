@@ -89,3 +89,13 @@ let initializeApps () =
 
 
     printfn "🚀 Finished initializing all apps and libs"
+
+    // Add the build:mngr step
+    printfn "🛠️  Building mngr..."
+
+    let buildResult =
+        NPM.runScript repoRoot "build:mngr" |> Async.AwaitTask |> Async.RunSynchronously
+
+    match buildResult with
+    | 0 -> printfn "✅ mngr built successfully"
+    | _ -> printfn "❌ Failed to build mngr. Please check the output and try again."
