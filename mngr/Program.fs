@@ -1,7 +1,6 @@
 ﻿open CommandLine
 open Types
 open Commands
-open Utils
 
 [<EntryPoint>]
 let main argv =
