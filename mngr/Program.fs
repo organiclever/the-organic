@@ -4,7 +4,7 @@ open System.Diagnostics
 open System.Threading
 open System.Threading.Tasks
 open CommandLine
-open System.Text.Json
+// Remove the System.Text.Json import as it's no longer needed here
 
 // Define command-line options
 type Options =
@@ -13,44 +13,7 @@ type Options =
       [<Option('r', "reset", Required = false, HelpText = "Delete all node_modules and reinitialize apps")>]
       Reset: bool }
 
-type Config =
-    { MaxParallelism: int
-      LibsDir: string
-      AppsDir: string }
-
-let readConfig () =
-    let configPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json")
-
-    let defaultConfig =
-        { MaxParallelism = Math.Max(1, Environment.ProcessorCount - 1)
-          LibsDir = "libs"
-          AppsDir = "apps" }
-
-    if File.Exists(configPath) then
-        try
-            let jsonString = File.ReadAllText(configPath)
-            let config = JsonSerializer.Deserialize<Config>(jsonString)
-
-            { config with
-                MaxParallelism =
-                    if config.MaxParallelism > 0 then
-                        config.MaxParallelism
-                    else
-                        defaultConfig.MaxParallelism
-                LibsDir =
-                    if String.IsNullOrWhiteSpace(config.LibsDir) then
-                        defaultConfig.LibsDir
-                    else
-                        config.LibsDir
-                AppsDir =
-                    if String.IsNullOrWhiteSpace(config.AppsDir) then
-                        defaultConfig.AppsDir
-                    else
-                        config.AppsDir }
-        with _ ->
-            defaultConfig
-    else
-        defaultConfig
+// Remove the Config type and readConfig function from here
 
 let runNpmInstall (dir: string) =
     task {
@@ -92,7 +55,7 @@ let initializeProjects (dir: string) =
     if Directory.Exists(dir) then
         printfn $"📂 Found directory: %s{dir}"
         let projectDirs = Directory.GetDirectories(dir)
-        let config = readConfig ()
+        let config = Config.readConfig ()
         printfn $"🖥️  Running with max parallelism: %d{config.MaxParallelism}"
 
         use semaphore = new SemaphoreSlim(config.MaxParallelism)
@@ -124,7 +87,7 @@ let initializeProjects (dir: string) =
 let initializeApps () =
     let currentDir = Directory.GetCurrentDirectory()
     let repoRoot = findRepoRoot currentDir
-    let config = readConfig ()
+    let config = Config.readConfig ()
     let libsDir = Path.Combine(repoRoot, config.LibsDir)
     let appsDir = Path.Combine(repoRoot, config.AppsDir)
 
@@ -148,7 +111,7 @@ let deleteNodeModules (dir: string) =
 let resetApps () =
     let currentDir = Directory.GetCurrentDirectory()
     let repoRoot = findRepoRoot currentDir
-    let config = readConfig ()
+    let config = Config.readConfig ()
     let libsDir = Path.Combine(repoRoot, config.LibsDir)
     let appsDir = Path.Combine(repoRoot, config.AppsDir)
 
