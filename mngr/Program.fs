@@ -10,6 +10,7 @@ open Commands.Doctor
 open System.Diagnostics
 
 let ensureFantomasInstalled () =
+    printfn "🔧 Ensuring Fantomas is installed..."
     let psi = ProcessStartInfo("dotnet", "tool restore")
     psi.RedirectStandardOutput <- true
     psi.RedirectStandardError <- true
@@ -20,9 +21,9 @@ let ensureFantomasInstalled () =
     p.WaitForExit()
 
     if p.ExitCode <> 0 then
-        printfn "Failed to restore dotnet tools. Please run 'dotnet tool restore' manually."
-
-// test
+        printfn "❌ Failed to restore dotnet tools. Please run 'dotnet tool restore' manually."
+    else
+        printfn "✅ Fantomas installation check completed successfully."
 
 [<EntryPoint>]
 let main argv =
