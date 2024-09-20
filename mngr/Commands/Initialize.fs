@@ -7,7 +7,6 @@ open Utils.Commons
 open PackageManager
 open PackageManager.ProjectKind
 open Newtonsoft.Json.Linq
-open Types
 
 let getProjectKind (dir: string) : ProjectKind * string =
     let packageJsonPath = Path.Combine(dir, "package.json")

@@ -24,12 +24,12 @@ let resetApps () =
 
         subDirs
         |> Array.iter (fun subDir ->
-            match fst (Commands.Initialize.getProjectKind subDir) with
+            match fst (Initialize.getProjectKind subDir) with
             | NPM -> printfn $"▶️ Processing {dirType}: %s{Path.GetFileName(subDir)}"
             | Unknown -> printfn $"⏭️ Skipping {dirType}: %s{Path.GetFileName(subDir)}")
 
         subDirs
-        |> Array.filter (fun subDir -> fst (Commands.Initialize.getProjectKind subDir) = NPM)
+        |> Array.filter (fun subDir -> fst (Initialize.getProjectKind subDir) = NPM)
         |> Array.map (fun subDir ->
             task {
                 do! NPM.deleteNodeModules subDir
@@ -57,4 +57,4 @@ let resetApps () =
     printfn "✅ Finished installing root dependencies"
 
     // Run npm install for libs and apps
-    Commands.Initialize.initializeApps ()
+    Initialize.initializeApps ()
