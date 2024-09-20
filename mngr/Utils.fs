@@ -1,4 +1,4 @@
-odule Utils
+module Utils
 
 open System.IO
 

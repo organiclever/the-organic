@@ -1,4 +1,4 @@
-odule Types
+module Types
 
 open CommandLine
 

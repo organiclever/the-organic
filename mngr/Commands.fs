@@ -1,4 +1,4 @@
-odule Commands
+module Commands
 
 open System
 open System.IO
