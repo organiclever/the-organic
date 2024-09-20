@@ -1,6 +1,8 @@
 ﻿open CommandLine
 open Types
-open Commands
+open Commands.Initialize
+open Commands.Reset
+open Commands.Help
 
 [<EntryPoint>]
 let main argv =
@@ -21,7 +23,7 @@ let main argv =
             resetApps ()
             0
         else
-            printfn "No action specified. Use --help to see available options."
+            printHelp ()
             0
     | :? NotParsed<Options> as notParsed ->
         printfn "Error: %A" (notParsed.Errors |> Seq.map (fun e -> e.Tag.ToString()))

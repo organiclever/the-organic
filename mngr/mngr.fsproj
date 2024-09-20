@@ -10,7 +10,9 @@
     <Compile Include="Config.fs" />
     <Compile Include="Utils.fs" />
     <Compile Include="PackageManager/NPM.fs" />
-    <Compile Include="Commands.fs" />
+    <Compile Include="Commands/Initialize.fs" />
+    <Compile Include="Commands/Reset.fs" />
+    <Compile Include="Commands/Help.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
