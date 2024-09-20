@@ -1,4 +1,4 @@
-﻿module Mngr.Program
+﻿module Program
 
 open CommandLine
 open Types
