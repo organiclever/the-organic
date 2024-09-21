@@ -56,7 +56,7 @@ let main argv =
             0
         elif not (String.IsNullOrEmpty opts.Run) && not (String.IsNullOrEmpty opts.Project) then
             printfn "🏃‍♂️ Running script '%s' for project '%s'..." opts.Run opts.Project
-            CLI.Commands.Run.runScript opts.Run opts.Project
+            CLI.Commands.Run.runScript opts.Run opts.Project |> ignore
             0
         else
             CLI.Commands.Help.printHelp ()
