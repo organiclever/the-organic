@@ -1,4 +1,4 @@
-module Types
+module Domains.CLI
 
 open CommandLine
 

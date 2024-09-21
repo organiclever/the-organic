@@ -1,7 +1,7 @@
 ﻿module Program
 
 open CommandLine
-open Types
+open Domains
 open Commands.Initialize
 open Commands.Reset
 open Commands.Clean
@@ -34,10 +34,10 @@ let getVersion () =
 let main argv =
     printfn "🚀 mngr - The Organic Monorepo Manager"
 
-    let result = Parser.Default.ParseArguments<Options>(argv)
+    let result = Parser.Default.ParseArguments<CLI.Options>(argv)
 
     match result with
-    | :? Parsed<Options> as parsed ->
+    | :? Parsed<CLI.Options> as parsed ->
         let opts = parsed.Value
 
         if opts.Version then
@@ -61,7 +61,7 @@ let main argv =
         else
             printHelp ()
             0
-    | :? NotParsed<Options> as notParsed ->
+    | :? NotParsed<CLI.Options> as notParsed ->
         match notParsed.Errors |> Seq.tryHead with
         | Some error when error.Tag = ErrorType.VersionRequestedError ->
             printfn "%s" (getVersion ())

@@ -11,7 +11,7 @@
     <Compile Include="Domains/PackageManager/Project.fs" />
     <Compile Include="Domains/GitRepo.fs" />
     <Compile Include="Domains/Terminal.fs" />
-    <Compile Include="Types.fs" />
+    <Compile Include="Domains/CLI.fs" />
     <Compile Include="Tools.fs" />
     <Compile Include="Config.fs" />
     <Compile Include="Domains/PackageManager/NPM.fs" />
