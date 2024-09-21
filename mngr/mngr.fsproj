@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Domains/PackageManager/ProjectKind.fs" />
+    <Compile Include="Domains/PackageManager/Project.fs" />
     <Compile Include="Types.fs" />
     <Compile Include="Tools.fs" />
     <Compile Include="Config.fs" />
