@@ -56,7 +56,7 @@ let main argv =
             initializeApps ()
             0
         elif opts.Doctor then
-            runDoctor ()
+            runDoctor (Config.readConfig().Tools)
             0
         else
             printHelp ()

@@ -3,11 +3,13 @@ module Config
 open System
 open System.IO
 open Newtonsoft.Json
+open Tools
 
 type Config =
     { MaxParallelism: int
       LibsDir: string
-      AppsDir: string }
+      AppsDir: string
+      Tools: Tool list }
 
 let readConfig () =
     let configPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json")
@@ -15,7 +17,8 @@ let readConfig () =
     let defaultConfig =
         { MaxParallelism = Math.Max(1, Environment.ProcessorCount - 1)
           LibsDir = "libs"
-          AppsDir = "apps" }
+          AppsDir = "apps"
+          Tools = tools }
 
     if File.Exists(configPath) then
         try
@@ -37,7 +40,8 @@ let readConfig () =
                     if String.IsNullOrWhiteSpace(config.AppsDir) then
                         defaultConfig.AppsDir
                     else
-                        config.AppsDir }
+                        config.AppsDir
+                Tools = tools }
         with _ ->
             defaultConfig
     else

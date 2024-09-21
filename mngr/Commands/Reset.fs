@@ -4,7 +4,6 @@ open System.IO
 open Config
 open Utils.Commons
 open PackageManager
-open PackageManager.ProjectKind
 
 let resetApps () =
     let currentDir = Directory.GetCurrentDirectory()
@@ -25,11 +24,11 @@ let resetApps () =
         [| if Directory.Exists(libsDir) then
                yield!
                    Directory.GetDirectories(libsDir)
-                   |> Array.filter (fun dir -> fst (PackageManager.ProjectKind.getKind dir) = NPM)
+                   |> Array.filter (fun dir -> fst (ProjectKind.getKind dir) = ProjectKind.NPM)
            if Directory.Exists(appsDir) then
                yield!
                    Directory.GetDirectories(appsDir)
-                   |> Array.filter (fun dir -> fst (PackageManager.ProjectKind.getKind dir) = NPM) |]
+                   |> Array.filter (fun dir -> fst (ProjectKind.getKind dir) = ProjectKind.NPM) |]
 
     // Reset apps and libs
     printfn "🔄 Resetting apps and libs"

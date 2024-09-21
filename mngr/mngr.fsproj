@@ -10,6 +10,7 @@
   <ItemGroup>
     <Compile Include="PackageManager/ProjectKind.fs" />
     <Compile Include="Types.fs" />
+    <Compile Include="Tools.fs" />
     <Compile Include="Config.fs" />
     <Compile Include="Utils/Commons.fs" />
     <Compile Include="PackageManager/NPM.fs" />
