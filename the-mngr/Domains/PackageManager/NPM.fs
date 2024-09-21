@@ -4,6 +4,21 @@ open System.IO
 open System.Threading.Tasks
 open Config
 open Domains
+open Newtonsoft.Json.Linq
+
+type PackageJson = { Scripts: Map<string, string> }
+
+let readPackageJson (path: string) : PackageJson =
+    let json = File.ReadAllText(path)
+    let packageObj = JObject.Parse(json)
+
+    let scripts =
+        packageObj.["scripts"]
+        |> Option.ofObj
+        |> Option.map (fun s -> s.ToObject<Map<string, string>>())
+        |> Option.defaultValue Map.empty
+
+    { Scripts = scripts }
 
 let runScript (dir: string) (scriptName: string) =
     task {
