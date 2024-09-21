@@ -61,6 +61,12 @@ let main argv =
         | Some error when error.Tag = ErrorType.VersionRequestedError ->
             printfn "%s" (getVersion ())
             0
+        | Some error when
+            error.Tag = ErrorType.HelpRequestedError
+            || argv.Length = 1 && (argv.[0] = "-h" || argv.[0] = "--help")
+            ->
+            CLI.Commands.Help.printHelp ()
+            0
         | _ ->
             printfn "Error: %A" (notParsed.Errors |> Seq.map (fun e -> e.Tag.ToString()))
             1

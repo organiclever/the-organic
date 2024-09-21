@@ -45,6 +45,7 @@
   "scripts": {
     "format:fs": "dotnet tool run fantomas . --recurse",
     "build:mngr": "dotnet publish mngr/mngr.fsproj -c Release -o ./mngr-published && chmod +x ./tmngr",
+    "test:mngr": "cd mngr/mngr.Tests && dotnet test",
     "tmngr": "dotnet mngr-published/mngr.dll"
   },
   "version": "1.0.0",
