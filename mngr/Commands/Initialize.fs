@@ -8,9 +8,9 @@ open System.Diagnostics
 
 
 let shouldInitialize (dir: string) =
-    match ProjectKind.getKind dir with
-    | ProjectKind.NPM, _ -> true
-    | ProjectKind.Unknown, value ->
+    match Project.getKind dir with
+    | Project.NPM, _ -> true
+    | Project.Unknown, value ->
         printfn "⚠️  Unknown project type in directory: %s" dir
         printfn "   project.kind value: %s" value
         false
