@@ -67,13 +67,13 @@ let runInProjects scriptName =
         printfn "- Libs directory: %s" libsDir
 
         if successfulProjects.Count > 0 then
-            printfn "\n✅ Successful projects:"
+            printfn "\n✅ Successful runs on projects:"
 
             for project in successfulProjects do
                 printfn "- %s" project
 
         if failedProjects.Count > 0 then
-            printfn "\n❌ Failed projects:"
+            printfn "\n❌ Failed runs on projects:"
 
             for project, exitCode in failedProjects do
                 printfn "- %s (Exit code: %d)" project exitCode
