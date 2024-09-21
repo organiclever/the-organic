@@ -3,14 +3,13 @@ module Commands.Initialize
 open System.IO
 open Config
 open Utils.Commons
-open Domains.PackageManager
-open System.Diagnostics
+open Domains
 
 
 let shouldInitialize (dir: string) =
-    match Project.getKind dir with
-    | Project.NPM, _ -> true
-    | Project.Unknown, value ->
+    match PackageManager.Project.getKind dir with
+    | PackageManager.Project.NPM, _ -> true
+    | PackageManager.Project.Unknown, value ->
         printfn "⚠️  Unknown project type in directory: %s" dir
         printfn "   project.kind value: %s" value
         false
@@ -33,14 +32,19 @@ let ensureFantomasInstalled () =
 let initializeApps () =
     ensureFantomasInstalled ()
     let currentDir = Directory.GetCurrentDirectory()
-    let repoRoot = findRepoRoot currentDir
+    let repoRoot = Repo.findRoot currentDir
     let config = readConfig ()
     let libsDir = Path.Combine(repoRoot, config.LibsDir)
     let appsDir = Path.Combine(repoRoot, config.AppsDir)
 
     // Install dependencies at the root level first
     printfn "📦 Installing dependencies at the root level"
-    NPM.install [ repoRoot ] |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+
+    PackageManager.NPM.install [ repoRoot ]
+    |> Async.AwaitTask
+    |> Async.RunSynchronously
+    |> ignore
+
     printfn "✅ Finished installing root dependencies"
 
     let libsDirsToInitialize =
@@ -50,7 +54,7 @@ let initializeApps () =
     // Initialize apps and libs
     printfn "📦 Initializing apps and libs"
 
-    NPM.install libsDirsToInitialize
+    PackageManager.NPM.install libsDirsToInitialize
     |> Async.AwaitTask
     |> Async.RunSynchronously
     |> ignore
@@ -62,7 +66,7 @@ let initializeApps () =
     // Initialize apps and libs
     printfn "📦 Initializing apps and libs"
 
-    NPM.install appsDirsToInitialize
+    PackageManager.NPM.install appsDirsToInitialize
     |> Async.AwaitTask
     |> Async.RunSynchronously
     |> ignore
@@ -74,7 +78,9 @@ let initializeApps () =
     printfn "🛠️  Building mngr..."
 
     let buildResult =
-        NPM.runScript repoRoot "build:mngr" |> Async.AwaitTask |> Async.RunSynchronously
+        PackageManager.NPM.runScript repoRoot "build:mngr"
+        |> Async.AwaitTask
+        |> Async.RunSynchronously
 
     match buildResult with
     | 0 -> printfn "✅ mngr built successfully"

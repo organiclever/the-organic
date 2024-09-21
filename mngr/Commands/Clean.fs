@@ -2,12 +2,12 @@ module Commands.Clean
 
 open System.IO
 open Config
-open Utils.Commons
 open Domains.PackageManager
+open Domains.Repo
 
 let cleanApps () =
     let currentDir = Directory.GetCurrentDirectory()
-    let repoRoot = findRepoRoot currentDir
+    let repoRoot = findRoot currentDir
     let config = readConfig ()
     let libsDir = Path.Combine(repoRoot, config.LibsDir)
     let appsDir = Path.Combine(repoRoot, config.AppsDir)
