@@ -1,4 +1,4 @@
-module Utils.Commons
+module Domains.Terminal
 
 open System
 

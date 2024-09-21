@@ -2,7 +2,6 @@ module Commands.Initialize
 
 open System.IO
 open Config
-open Utils.Commons
 open Domains
 
 
@@ -18,7 +17,7 @@ let ensureFantomasInstalled () =
     printfn "🔧 Ensuring Fantomas is installed..."
 
     let (_, exitCode, _, error) =
-        runCommand "dotnet" "tool restore" (Directory.GetCurrentDirectory())
+        Terminal.runCommand "dotnet" "tool restore" (Directory.GetCurrentDirectory())
         |> Async.AwaitTask
         |> Async.RunSynchronously
 
