@@ -3,7 +3,6 @@ module ProgramTests
 open Xunit
 open FsUnit.Xunit
 open Program
-open System.Reflection
 
 [<Fact>]
 let ``getVersion should return correct version format`` () =

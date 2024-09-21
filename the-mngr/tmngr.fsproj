@@ -20,6 +20,7 @@
     <Compile Include="Domains/CLI/Commands/Reset.fs" />
     <Compile Include="Domains/CLI/Commands/Help.fs" />
     <Compile Include="Domains/CLI/Commands/Doctor.fs" />
+    <Compile Include="Domains/CLI/Commands/Run.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
