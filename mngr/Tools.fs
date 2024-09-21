@@ -1,7 +1,7 @@
 module Tools
 
 open System.Runtime.InteropServices
-open Utils.Commons
+open Domains
 
 type Tool =
     { Command: string
@@ -13,7 +13,7 @@ let checkCommand (command: string) =
     let checkCommand = if isWindows then "where" else "which"
 
     let (_, exitCode, _, _) =
-        runCommand checkCommand command (System.Environment.CurrentDirectory)
+        Terminal.runCommand checkCommand command (System.Environment.CurrentDirectory)
         |> Async.AwaitTask
         |> Async.RunSynchronously
 
@@ -21,7 +21,7 @@ let checkCommand (command: string) =
 
 let checkFantomas () =
     let (_, exitCode, output, error) =
-        runCommand "dotnet" "tool list -g" (System.Environment.CurrentDirectory)
+        Terminal.runCommand "dotnet" "tool list -g" (System.Environment.CurrentDirectory)
         |> Async.AwaitTask
         |> Async.RunSynchronously
 
