@@ -21,6 +21,7 @@
     <Compile Include="Domains/CLI/Commands/Help.fs" />
     <Compile Include="Domains/CLI/Commands/Doctor.fs" />
     <Compile Include="Domains/CLI/Commands/Run.fs" />
+    <Compile Include="Domains/CLI/Commands/RunAll.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

@@ -16,4 +16,6 @@ type Options =
       [<Option('r', "run", Required = false, HelpText = "Script to run")>]
       Run: string
       [<Option('p', "project", Required = false, HelpText = "Project to run the script for")>]
-      Project: string }
+      Project: string
+      [<Option("run-all", Required = false, HelpText = "Run the specified script for all applicable projects")>]
+      RunAll: string }

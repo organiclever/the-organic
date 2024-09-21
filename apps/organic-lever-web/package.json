@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start -p 3301",
     "lint": "next lint",
-    "test": "jest",
+    "test": "npm run test:unit",
+    "test:unit": "jest",
     "test:watch": "jest --watch",
     "clean": "rimraf .next out"
   },

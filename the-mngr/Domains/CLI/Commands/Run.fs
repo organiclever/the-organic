@@ -5,7 +5,6 @@ open System.IO
 open Domains
 open Domains.PackageManager
 
-
 let runScript scriptName projectName =
     let projectPath =
         let appPath = GitRepo.findAppsDir ()

@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc-watch --onSuccess \"echo Library built successfully\"",
-    "test": "jest",
+    "test": "npm run test:unit",
+    "test:unit": "jest",
     "test:watch": "jest --watch",
     "dev": "tsc --watch"
   },
