@@ -39,7 +39,7 @@ let main argv =
             printfn "%s" (getVersion ())
             0
         elif opts.Reset then
-            printfn "🔄 Resetting apps..."
+            printfn "🔄 Resetting project packages..."
             CLI.Commands.Reset.resetApps ()
             0
         elif opts.Clean then

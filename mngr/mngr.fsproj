@@ -16,8 +16,8 @@
     <Compile Include="Domains/PackageManager/NPM.fs" />
     <Compile Include="Domains/CLI/Menu.fs" />
     <Compile Include="Domains/CLI/Commands/Initialize.fs" />
-    <Compile Include="Domains/CLI/Commands/Reset.fs" />
     <Compile Include="Domains/CLI/Commands/Clean.fs" />
+    <Compile Include="Domains/CLI/Commands/Reset.fs" />
     <Compile Include="Domains/CLI/Commands/Help.fs" />
     <Compile Include="Domains/CLI/Commands/Doctor.fs" />
     <Compile Include="Program.fs" />
