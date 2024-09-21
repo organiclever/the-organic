@@ -73,11 +73,11 @@ let initializeApps () =
 
     printfn "🚀 Finished initializing all apps and libs"
 
-    // Add the build:mngr step
+    // Add the mngr:build step
     printfn "🛠️  Building mngr..."
 
     let buildResult =
-        PackageManager.NPM.runScript repoRoot "build:mngr"
+        PackageManager.NPM.runScript repoRoot "mngr:build"
         |> Async.AwaitTask
         |> Async.RunSynchronously
 
