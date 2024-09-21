@@ -46,7 +46,7 @@
     "format:fs": "dotnet tool run fantomas . --recurse",
     "tmngr:build": "dotnet publish the-mngr/tmngr.fsproj -c Release -o ./the-mngr-published && chmod +x ./tmngr",
     "tmngr:test:unit": "cd the-mngr/tmngr.Tests && dotnet test",
-    "tmngr": "dotnet tmngr-published/tmngr.dll"
+    "tmngr": "dotnet ./the-mngr-published/tmngr.dll"
   },
   "version": "1.0.0",
   "volta": {
