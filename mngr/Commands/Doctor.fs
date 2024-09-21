@@ -52,7 +52,8 @@ let runDoctor () =
     let tools =
         [ ("dotnet", ".NET SDK")
           ("volta", "Volta")
-          ("npm", "npm")
+          ("npm", "NPM")
+          ("node", "Node")
           ("cargo", "Cargo") ]
 
     printfn "🩺 Running doctor checks..."
