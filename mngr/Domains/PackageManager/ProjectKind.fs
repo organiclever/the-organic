@@ -1,4 +1,4 @@
-module PackageManager.ProjectKind
+module Domains.PackageManager.ProjectKind
 
 open System.IO
 open Newtonsoft.Json.Linq

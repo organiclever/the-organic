@@ -3,7 +3,7 @@ module Commands.Reset
 open System.IO
 open Config
 open Utils.Commons
-open PackageManager
+open Domains.PackageManager
 
 let resetApps () =
     let currentDir = Directory.GetCurrentDirectory()

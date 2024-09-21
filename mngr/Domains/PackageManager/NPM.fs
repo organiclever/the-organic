@@ -1,4 +1,4 @@
-module PackageManager.NPM
+module Domains.PackageManager.NPM
 
 open System.IO
 open System.Diagnostics

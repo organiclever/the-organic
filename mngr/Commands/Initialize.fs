@@ -3,15 +3,14 @@ module Commands.Initialize
 open System.IO
 open Config
 open Utils.Commons
-open PackageManager
-open PackageManager.ProjectKind
+open Domains.PackageManager
 open System.Diagnostics
 
 
 let shouldInitialize (dir: string) =
-    match getKind dir with
-    | NPM, _ -> true
-    | Unknown, value ->
+    match ProjectKind.getKind dir with
+    | ProjectKind.NPM, _ -> true
+    | ProjectKind.Unknown, value ->
         printfn "⚠️  Unknown project type in directory: %s" dir
         printfn "   project.kind value: %s" value
         false

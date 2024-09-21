@@ -8,12 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="PackageManager/ProjectKind.fs" />
+    <Compile Include="Domains/PackageManager/ProjectKind.fs" />
     <Compile Include="Types.fs" />
     <Compile Include="Tools.fs" />
     <Compile Include="Config.fs" />
     <Compile Include="Utils/Commons.fs" />
-    <Compile Include="PackageManager/NPM.fs" />
+    <Compile Include="Domains/PackageManager/NPM.fs" />
     <Compile Include="Commands/Initialize.fs" />
     <Compile Include="Commands/Reset.fs" />
     <Compile Include="Commands/Clean.fs" />

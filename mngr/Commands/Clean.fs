@@ -3,7 +3,7 @@ module Commands.Clean
 open System.IO
 open Config
 open Utils.Commons
-open PackageManager
+open Domains.PackageManager
 
 let cleanApps () =
     let currentDir = Directory.GetCurrentDirectory()
