@@ -1,4 +1,4 @@
-module Domains.CLI
+module Domains.CLI.Options
 
 open CommandLine
 

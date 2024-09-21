@@ -11,7 +11,7 @@ type Config =
       AppsDir: string
       Tools: Tooling.Tool list }
 
-let readConfig () =
+let read () =
     let configPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json")
 
     let defaultConfig =

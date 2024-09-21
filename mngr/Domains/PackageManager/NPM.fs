@@ -21,7 +21,7 @@ let runScript (dir: string) (scriptName: string) =
     }
 
 let install (dirs: string seq) =
-    let config = readConfig ()
+    let config = read ()
     let maxWorkers = config.MaxParallelism
     printfn "🚀 Using %d parallel workers for npm install" maxWorkers
 
@@ -39,7 +39,7 @@ let install (dirs: string seq) =
     dirs |> Seq.map installDir |> (fun tasks -> Task.WhenAll(tasks))
 
 let deleteNodeModules (dirs: string seq) =
-    let config = readConfig ()
+    let config = read ()
     let maxWorkers = config.MaxParallelism
     printfn "🚀 Using %d parallel workers for deleting node_modules" maxWorkers
 

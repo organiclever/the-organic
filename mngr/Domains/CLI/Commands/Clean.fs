@@ -1,21 +1,19 @@
-module Commands.Clean
+module Domains.CLI.Commands.Clean
 
 open System.IO
-open Config
-open Domains.PackageManager
-open Domains.GitRepo
+open Domains
 
 let cleanApps () =
     let currentDir = Directory.GetCurrentDirectory()
-    let repoRoot = findRoot currentDir
-    let config = readConfig ()
+    let repoRoot = GitRepo.findRoot currentDir
+    let config = Config.read ()
     let libsDir = Path.Combine(repoRoot, config.LibsDir)
     let appsDir = Path.Combine(repoRoot, config.AppsDir)
 
     // Clean root
     printfn "📂 Cleaning root directory: %s" repoRoot
 
-    NPM.deleteNodeModules [ repoRoot ]
+    PackageManager.NPM.deleteNodeModules [ repoRoot ]
     |> Async.AwaitTask
     |> Async.RunSynchronously
     |> ignore
@@ -31,7 +29,7 @@ let cleanApps () =
     // Clean apps and libs
     printfn "📂 Cleaning apps and libs directories"
 
-    NPM.deleteNodeModules dirsToClean
+    PackageManager.NPM.deleteNodeModules dirsToClean
     |> Async.AwaitTask
     |> Async.RunSynchronously
     |> ignore

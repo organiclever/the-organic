@@ -1,4 +1,4 @@
-module Commands.Help
+module Domains.CLI.Commands.Help
 
 let printHelp () =
     printfn "Usage: mngr [command] [options]"

@@ -2,11 +2,6 @@
 
 open CommandLine
 open Domains
-open Commands.Initialize
-open Commands.Reset
-open Commands.Clean
-open Commands.Help
-open Commands.Doctor
 open System.Reflection
 
 let getVersion () =
@@ -34,10 +29,10 @@ let getVersion () =
 let main argv =
     printfn "🚀 mngr - The Organic Monorepo Manager"
 
-    let result = Parser.Default.ParseArguments<CLI.Options>(argv)
+    let result = Parser.Default.ParseArguments<CLI.Options.Options>(argv)
 
     match result with
-    | :? Parsed<CLI.Options> as parsed ->
+    | :? Parsed<CLI.Options.Options> as parsed ->
         let opts = parsed.Value
 
         if opts.Version then
@@ -45,23 +40,23 @@ let main argv =
             0
         elif opts.Reset then
             printfn "🔄 Resetting apps..."
-            resetApps ()
+            CLI.Commands.Reset.resetApps ()
             0
         elif opts.Clean then
             printfn "🧹 Cleaning node_modules..."
-            cleanApps ()
+            CLI.Commands.Clean.cleanApps ()
             0
         elif opts.Init then
             printfn "🏗️ Initializing apps..."
-            initializeApps ()
+            CLI.Commands.Initialize.initializeApps ()
             0
         elif opts.Doctor then
-            runDoctor (Config.readConfig().Tools)
+            CLI.Commands.Doctor.runDoctor (Config.read().Tools)
             0
         else
-            printHelp ()
+            CLI.Commands.Help.printHelp ()
             0
-    | :? NotParsed<CLI.Options> as notParsed ->
+    | :? NotParsed<CLI.Options.Options> as notParsed ->
         match notParsed.Errors |> Seq.tryHead with
         | Some error when error.Tag = ErrorType.VersionRequestedError ->
             printfn "%s" (getVersion ())

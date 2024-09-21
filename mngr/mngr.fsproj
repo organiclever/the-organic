@@ -8,18 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Domains/Terminal.fs" />
     <Compile Include="Domains/PackageManager/Project.fs" />
     <Compile Include="Domains/GitRepo.fs" />
-    <Compile Include="Domains/Terminal.fs" />
-    <Compile Include="Domains/CLI.fs" />
+    <Compile Include="Domains/CLI/Options.fs" />
     <Compile Include="Domains/Tooling.fs" />
     <Compile Include="Config.fs" />
     <Compile Include="Domains/PackageManager/NPM.fs" />
-    <Compile Include="Commands/Initialize.fs" />
-    <Compile Include="Commands/Reset.fs" />
-    <Compile Include="Commands/Clean.fs" />
-    <Compile Include="Commands/Help.fs" />
-    <Compile Include="Commands/Doctor.fs" />
+    <Compile Include="Domains/CLI/Commands/Initialize.fs" />
+    <Compile Include="Domains/CLI/Commands/Reset.fs" />
+    <Compile Include="Domains/CLI/Commands/Clean.fs" />
+    <Compile Include="Domains/CLI/Commands/Help.fs" />
+    <Compile Include="Domains/CLI/Commands/Doctor.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

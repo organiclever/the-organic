@@ -1,4 +1,4 @@
-module Commands.Initialize
+module Domains.CLI.Commands.Initialize
 
 open System.IO
 open Config
@@ -32,7 +32,7 @@ let initializeApps () =
     ensureFantomasInstalled ()
     let currentDir = Directory.GetCurrentDirectory()
     let repoRoot = GitRepo.findRoot currentDir
-    let config = readConfig ()
+    let config = read ()
     let libsDir = Path.Combine(repoRoot, config.LibsDir)
     let appsDir = Path.Combine(repoRoot, config.AppsDir)
 

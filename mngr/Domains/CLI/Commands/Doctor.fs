@@ -1,4 +1,4 @@
-module Commands.Doctor
+module Domains.CLI.Commands.Doctor
 
 open Domains
 
