@@ -1,6 +1,6 @@
 # The Organic Monorepo
 
-This monorepo contains multiple projects including ayokoding-web, organic-lever-web, associated libraries, and an F# project called mngr.
+This monorepo contains multiple projects including ayokoding-web, organic-lever-web, associated libraries, and an F# project called tmngr.
 
 ## Project Structure
 
@@ -10,7 +10,7 @@ This monorepo contains multiple projects including ayokoding-web, organic-lever-
   - `organic-lever-web-e2e/`: End-to-end tests for Organic Lever
 - `libs/`
   - `hello/`: Shared library
-- `mngr/`: F# project for repository management
+- `the-mngr/`: F# project for repository management
 
 ## Getting Started
 
@@ -29,14 +29,14 @@ This monorepo contains multiple projects including ayokoding-web, organic-lever-
 
 ## Repository Management
 
-The `mngr` tool provides several commands to manage the monorepo. For more details, see the [mngr README](./mngr/README.md).
+The `tmngr` tool provides several commands to manage the monorepo. For more details, see the [tmngr README](./the-mngr/README.md).
 
-## F# Project: mngr
+## F# Project: tmngr
 
 To run the F# project:
 
-1. Navigate to the mngr directory:
-   `cd mngr`
+1. Navigate to the the-mngr directory:
+   `cd the-mngr`
 
 2. Build the project:
    `dotnet build`
@@ -44,7 +44,7 @@ To run the F# project:
 3. Run the project:
    `dotnet run`
 
-For more details about the `mngr` project, see its [README](./mngr/README.md).
+For more details about the `tmngr` project, see its [README](./the-mngr/README.md).
 
 ## Available Scripts
 
@@ -71,7 +71,7 @@ Repo Manager is a command-line tool for managing repositories and dependencies.
 
 ## Usage
 
-`mngr [OPTIONS]`
+`tmngr [OPTIONS]`
 
 Options:
 `--init` Initialize package.json, run npm install, and install project dependencies
@@ -84,16 +84,16 @@ Options:
 ## Examples
 
 1. Initialize the project:
-   `mngr --init`
+   `tmngr --init`
 
 2. Run doctor checks:
-   `mngr --doctor`
+   `tmngr --doctor`
 
 3. Reset the project:
-   `mngr --reset`
+   `tmngr --reset`
 
 4. Clean the project:
-   `mngr --clean`
+   `tmngr --clean`
 
 ## Contributing
 

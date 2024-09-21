@@ -8,7 +8,7 @@ open System.Reflection
 [<Fact>]
 let ``getVersion should return correct version format`` () =
     let version = getVersion ()
-    version |> should startWith "mngr"
+    version |> should startWith "tmngr"
     version.Split('.') |> Array.length |> should be (greaterThanOrEqualTo 3)
 
 [<Theory>]

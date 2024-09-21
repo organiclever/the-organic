@@ -6,8 +6,8 @@ ORIGINAL_DIR=$(pwd)
 # Navigate to the repository root (assuming init.sh is in the root)
 cd "$(dirname "$0")"
 
-# Navigate to the mngr directory
-cd mngr
+# Navigate to the the-mngr directory
+cd the-mngr
 
 # Run the F# program with the --doctor flag
 dotnet run -- --doctor

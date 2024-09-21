@@ -1,7 +1,7 @@
 module Domains.CLI.Commands.Help
 
 let printHelp () =
-    printfn "Usage: mngr [command] [options]"
+    printfn "Usage: tmngr [command] [options]"
     printfn ""
     printfn "Commands:"
     printfn "  --init, -i     Initialize all apps in the monorepo"

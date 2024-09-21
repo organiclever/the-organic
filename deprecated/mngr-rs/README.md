@@ -13,7 +13,7 @@ Repo Manager is a command-line tool for managing repositories and dependencies w
 
 1. Ensure you have Rust and Cargo installed on your system.
 2. Navigate to the `mngr-rs` directory:
-   `cd mngr-rs`
+   `cd the-mngr-rs`
 3. Build the project:
    `cargo build --release`
 4. The binary will be available in `target/release/mngr-rs`
