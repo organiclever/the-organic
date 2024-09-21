@@ -3,7 +3,6 @@ module Domains.PackageManager.NPM
 open System.IO
 open System.Threading.Tasks
 open Config
-open Domains
 open Newtonsoft.Json.Linq
 
 type PackageJson = { Scripts: Map<string, string> }
@@ -23,7 +22,7 @@ let readPackageJson (path: string) : PackageJson =
 let runScript (dir: string) (scriptName: string) =
     task {
         printfn "🚀 Running npm script '%s' in %s" scriptName (Path.GetFileName dir)
-        let! (_, exitCode, _output, error) = Terminal.runCommand "npm" ("run " + scriptName) dir
+        let! (_, exitCode, _output, error) = Utils.Terminal.runCommand "npm" ("run " + scriptName) dir
 
         if exitCode = 0 then
             printfn "✅ Finished running npm script '%s' in %s" scriptName (Path.GetFileName dir)
@@ -43,7 +42,7 @@ let install (dirs: string seq) =
     let installDir (dir: string) =
         task {
             printfn "📦 Starting npm install in %s" (Path.GetFileName dir)
-            let! (_, exitCode, _, _) = Terminal.runCommand "npm" "install" dir
+            let! (_, exitCode, _, _) = Utils.Terminal.runCommand "npm" "install" dir
 
             if exitCode = 0 then
                 printfn "✅ Finished npm install in %s" (Path.GetFileName dir)

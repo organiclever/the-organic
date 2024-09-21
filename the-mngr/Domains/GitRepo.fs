@@ -15,3 +15,13 @@ let findRoot (startDir: string) =
                 findRoot parent.FullName
 
     findRoot startDir
+
+let findAppsDir () =
+    let config = Config.read ()
+    let root = findRoot (IO.Directory.GetCurrentDirectory())
+    IO.Path.Combine(root, config.AppsDir)
+
+let findLibsDir () =
+    let config = Config.read ()
+    let root = findRoot (IO.Directory.GetCurrentDirectory())
+    IO.Path.Combine(root, config.LibsDir)

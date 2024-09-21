@@ -1,6 +1,4 @@
-module Domains.Tooling
-
-open Domains
+module Utils.Tooling
 
 type Tool =
     { Command: string

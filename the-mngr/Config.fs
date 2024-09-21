@@ -3,7 +3,7 @@ module Config
 open System
 open System.IO
 open Newtonsoft.Json
-open Domains
+open Utils
 
 type Config =
     { MaxParallelism: int

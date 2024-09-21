@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Domains/Terminal.fs" />
+    <Compile Include="Utils/Terminal.fs" />
+    <Compile Include="Utils/Tooling.fs" />
+    <Compile Include="Config.fs" />
     <Compile Include="Domains/PackageManager/Project.fs" />
     <Compile Include="Domains/GitRepo.fs" />
-    <Compile Include="Domains/Tooling.fs" />
-    <Compile Include="Config.fs" />
     <Compile Include="Domains/PackageManager/NPM.fs" />
     <Compile Include="Domains/CLI/Menu.fs" />
     <Compile Include="Domains/CLI/Commands/Initialize.fs" />

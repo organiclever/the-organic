@@ -17,7 +17,7 @@ let ensureFantomasInstalled () =
     printfn "🔧 Ensuring Fantomas is installed..."
 
     let (_, exitCode, _, error) =
-        Terminal.runCommand "dotnet" "tool restore" (Directory.GetCurrentDirectory())
+        Utils.Terminal.runCommand "dotnet" "tool restore" (Directory.GetCurrentDirectory())
         |> Async.AwaitTask
         |> Async.RunSynchronously
 

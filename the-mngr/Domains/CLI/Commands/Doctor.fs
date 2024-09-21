@@ -1,8 +1,7 @@
 module Domains.CLI.Commands.Doctor
 
-open Domains
 
-let runDoctor (tools: Tooling.Tool list) =
+let runDoctor (tools: Utils.Tooling.Tool list) =
     printfn "🩺 Running doctor checks..."
 
     for tool in tools do

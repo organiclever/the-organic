@@ -1,4 +1,4 @@
-module Domains.Terminal
+module Utils.Terminal
 
 open System
 open System.Diagnostics

@@ -7,19 +7,16 @@ open Domains.PackageManager
 
 
 let runScript scriptName projectName =
-    let config = Config.read ()
-    let startDir = Directory.GetCurrentDirectory()
-    let repoRoot = GitRepo.findRoot startDir
-    let appsDir = Path.Combine(repoRoot, config.AppsDir)
-    let libsDir = Path.Combine(repoRoot, config.LibsDir)
-
     let projectPath =
-        let appPath = Path.Combine(appsDir, projectName)
-        let libPath = Path.Combine(libsDir, projectName)
+        let appPath = GitRepo.findAppsDir ()
+        let libPath = GitRepo.findLibsDir ()
 
-        if Directory.Exists appPath then appPath
-        elif Directory.Exists libPath then libPath
-        else ""
+        if Directory.Exists appPath then
+            Path.Combine(appPath, projectName)
+        elif Directory.Exists libPath then
+            Path.Combine(libPath, projectName)
+        else
+            ""
 
     if String.IsNullOrEmpty projectPath then
         eprintfn "Error: Project '%s' not found in apps or libs directory." projectName
@@ -38,7 +35,7 @@ let runScript scriptName projectName =
                 printfn "Running script '%s' for project '%s'..." scriptName projectName
 
                 let result =
-                    Terminal.runCommandAndStream "npm" [ "run"; scriptName ] (Some projectPath)
+                    Utils.Terminal.runCommandAndStream "npm" [ "run"; scriptName ] (Some projectPath)
 
                 match result with
                 | 0 ->
