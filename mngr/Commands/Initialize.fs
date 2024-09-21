@@ -32,7 +32,7 @@ let ensureFantomasInstalled () =
 let initializeApps () =
     ensureFantomasInstalled ()
     let currentDir = Directory.GetCurrentDirectory()
-    let repoRoot = Repo.findRoot currentDir
+    let repoRoot = GitRepo.findRoot currentDir
     let config = readConfig ()
     let libsDir = Path.Combine(repoRoot, config.LibsDir)
     let appsDir = Path.Combine(repoRoot, config.AppsDir)

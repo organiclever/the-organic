@@ -3,7 +3,7 @@ module Commands.Reset
 open System.IO
 open Config
 open Domains.PackageManager
-open Domains.Repo
+open Domains.GitRepo
 
 let resetApps () =
     let currentDir = Directory.GetCurrentDirectory()

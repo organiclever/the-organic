@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <Compile Include="Domains/PackageManager/Project.fs" />
-    <Compile Include="Domains/Repo.fs" />
+    <Compile Include="Domains/GitRepo.fs" />
     <Compile Include="Utils/Commons.fs" />
     <Compile Include="Types.fs" />
     <Compile Include="Tools.fs" />

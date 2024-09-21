@@ -1,4 +1,4 @@
-module Domains.Repo
+module Domains.GitRepo
 
 open System
 
