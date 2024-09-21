@@ -12,7 +12,7 @@
     <Compile Include="Domains/GitRepo.fs" />
     <Compile Include="Domains/Terminal.fs" />
     <Compile Include="Domains/CLI.fs" />
-    <Compile Include="Tools.fs" />
+    <Compile Include="Domains/Tooling.fs" />
     <Compile Include="Config.fs" />
     <Compile Include="Domains/PackageManager/NPM.fs" />
     <Compile Include="Commands/Initialize.fs" />

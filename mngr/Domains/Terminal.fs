@@ -23,3 +23,14 @@ let runCommand (command: string) (args: string) (dir: string) =
 
         return (dir, p.ExitCode, output, error)
     }
+
+let checkCommand (command: string) =
+    let isWindows = Environment.OSVersion.Platform = PlatformID.Win32NT
+    let checkCommand = if isWindows then "where" else "which"
+
+    let (_, exitCode, _, _) =
+        runCommand checkCommand command (Environment.CurrentDirectory)
+        |> Async.AwaitTask
+        |> Async.RunSynchronously
+
+    exitCode = 0

@@ -1,6 +1,5 @@
-module Tools
+module Domains.Tooling
 
-open System.Runtime.InteropServices
 open Domains
 
 type Tool =
@@ -8,16 +7,6 @@ type Tool =
       Name: string
       Check: unit -> bool }
 
-let checkCommand (command: string) =
-    let isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-    let checkCommand = if isWindows then "where" else "which"
-
-    let (_, exitCode, _, _) =
-        Terminal.runCommand checkCommand command (System.Environment.CurrentDirectory)
-        |> Async.AwaitTask
-        |> Async.RunSynchronously
-
-    exitCode = 0
 
 let checkFantomas () =
     let (_, exitCode, output, error) =
@@ -43,19 +32,19 @@ let checkFantomas () =
 let tools =
     [ { Command = "dotnet"
         Name = ".NET SDK"
-        Check = fun () -> checkCommand "dotnet" }
+        Check = fun () -> Terminal.checkCommand "dotnet" }
       { Command = "volta"
         Name = "Volta"
-        Check = fun () -> checkCommand "volta" }
+        Check = fun () -> Terminal.checkCommand "volta" }
       { Command = "npm"
         Name = "NPM"
-        Check = fun () -> checkCommand "npm" }
+        Check = fun () -> Terminal.checkCommand "npm" }
       { Command = "node"
         Name = "Node"
-        Check = fun () -> checkCommand "node" }
+        Check = fun () -> Terminal.checkCommand "node" }
       { Command = "cargo"
         Name = "Cargo"
-        Check = fun () -> checkCommand "cargo" }
+        Check = fun () -> Terminal.checkCommand "cargo" }
       { Command = "fantomas"
         Name = "Fantomas"
         Check = checkFantomas } ]
