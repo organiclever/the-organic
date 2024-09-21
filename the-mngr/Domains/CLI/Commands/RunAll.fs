@@ -62,6 +62,9 @@ let runInProjects scriptName =
 
         printfn "\n📊 Execution Summary:"
         printfn "==================="
+        printfn "Running '%s' in:" scriptName
+        printfn "- Apps directory: %s" appsDir
+        printfn "- Libs directory: %s" libsDir
 
         if successfulProjects.Count > 0 then
             printfn "\n✅ Successful projects:"
