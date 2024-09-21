@@ -5,29 +5,11 @@ open Config
 open Utils.Commons
 open PackageManager
 open PackageManager.ProjectKind
-open Newtonsoft.Json.Linq
 open System.Diagnostics
 
-let getProjectKind (dir: string) : ProjectKind * string =
-    let packageJsonPath = Path.Combine(dir, "package.json")
-
-    if File.Exists(packageJsonPath) then
-        let jsonContent = File.ReadAllText(packageJsonPath)
-        let json = JObject.Parse(jsonContent)
-
-        match json.SelectToken("project.kind") with
-        | null -> Unknown, "null"
-        | token ->
-            let value = token.Value<string>()
-
-            match value.ToLower() with
-            | "npm" -> NPM, value
-            | _ -> Unknown, value
-    else
-        Unknown, "package.json not found"
 
 let shouldInitialize (dir: string) =
-    match getProjectKind dir with
+    match getKind dir with
     | NPM, _ -> true
     | Unknown, value ->
         printfn "⚠️  Unknown project type in directory: %s" dir

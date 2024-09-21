@@ -25,11 +25,11 @@ let resetApps () =
         [| if Directory.Exists(libsDir) then
                yield!
                    Directory.GetDirectories(libsDir)
-                   |> Array.filter (fun dir -> fst (Initialize.getProjectKind dir) = NPM)
+                   |> Array.filter (fun dir -> fst (PackageManager.ProjectKind.getKind dir) = NPM)
            if Directory.Exists(appsDir) then
                yield!
                    Directory.GetDirectories(appsDir)
-                   |> Array.filter (fun dir -> fst (Initialize.getProjectKind dir) = NPM) |]
+                   |> Array.filter (fun dir -> fst (PackageManager.ProjectKind.getKind dir) = NPM) |]
 
     // Reset apps and libs
     printfn "🔄 Resetting apps and libs"
