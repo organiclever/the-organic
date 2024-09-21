@@ -1,6 +1,5 @@
 module Domains.CLI.Commands.RunAll
 
-open System
 open System.IO
 open Domains
 open Domains.PackageManager
@@ -45,14 +44,9 @@ let runInProjects scriptName =
                 async {
                     printfn "\n▶️ Starting for project: %s" projectName
 
-                    let! result, output =
-                        async {
-                            let outputBuilder = new Text.StringBuilder()
-                            let result = Run.runScript scriptName projectName
-                            return result, outputBuilder.ToString()
-                        }
+                    let! result = async { return Run.runScript scriptName projectName }
 
-                    return projectName, result, output
+                    return projectName, result
                 })
             |> Async.Parallel
             |> Async.RunSynchronously
@@ -60,7 +54,7 @@ let runInProjects scriptName =
         let successfulProjects = ResizeArray<string>()
         let failedProjects = ResizeArray<string * int>()
 
-        for projectName, result, _ in results do
+        for projectName, result in results do
             if result = 0 then
                 successfulProjects.Add(projectName)
             else

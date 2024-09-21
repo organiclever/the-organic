@@ -10,12 +10,12 @@ let runScript scriptName projectName =
         let appPath = GitRepo.findAppsDir ()
         let libPath = GitRepo.findLibsDir ()
 
-        if Directory.Exists appPath then
-            Path.Combine(appPath, projectName)
-        elif Directory.Exists libPath then
-            Path.Combine(libPath, projectName)
-        else
-            ""
+        let appProjectPath = Path.Combine(appPath, projectName)
+        let libProjectPath = Path.Combine(libPath, projectName)
+
+        if Directory.Exists appProjectPath then appProjectPath
+        elif Directory.Exists libProjectPath then libProjectPath
+        else ""
 
     if String.IsNullOrEmpty projectPath then
         eprintfn "Error: Project '%s' not found in apps or libs directory." projectName
