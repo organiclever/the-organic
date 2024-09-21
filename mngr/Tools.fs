@@ -1,7 +1,7 @@
 module Tools
 
-open System.Diagnostics
 open System.Runtime.InteropServices
+open Utils.Commons
 
 type Tool =
     { Command: string
@@ -10,35 +10,22 @@ type Tool =
 
 let checkCommand (command: string) =
     let isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-    let processInfo = ProcessStartInfo()
+    let checkCommand = if isWindows then "where" else "which"
 
-    processInfo.FileName <- if isWindows then "where" else "which"
-    processInfo.Arguments <- command
-    processInfo.RedirectStandardOutput <- true
-    processInfo.UseShellExecute <- false
-    processInfo.CreateNoWindow <- true
+    let (_, exitCode, _, _) =
+        runCommand checkCommand command (System.Environment.CurrentDirectory)
+        |> Async.AwaitTask
+        |> Async.RunSynchronously
 
-    use proc = Process.Start(processInfo)
-    let _output = proc.StandardOutput.ReadToEnd()
-    proc.WaitForExit()
-
-    proc.ExitCode = 0
+    exitCode = 0
 
 let checkFantomas () =
-    let processInfo = ProcessStartInfo()
-    processInfo.FileName <- "dotnet"
-    processInfo.Arguments <- "tool list -g"
-    processInfo.RedirectStandardOutput <- true
-    processInfo.RedirectStandardError <- true
-    processInfo.UseShellExecute <- false
-    processInfo.CreateNoWindow <- true
+    let (_, exitCode, output, error) =
+        runCommand "dotnet" "tool list -g" (System.Environment.CurrentDirectory)
+        |> Async.AwaitTask
+        |> Async.RunSynchronously
 
-    use proc = Process.Start(processInfo)
-    let output = proc.StandardOutput.ReadToEnd()
-    let error = proc.StandardError.ReadToEnd()
-    proc.WaitForExit()
-
-    if proc.ExitCode = 0 then
+    if exitCode = 0 then
         if output.Contains("fantomas") then
             printfn "✅ Fantomas is installed"
             true

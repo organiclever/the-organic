@@ -17,17 +17,16 @@ let shouldInitialize (dir: string) =
 
 let ensureFantomasInstalled () =
     printfn "🔧 Ensuring Fantomas is installed..."
-    let psi = ProcessStartInfo("dotnet", "tool restore")
-    psi.RedirectStandardOutput <- true
-    psi.RedirectStandardError <- true
-    psi.UseShellExecute <- false
-    psi.CreateNoWindow <- true
 
-    use p = Process.Start(psi)
-    p.WaitForExit()
+    let (_, exitCode, _, error) =
+        runCommand "dotnet" "tool restore" (Directory.GetCurrentDirectory())
+        |> Async.AwaitTask
+        |> Async.RunSynchronously
 
-    if p.ExitCode <> 0 then
+    if exitCode <> 0 then
         printfn "❌ Failed to restore dotnet tools. Please run 'dotnet tool restore' manually."
+        printfn "Error output:"
+        printfn "%s" error
     else
         printfn "✅ Fantomas installation check completed successfully."
 

@@ -9,10 +9,10 @@
 
   <ItemGroup>
     <Compile Include="Domains/PackageManager/Project.fs" />
+    <Compile Include="Utils/Commons.fs" />
     <Compile Include="Types.fs" />
     <Compile Include="Tools.fs" />
     <Compile Include="Config.fs" />
-    <Compile Include="Utils/Commons.fs" />
     <Compile Include="Domains/PackageManager/NPM.fs" />
     <Compile Include="Commands/Initialize.fs" />
     <Compile Include="Commands/Reset.fs" />
