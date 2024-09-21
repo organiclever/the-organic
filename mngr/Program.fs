@@ -29,10 +29,10 @@ let getVersion () =
 let main argv =
     printfn "🚀 mngr - The Organic Monorepo Manager"
 
-    let result = Parser.Default.ParseArguments<CLI.Options.Options>(argv)
+    let result = Parser.Default.ParseArguments<CLI.Menu.Options>(argv)
 
     match result with
-    | :? Parsed<CLI.Options.Options> as parsed ->
+    | :? Parsed<CLI.Menu.Options> as parsed ->
         let opts = parsed.Value
 
         if opts.Version then
@@ -56,7 +56,7 @@ let main argv =
         else
             CLI.Commands.Help.printHelp ()
             0
-    | :? NotParsed<CLI.Options.Options> as notParsed ->
+    | :? NotParsed<CLI.Menu.Options> as notParsed ->
         match notParsed.Errors |> Seq.tryHead with
         | Some error when error.Tag = ErrorType.VersionRequestedError ->
             printfn "%s" (getVersion ())
