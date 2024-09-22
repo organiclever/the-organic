@@ -48,7 +48,7 @@ let main argv =
             CLI.Commands.Clean.cleanApps ()
             0
         elif opts.Init then
-            printfn "🏗️ Initializing apps..."
+            printfn "🏗️  Initializing apps..."
             CLI.Commands.Initialize.initializeApps ()
             0
         elif opts.Doctor then
