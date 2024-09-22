@@ -5,8 +5,16 @@ open System.Threading.Tasks
 open Config
 open Newtonsoft.Json.Linq
 
+/// <summary>
+/// Represents the scripts object from the package.json file.
+/// </summary>
 type PackageJson = { Scripts: Map<string, string> }
 
+/// <summary>
+/// Reads the package.json file from the specified path and returns a PackageJson object.
+/// </summary>
+/// <param name="path">The path to the package.json file.</param>
+/// <returns>A PackageJson object containing the scripts map.</returns>
 let readPackageJson (path: string) : PackageJson =
     let json = File.ReadAllText(path)
     let packageObj = JObject.Parse(json)
@@ -19,6 +27,12 @@ let readPackageJson (path: string) : PackageJson =
 
     { Scripts = scripts }
 
+/// <summary>
+/// Runs the specified npm script in the given directory.
+/// </summary>
+/// <param name="dir">The directory where the npm script should be run.</param>
+/// <param name="scriptName">The name of the npm script to run.</param>
+/// <returns>The exit code of the npm script.</returns>
 let runScript (dir: string) (scriptName: string) =
     task {
         printfn "🚀 Running npm script '%s' in %s" scriptName (Path.GetFileName dir)
@@ -34,6 +48,11 @@ let runScript (dir: string) (scriptName: string) =
         return exitCode
     }
 
+/// <summary>
+/// Installs npm dependencies in the specified directories.
+/// </summary>
+/// <param name="dirs">The directories where npm install should be performed.</param>
+/// <returns>A task that completes when all npm installs are finished.</returns>
 let install (dirs: string seq) =
     let config = read ()
     let maxWorkers = config.MaxParallelism
@@ -52,6 +71,11 @@ let install (dirs: string seq) =
 
     dirs |> Seq.map installDir |> (fun tasks -> Task.WhenAll(tasks))
 
+/// <summary>
+/// Deletes the node_modules directory in the specified directories.
+/// </summary>
+/// <param name="dirs">The directories where the node_modules directory should be deleted.</param>
+/// <returns>A task that completes when all node_modules deletions are finished.</returns>
 let deleteNodeModules (dirs: string seq) =
     let config = read ()
     let maxWorkers = config.MaxParallelism

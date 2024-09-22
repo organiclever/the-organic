@@ -1,5 +1,12 @@
 module Domains.CLI.Commands.Help
 
+/// <summary>
+/// Prints the help message for the tmngr command-line interface.
+/// </summary>
+/// <remarks>
+/// This function prints the usage information for the tmngr command-line interface,
+/// including the available commands and their descriptions.
+/// </remarks>
 let printHelp () =
     printfn "Usage: tmngr [command] [options]"
     printfn ""

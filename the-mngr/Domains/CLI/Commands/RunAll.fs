@@ -4,6 +4,26 @@ open System.IO
 open Domains
 open Domains.PackageManager
 
+/// <summary>
+/// Runs a specified script for all projects in the monorepo that have that script defined.
+/// </summary>
+/// <param name="scriptName">The name of the script to run.</param>
+/// <returns>
+/// An integer representing the overall exit code:
+/// 0 if all projects ran successfully, 1 if any project failed or if no projects were found with the specified script.
+/// </returns>
+/// <remarks>
+/// This function performs the following steps:
+/// 1. Finds the apps and libs directories.
+/// 2. Searches for projects in both directories that have the specified script in their package.json.
+/// 3. Runs the script concurrently for all applicable projects.
+/// 4. Provides a summary of successful and failed runs.
+///
+/// The function uses the following helper functions and modules:
+/// - GitRepo.findAppsDir() and GitRepo.findLibsDir() to locate the project directories.
+/// - NPM.readPackageJson to parse package.json files.
+/// - Run.runScript to execute the script for each project.
+/// </remarks>
 let runInProjects scriptName =
     let appsDir = GitRepo.findAppsDir ()
     let libsDir = GitRepo.findLibsDir ()

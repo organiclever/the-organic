@@ -17,3 +17,17 @@ dotnet run -- --init
 
 # Return to the original directory
 cd "$ORIGINAL_DIR"
+
+# Make the husky hooks executable
+
+HOOKS_DIR=".husky"
+
+for file in "$HOOKS_DIR"/*; do
+  if [ -f "$file" ] && [ "$(basename "$file")" != "_" ] && [[ ! "$file" =~ \.(sample|md)$ ]]; then
+    chmod +x "$file"
+    echo "Made $file executable"
+  fi
+done
+
+# Return to the original directory
+cd "$ORIGINAL_DIR"

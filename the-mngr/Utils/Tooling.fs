@@ -5,7 +5,10 @@ type Tool =
       Name: string
       Check: unit -> bool }
 
-
+/// <summary>
+/// Checks if Fantomas is installed globally.
+/// </summary>
+/// <returns>True if Fantomas is installed, false otherwise.</returns>
 let checkFantomas () =
     let (_, exitCode, output, error) =
         Terminal.runCommand "dotnet" "tool list -g" (System.Environment.CurrentDirectory)

@@ -11,9 +11,16 @@ type Config =
       AppsDir: string
       Tools: Tooling.Tool list }
 
+/// <summary>
+/// Reads the configuration from the config.json file or returns a default configuration if the file doesn't exist or is invalid.
+/// </summary>
+/// <returns>A Config object containing the application configuration.</returns>
 let read () =
     let configPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json")
 
+    /// <summary>
+    /// Default configuration used when the config file is missing or invalid.
+    /// </summary>
     let defaultConfig =
         { MaxParallelism = Math.Max(1, Environment.ProcessorCount - 1)
           LibsDir = "libs"
@@ -43,6 +50,8 @@ let read () =
                         config.AppsDir
                 Tools = Tooling.tools }
         with _ ->
+            // If any exception occurs during reading or parsing, return the default config
             defaultConfig
     else
+        // If the config file doesn't exist, return the default config
         defaultConfig

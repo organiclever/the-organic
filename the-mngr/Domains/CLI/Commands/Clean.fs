@@ -3,6 +3,17 @@ module Domains.CLI.Commands.Clean
 open System.IO
 open Domains
 
+/// <summary>
+/// Cleans the node_modules directories in the root, apps, and libs folders of the repository.
+/// </summary>
+/// <remarks>
+/// This function performs the following steps:
+/// 1. Finds the root directory of the Git repository.
+/// 2. Reads the configuration to get the paths for libs and apps directories.
+/// 3. Cleans the root directory by deleting its node_modules folder.
+/// 4. Identifies all subdirectories in the libs and apps folders.
+/// 5. Cleans all identified subdirectories by deleting their node_modules folders.
+/// </remarks>
 let cleanApps () =
     let currentDir = Directory.GetCurrentDirectory()
     let repoRoot = GitRepo.findRoot currentDir

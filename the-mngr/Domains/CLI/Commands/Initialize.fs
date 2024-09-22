@@ -5,6 +5,19 @@ open Config
 open Domains
 
 
+/// <summary>
+/// Determines whether a project in the given directory should be initialized.
+/// </summary>
+/// <param name="dir">The directory path of the project to check.</param>
+/// <returns>
+/// Returns true if the project is an NPM project and should be initialized,
+/// false otherwise.
+/// </returns>
+/// <remarks>
+/// This function checks the project type using PackageManager.Project.getKind.
+/// If the project is of type NPM, it returns true.
+/// If the project type is unknown, it prints a warning message and returns false.
+/// </remarks>
 let shouldInitialize (dir: string) =
     match PackageManager.Project.getKind dir with
     | PackageManager.Project.NPM, _ -> true
@@ -13,6 +26,17 @@ let shouldInitialize (dir: string) =
         printfn "   project.kind value: %s" value
         false
 
+/// <summary>
+/// Ensures that Fantomas is installed by running 'dotnet tool restore'.
+/// </summary>
+/// <remarks>
+/// This function performs the following steps:
+/// 1. Prints a message indicating that it's checking for Fantomas installation.
+/// 2. Runs the 'dotnet tool restore' command in the current directory.
+/// 3. Checks the exit code of the command:
+///    - If the exit code is 0, it prints a success message.
+///    - If the exit code is non-zero, it prints an error message and the error output.
+/// </remarks>
 let ensureFantomasInstalled () =
     printfn "🔧 Ensuring Fantomas is installed..."
 
@@ -28,6 +52,17 @@ let ensureFantomasInstalled () =
     else
         printfn "✅ Fantomas installation check completed successfully."
 
+/// <summary>
+/// Initializes the apps and libs in the monorepo.
+/// </summary>
+/// <remarks>
+/// This function performs the following steps:
+/// 1. Ensures Fantomas is installed.
+/// 2. Finds the repository root and reads the configuration.
+/// 3. Installs dependencies at the root level.
+/// 4. Initializes libraries and applications by installing their dependencies.
+/// 5. Builds the tmngr tool.
+/// </remarks>
 let initializeApps () =
     ensureFantomasInstalled ()
     let currentDir = Directory.GetCurrentDirectory()

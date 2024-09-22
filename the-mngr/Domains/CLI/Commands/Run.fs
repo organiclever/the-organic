@@ -5,6 +5,24 @@ open System.IO
 open Domains
 open Domains.PackageManager
 
+/// <summary>
+/// Runs a specified script for a given project in the monorepo.
+/// </summary>
+/// <param name="scriptName">The name of the script to run.</param>
+/// <param name="projectName">The name of the project to run the script for.</param>
+/// <returns>
+/// An integer representing the exit code of the script execution:
+/// 0 if successful, 1 if there's an error finding the project or script,
+/// or the actual exit code of the script if it fails during execution.
+/// </returns>
+/// <remarks>
+/// This function performs the following steps:
+/// 1. Locates the project directory in either the apps or libs folder.
+/// 2. Checks for the existence of package.json in the project directory.
+/// 3. Reads the package.json file to find the specified script.
+/// 4. If the script is found, it executes it using npm.
+/// 5. Prints appropriate success or error messages based on the execution result.
+/// </remarks>
 let runScript scriptName projectName =
     let projectPath =
         let appPath = GitRepo.findAppsDir ()

@@ -7,6 +7,11 @@ type ProjectKind =
     | NPM
     | Unknown
 
+/// <summary>
+/// Determines the kind of project based on the package.json file in the specified directory.
+/// </summary>
+/// <param name="dir">The directory containing the package.json file.</param>
+/// <returns>A tuple containing the project kind and any error message.</returns>
 let getKind (dir: string) : ProjectKind * string =
     let packageJsonPath = Path.Combine(dir, "package.json")
 
