@@ -63,6 +63,19 @@ let ensureFantomasInstalled () =
 /// 4. Initializes libraries and applications by installing their dependencies.
 /// 5. Builds the tmngr tool.
 /// </remarks>
+/// <summary>
+/// Initializes the apps and libs in the monorepo.
+/// </summary>
+/// <remarks>
+/// This function performs the following steps:
+/// 1. Ensures Fantomas is installed.
+/// 2. Finds the repository root and reads the configuration.
+/// 3. Installs dependencies at the root level.
+/// 4. Initializes libraries by installing their dependencies.
+/// 5. Initializes applications by installing their dependencies.
+/// 6. Builds the libraries.
+/// 7. Builds the tmngr tool.
+/// </remarks>
 let initializeApps () =
     ensureFantomasInstalled ()
     let currentDir = Directory.GetCurrentDirectory()
@@ -85,8 +98,8 @@ let initializeApps () =
         [| if Directory.Exists(libsDir) then
                yield! Directory.GetDirectories(libsDir) |> Array.filter shouldInitialize |]
 
-    // Initialize apps and libs
-    printfn "📦 Initializing apps and libs"
+    // Initialize libs
+    printfn "📦 Initializing libs"
 
     PackageManager.NPM.install libsDirsToInitialize
     |> Async.AwaitTask
@@ -97,8 +110,8 @@ let initializeApps () =
         [| if Directory.Exists(appsDir) then
                yield! Directory.GetDirectories(appsDir) |> Array.filter shouldInitialize |]
 
-    // Initialize apps and libs
-    printfn "📦 Initializing apps and libs"
+    // Initialize apps
+    printfn "📦 Initializing apps"
 
     PackageManager.NPM.install appsDirsToInitialize
     |> Async.AwaitTask
@@ -116,7 +129,7 @@ let initializeApps () =
     |> Async.RunSynchronously
     |> ignore
 
-    // Add the tmngr:build step
+    // Build tmngr
     printfn "🛠️  Building tmngr..."
 
     let buildResult =
