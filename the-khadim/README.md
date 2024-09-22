@@ -1,4 +1,4 @@
-# mngr
+# khadim
 
 A CLI tool for managing the monorepo, written in F#.
 
@@ -9,7 +9,7 @@ A CLI tool for managing the monorepo, written in F#.
 
 ## Building the Project
 
-To build the project, run the following command in the `mngr` directory:
+To build the project, run the following command in the `khadim` directory:
 
 `dotnet build`
 
@@ -51,7 +51,7 @@ The main program logic is located in `Program.fs`. To make changes to the projec
 
 ## Adding Dependencies
 
-To add new dependencies to the project, modify the `mngr.fsproj` file and run `dotnet restore`.
+To add new dependencies to the project, modify the `khadim.fsproj` file and run `dotnet restore`.
 
 ## Contributing
 

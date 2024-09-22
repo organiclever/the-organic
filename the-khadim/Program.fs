@@ -17,18 +17,18 @@ let getVersion () =
             null
 
     match gitHash with
-    | null -> sprintf "tmngr %d.%d.%d" version.Major version.Minor version.Build
+    | null -> sprintf "khadim %d.%d.%d" version.Major version.Minor version.Build
     | _ ->
         let hashParts = gitHash.Split('+')
 
         if hashParts.Length > 1 then
-            sprintf "tmngr %d.%d.%d+%s" version.Major version.Minor version.Build hashParts.[1]
+            sprintf "khadim %d.%d.%d+%s" version.Major version.Minor version.Build hashParts.[1]
         else
-            sprintf "tmngr %d.%d.%d" version.Major version.Minor version.Build
+            sprintf "khadim %d.%d.%d" version.Major version.Minor version.Build
 
 [<EntryPoint>]
 let main argv =
-    printfn "🚀 tmngr - The Organic Monorepo Manager"
+    printfn "🚀 khadim - The Organic Monorepo Manager"
 
     let result = Parser.Default.ParseArguments<CLI.Menu.Options>(argv)
 

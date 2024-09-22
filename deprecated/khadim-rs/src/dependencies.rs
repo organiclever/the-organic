@@ -33,7 +33,7 @@ use std::process::Command;
 /// # Example
 ///
 /// ```
-/// use mngr-rs::dependencies::add_dependencies;
+/// use khadim-rs::dependencies::add_dependencies;
 ///
 /// let packages = vec!["package1", "package2"];
 /// let result = add_dependencies(packages, false);
@@ -147,7 +147,7 @@ pub fn add_dependencies(packages: Vec<&str>, is_dev: bool) -> Result<(), BoxErro
 /// # Example
 ///
 /// ```
-/// use mngr-rs::dependencies::get_latest_version;
+/// use khadim-rs::dependencies::get_latest_version;
 ///
 /// let result = get_latest_version("package_name");
 /// assert!(result.is_ok());
@@ -183,7 +183,7 @@ pub fn get_latest_version(package: &str) -> Result<String, BoxError> {
 /// # Examples
 ///
 /// ```
-/// use mngr-rs::dependencies::find_root_dir;
+/// use khadim-rs::dependencies::find_root_dir;
 ///
 /// let result = find_root_dir();
 /// assert!(result.is_ok());
@@ -220,7 +220,7 @@ pub fn find_root_dir() -> Result<PathBuf, BoxError> {
 /// # Examples
 ///
 /// ```
-/// use mngr-rs::init::run_npm_install;
+/// use khadim-rs::init::run_npm_install;
 /// use std::path::Path;
 ///
 /// let project_dir = Path::new(".");
@@ -276,7 +276,7 @@ fn run_npm_install(dir: &PathBuf) -> Result<(), BoxError> {
 /// # Example
 ///
 /// ```
-/// use mngr-rs::dependencies::add_dev_dependency;
+/// use khadim-rs::dependencies::add_dev_dependency;
 ///
 /// let result = add_dev_dependency("jest");
 /// assert!(result.is_ok());

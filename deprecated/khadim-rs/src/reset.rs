@@ -31,14 +31,14 @@ use std::sync::Arc;
 /// # Examples
 ///
 /// ```
-/// use mngr-rs::reset::reset_project;
+/// use khadim-rs::reset::reset_project;
 ///
 /// let result = reset_project();
 /// assert!(result.is_ok());
 /// ```
 
 /// ```
-/// use mngr-rs::reset::delete_node_modules;
+/// use khadim-rs::reset::delete_node_modules;
 /// use std::path::Path;
 ///
 /// let project_dir = Path::new(".");
@@ -114,7 +114,7 @@ pub fn reset_project() -> Result<(), BoxError> {
 /// # Examples
 ///
 /// ```
-/// use mngr-rs::reset::find_root_dir;
+/// use khadim-rs::reset::find_root_dir;
 ///
 /// fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 ///     match find_root_dir() {
@@ -159,7 +159,7 @@ pub fn find_root_dir() -> Result<PathBuf, BoxError> {
 ///
 /// ```
 /// use std::path::Path;
-/// use mngr-rs::reset::delete_node_modules;
+/// use khadim-rs::reset::delete_node_modules;
 ///
 /// let project_dir = Path::new("/path/to/project");
 /// let result = delete_node_modules(project_dir);

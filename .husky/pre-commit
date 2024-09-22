@@ -3,6 +3,6 @@
 
 npx lint-staged
 
-npm run tmngr:build
-npm run tmngr:test:unit
-npm run tmngr -- --run-all test:unit
+npm run khadim:build
+npm run khadim:test:unit
+npm run khadim -- --run-all test:unit

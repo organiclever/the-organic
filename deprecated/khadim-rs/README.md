@@ -12,15 +12,15 @@ Repo Manager is a command-line tool for managing repositories and dependencies w
 ## Installation
 
 1. Ensure you have Rust and Cargo installed on your system.
-2. Navigate to the `mngr-rs` directory:
-   `cd the-mngr-rs`
+2. Navigate to the `khadim-rs` directory:
+   `cd the-khadim-rs`
 3. Build the project:
    `cargo build --release`
-4. The binary will be available in `target/release/mngr-rs`
+4. The binary will be available in `target/release/khadim-rs`
 
 ## Usage
 
-`mngr-rs [OPTIONS]`
+`khadim-rs [OPTIONS]`
 
 Options:
 `--init` Initialize package.json, run npm install, and install project dependencies
@@ -34,19 +34,19 @@ Options:
 ## Examples
 
 1. Initialize the project:
-   `mngr-rs --init`
+   `khadim-rs --init`
 
 2. Run doctor checks:
-   `mngr-rs --doctor`
+   `khadim-rs --doctor`
 
 3. Reset the project:
-   `mngr-rs --reset`
+   `khadim-rs --reset`
 
 4. Add a dependency:
-   `mngr-rs --deps lodash`
+   `khadim-rs --deps lodash`
 
 5. Add a dev dependency:
-   `mngr-rs --deps-dev jest`
+   `khadim-rs --deps-dev jest`
 
 ## Project Structure
 

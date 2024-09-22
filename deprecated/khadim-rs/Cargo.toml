@@ -1,5 +1,5 @@
 [package]
-name = "mngr-rs"
+name = "khadim-rs"
 version = "0.1.0"
 edition = "2021"
 
@@ -10,7 +10,7 @@ rayon = "1.5"
 num_cpus = "1.13"
 
 [[bin]]
-name = "mngr-rs"
+name = "khadim-rs"
 path = "src/main.rs"
 
 [profile.release]

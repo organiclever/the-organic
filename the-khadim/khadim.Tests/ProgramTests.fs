@@ -7,7 +7,7 @@ open Program
 [<Fact>]
 let ``getVersion should return correct version format`` () =
     let version = getVersion ()
-    version |> should startWith "tmngr"
+    version |> should startWith "khadim"
     version.Split('.') |> Array.length |> should be (greaterThanOrEqualTo 3)
 
 [<Theory>]

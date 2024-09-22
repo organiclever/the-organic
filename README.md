@@ -1,6 +1,6 @@
 # The Organic Monorepo
 
-This monorepo contains multiple projects including ayokoding-web, organic-lever-web, associated libraries, and an F# project called tmngr.
+This monorepo contains multiple projects including ayokoding-web, organic-lever-web, associated libraries, and an F# project called khadim.
 
 ## Project Structure
 
@@ -10,7 +10,7 @@ This monorepo contains multiple projects including ayokoding-web, organic-lever-
   - `organic-lever-web-e2e/`: End-to-end tests for Organic Lever
 - `libs/`
   - `hello/`: Shared library
-- `the-mngr/`: F# project for repository management
+- `the-khadim/`: F# project for repository management
 
 ## Getting Started
 
@@ -29,14 +29,14 @@ This monorepo contains multiple projects including ayokoding-web, organic-lever-
 
 ## Repository Management
 
-The `tmngr` tool provides several commands to manage the monorepo. For more details, see the [tmngr README](./the-mngr/README.md).
+The `khadim` tool provides several commands to manage the monorepo. For more details, see the [khadim README](./the-khadim/README.md).
 
-## F# Project: tmngr
+## F# Project: khadim
 
 To run the F# project:
 
-1. Navigate to the the-mngr directory:
-   `cd the-mngr`
+1. Navigate to the the-khadim directory:
+   `cd the-khadim`
 
 2. Build the project:
    `dotnet build`
@@ -44,7 +44,7 @@ To run the F# project:
 3. Run the project:
    `dotnet run`
 
-For more details about the `tmngr` project, see its [README](./the-mngr/README.md).
+For more details about the `khadim` project, see its [README](./the-khadim/README.md).
 
 ## Available Scripts
 
@@ -71,7 +71,7 @@ Repo Manager is a command-line tool for managing repositories and dependencies.
 
 ## Usage
 
-`tmngr [OPTIONS]`
+`khadim [OPTIONS]`
 
 Options:
 `--init` Initialize package.json, run npm install, and install project dependencies
@@ -84,16 +84,16 @@ Options:
 ## Examples
 
 1. Initialize the project:
-   `tmngr --init`
+   `khadim --init`
 
 2. Run doctor checks:
-   `tmngr --doctor`
+   `khadim --doctor`
 
 3. Reset the project:
-   `tmngr --reset`
+   `khadim --reset`
 
 4. Clean the project:
-   `tmngr --clean`
+   `khadim --clean`
 
 ## Contributing
 

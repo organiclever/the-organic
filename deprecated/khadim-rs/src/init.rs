@@ -47,7 +47,7 @@ pub fn initialize_and_install_all() -> Result<(), BoxError> {
 /// Example usage of initialize_package_json
 ///
 /// ```
-/// use mngr-rs::init::initialize_package_json;
+/// use khadim-rs::init::initialize_package_json;
 ///
 /// match initialize_package_json() {
 ///     Ok(_) => println!("Package.json initialized successfully."),
@@ -165,7 +165,7 @@ pub fn initialize_package_json() -> Result<PathBuf, BoxError> {
 /// ```
 /// use serde_json::json;
 /// use std::path::Path;
-/// use mngr-rs::init::merge_scripts;
+/// use khadim-rs::init::merge_scripts;
 ///
 /// let mut scripts = json!({});
 /// let root_dir = Path::new("/path/to/project");
@@ -220,8 +220,8 @@ pub fn merge_scripts(
 ///
 /// ```
 /// use std::path::Path;
-/// use mngr-rs::init::create_dev_scripts;
-/// use mngr-rs::BoxError;
+/// use khadim-rs::init::create_dev_scripts;
+/// use khadim-rs::BoxError;
 ///
 /// fn example() -> Result<(), BoxError> {
 ///     let root_dir = Path::new("/path/to/project");
@@ -269,7 +269,7 @@ pub fn create_dev_scripts(root_dir: &Path) -> Result<String, BoxError> {
 ///
 /// ```
 /// use std::path::Path;
-/// use mngr-rs::init::install_project_dependencies;
+/// use khadim-rs::init::install_project_dependencies;
 ///
 /// let root_dir = Path::new("/path/to/project");
 /// match install_project_dependencies(root_dir) {
@@ -415,7 +415,7 @@ fn is_npm_project(project_dir: &Path) -> bool {
 ///
 /// ```
 /// use std::path::Path;
-/// use mngr-rs::init::run_npm_install;
+/// use khadim-rs::init::run_npm_install;
 ///
 /// let project_dir = Path::new("/path/to/project");
 /// match run_npm_install(project_dir) {

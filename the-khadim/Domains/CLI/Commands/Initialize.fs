@@ -61,7 +61,7 @@ let ensureFantomasInstalled () =
 /// 2. Finds the repository root and reads the configuration.
 /// 3. Installs dependencies at the root level.
 /// 4. Initializes libraries and applications by installing their dependencies.
-/// 5. Builds the tmngr tool.
+/// 5. Builds the khadim tool.
 /// </remarks>
 /// <summary>
 /// Initializes the apps and libs in the monorepo.
@@ -74,7 +74,7 @@ let ensureFantomasInstalled () =
 /// 4. Initializes libraries by installing their dependencies.
 /// 5. Initializes applications by installing their dependencies.
 /// 6. Builds the libraries.
-/// 7. Builds the tmngr tool.
+/// 7. Builds the khadim tool.
 /// </remarks>
 let initializeApps () =
     ensureFantomasInstalled ()
@@ -129,14 +129,14 @@ let initializeApps () =
     |> Async.RunSynchronously
     |> ignore
 
-    // Build tmngr
-    printfn "🛠️  Building tmngr..."
+    // Build khadim
+    printfn "🛠️  Building khadim..."
 
     let buildResult =
-        PackageManager.NPM.runScript repoRoot "tmngr:build"
+        PackageManager.NPM.runScript repoRoot "khadim:build"
         |> Async.AwaitTask
         |> Async.RunSynchronously
 
     match buildResult with
-    | 0 -> printfn "✅ tmngr built successfully"
-    | _ -> printfn "❌ Failed to build tmngr. Please check the output and try again."
+    | 0 -> printfn "✅ khadim built successfully"
+    | _ -> printfn "❌ Failed to build khadim. Please check the output and try again."

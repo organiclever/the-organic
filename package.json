@@ -44,9 +44,9 @@
   "name": "the-organic",
   "scripts": {
     "format:fs": "dotnet tool run fantomas . --recurse",
-    "tmngr:build": "dotnet publish the-mngr/tmngr.fsproj -c Release -o ./the-mngr-published && chmod +x ./tmngr",
-    "tmngr:test:unit": "cd the-mngr/tmngr.Tests && dotnet test",
-    "tmngr": "dotnet ./the-mngr-published/tmngr.dll",
+    "khadim:build": "dotnet publish the-khadim/khadim.fsproj -c Release -o ./the-khadim-published && chmod +x ./khadim",
+    "khadim:test:unit": "cd the-khadim/khadim.Tests && dotnet test",
+    "khadim": "dotnet ./the-khadim-published/khadim.dll",
     "prepare": "husky install"
   },
   "version": "1.0.0",

@@ -1,14 +1,14 @@
 module Domains.CLI.Commands.Help
 
 /// <summary>
-/// Prints the help message for the tmngr command-line interface.
+/// Prints the help message for the khadim command-line interface.
 /// </summary>
 /// <remarks>
-/// This function prints the usage information for the tmngr command-line interface,
+/// This function prints the usage information for the khadim command-line interface,
 /// including the available commands and their descriptions.
 /// </remarks>
 let printHelp () =
-    printfn "Usage: tmngr [command] [options]"
+    printfn "Usage: khadim [command] [options]"
     printfn ""
     printfn "Commands:"
     printfn "  --init, -i     Initialize all apps in the monorepo"
