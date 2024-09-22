@@ -108,6 +108,14 @@ let initializeApps () =
 
     printfn "🚀 Finished initializing all apps and libs"
 
+    // Build libs
+    printfn "📦 Building libs"
+
+    PackageManager.NPM.runScripts libsDirsToInitialize "build"
+    |> Async.AwaitTask
+    |> Async.RunSynchronously
+    |> ignore
+
     // Add the tmngr:build step
     printfn "🛠️  Building tmngr..."
 

@@ -49,6 +49,26 @@ let runScript (dir: string) (scriptName: string) =
     }
 
 /// <summary>
+/// Runs the specified npm script in multiple directories concurrently.
+/// </summary>
+/// <param name="dirs">A sequence of directory paths where the script should be run.</param>
+/// <param name="scriptName">The name of the npm script to run in each directory.</param>
+/// <returns>A task that completes when all script executions are finished.</returns>
+/// <remarks>
+/// This function uses parallel processing to run the scripts concurrently.
+/// The number of parallel workers is set to one less than the number of processor cores.
+/// </remarks>
+let runScripts (dirs: string seq) (scriptName: string) =
+    let config = read ()
+    let maxWorkers = config.MaxParallelism
+    printfn "🚀 Using %d parallel workers for running scripts" maxWorkers
+
+    dirs
+    |> Seq.map (fun dir -> async { return! runScript dir scriptName |> Async.AwaitTask })
+    |> fun tasks -> Async.Parallel(tasks, maxWorkers)
+    |> Async.StartAsTask
+
+/// <summary>
 /// Installs npm dependencies in the specified directories.
 /// </summary>
 /// <param name="dirs">The directories where npm install should be performed.</param>
