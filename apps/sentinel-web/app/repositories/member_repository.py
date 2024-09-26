@@ -1,6 +1,6 @@
 import sqlite3
 from uuid import UUID
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Union
 import aiosqlite
 from app.config import DB_PATH
 
@@ -21,7 +21,7 @@ class MemberRepository:
             )
             await db.commit()
 
-    async def create(self, id: UUID, name: str) -> Dict[str, Any]:
+    async def create(self, id: UUID, name: str) -> Dict[str, Union[UUID, str]]:
         await self._init_db()
         async with aiosqlite.connect(self.db_path) as db:
             await db.execute(
@@ -30,14 +30,14 @@ class MemberRepository:
             await db.commit()
         return {"id": id, "name": name}
 
-    async def list(self) -> List[Dict[str, Any]]:
+    async def list(self) -> List[Dict[str, Union[UUID, str]]]:
         await self._init_db()
         async with aiosqlite.connect(self.db_path) as db:
             async with db.execute("SELECT id, name FROM members") as cursor:
                 rows = await cursor.fetchall()
         return [{"id": UUID(row[0]), "name": row[1]} for row in rows]
 
-    async def get(self, id: UUID) -> Optional[Dict[str, Any]]:
+    async def get(self, id: UUID) -> Optional[Dict[str, Union[UUID, str]]]:
         await self._init_db()
         async with aiosqlite.connect(self.db_path) as db:
             async with db.execute(
@@ -46,7 +46,9 @@ class MemberRepository:
                 row = await cursor.fetchone()
         return {"id": UUID(row[0]), "name": row[1]} if row else None
 
-    async def update(self, id: UUID, data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    async def update(
+        self, id: UUID, data: Dict[str, str]
+    ) -> Optional[Dict[str, Union[UUID, str]]]:
         await self._init_db()
         set_clause = ", ".join(f"{key} = ?" for key in data.keys())
         values = list(data.values()) + [str(id)]
