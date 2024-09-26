@@ -12,9 +12,9 @@ async def say_hello(
     salutation: str = Query("Hello", description="Salutation to use")
 ):
     return templates.TemplateResponse(
+        request,
         "hello.html",
         {
-            "request": request,
             "name": to,
             "salutation": salutation,
             "navigation_items": request.state.navigation_items
