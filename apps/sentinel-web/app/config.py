@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Dict, Union
 
 
-DEFAULT_CONFIG: Dict[str, Union[int, str]] = {"port": 8000}
+DEFAULT_CONFIG: Dict[str, Union[int, str]] = {"port": 8000, "db_path": "./sentinel.db"}
 
 
 def load_config() -> Dict[str, Union[int, str]]:
@@ -28,3 +28,4 @@ def load_config() -> Dict[str, Union[int, str]]:
 
 config: Dict[str, Union[int, str]] = load_config()
 PORT: int = int(config["port"])
+DB_PATH: str = str(config["db_path"])

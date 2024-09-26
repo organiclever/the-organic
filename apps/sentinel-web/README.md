@@ -91,3 +91,10 @@ For development with live reloading of CSS:
 ```
 npm run
 ```
+
+## Configuration
+
+The application can be configured using the `config.json` file in the root directory. Available options are:
+
+- `port`: The port number on which the application will run (default: 8000)
+- `db_path`: The path to the SQLite database file (default: "./sentinel.db")

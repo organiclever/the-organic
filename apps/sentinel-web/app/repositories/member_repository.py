@@ -2,10 +2,11 @@ import sqlite3
 from uuid import UUID
 from typing import List, Optional, Dict, Any
 import aiosqlite
+from app.config import DB_PATH
 
 
 class MemberRepository:
-    def __init__(self, db_path: str = "./sentinel.db"):
+    def __init__(self, db_path: str = DB_PATH):
         self.db_path = db_path
 
     async def _init_db(self) -> None:
@@ -63,4 +64,4 @@ class MemberRepository:
 
 
 async def get_member_repository() -> MemberRepository:
-    return MemberRepository("./sentinel.db")
+    return MemberRepository(DB_PATH)
