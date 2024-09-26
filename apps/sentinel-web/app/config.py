@@ -1,18 +1,18 @@
 import json
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Union
 
 
-DEFAULT_CONFIG: Dict[str, Any] = {
+DEFAULT_CONFIG: Dict[str, Union[int, str]] = {
     'port': 8000
 }
 
 
-def load_config() -> Dict[str, Any]:
-    config_path = Path(__file__).parent.parent / 'config.json'
+def load_config() -> Dict[str, Union[int, str]]:
+    config_path: Path = Path(__file__).parent.parent / 'config.json'
     try:
         with open(config_path, 'r') as config_file:
-            loaded_config = json.load(config_file)
+            loaded_config: Dict[str, Union[int, str]] = json.load(config_file)
             return {**DEFAULT_CONFIG, **loaded_config}
     except FileNotFoundError:
         print(f"Configuration file not found at {
@@ -24,5 +24,5 @@ def load_config() -> Dict[str, Any]:
         return DEFAULT_CONFIG
 
 
-config = load_config()
-PORT = config['port']
+config: Dict[str, Union[int, str]] = load_config()
+PORT: int = int(config['port'])

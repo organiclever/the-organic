@@ -2,7 +2,9 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import uvicorn
-from typing import List, Dict, Any
+from typing import Callable, Awaitable
+from starlette.middleware.base import RequestResponseEndpoint
+from starlette.responses import Response
 
 from app.routes import home, hello
 from app.navigation import navigation_items
@@ -15,7 +17,10 @@ templates: Jinja2Templates = Jinja2Templates(directory="app/templates")
 
 
 @app.middleware("http")
-async def add_navigation_to_request(request: Request, call_next: Any) -> Any:
+async def add_navigation_to_request(
+    request: Request,
+    call_next: RequestResponseEndpoint
+) -> Response:
     request.state.navigation_items = navigation_items
     response = await call_next(request)
     return response
