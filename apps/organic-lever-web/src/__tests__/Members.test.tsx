@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
-import "@testing-library/jest-dom"; // Add this line
+import "@testing-library/jest-dom";
 import MemberList from "../components/MemberList";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -12,9 +12,11 @@ const createWrapper = () => {
       },
     },
   });
-  return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return function Wrapper({ children }: { children: React.ReactNode }) {
+    return (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    );
+  };
 };
 
 describe("MemberList component", () => {
