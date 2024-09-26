@@ -20,4 +20,10 @@ pip install --upgrade pip
 # Install Python dependencies
 pip install -r requirements.txt
 
+# Add the project root to PYTHONPATH
+echo "export PYTHONPATH=\$PYTHONPATH:$(pwd)" >>sentinel-web/bin/activate
+
+# Install Pyright
+npm install pyright
+
 echo "Python setup complete. Virtual environment 'sentinel-web' is created and activated."

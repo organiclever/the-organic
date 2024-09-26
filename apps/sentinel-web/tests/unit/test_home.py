@@ -1,10 +1,10 @@
 from fastapi.testclient import TestClient
 from app.main import app
 
-client = TestClient(app)
+client: TestClient = TestClient(app)
 
 
-def test_read_main():
+def test_read_main() -> None:
     response = client.get("/")
     assert response.status_code == 200
     assert "Welcome to Sentinel Web" in response.text
@@ -12,7 +12,7 @@ def test_read_main():
     assert "Navigation" in response.text
 
 
-def test_navigation_items_present():
+def test_navigation_items_present() -> None:
     response = client.get("/")
     assert response.status_code == 200
     assert "Home" in response.text

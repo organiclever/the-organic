@@ -2,19 +2,20 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import uvicorn
+from typing import List, Dict, Any
 
 from app.routes import home, hello
 from app.navigation import navigation_items
 from app.config import PORT
 
-app = FastAPI()
+app: FastAPI = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="app/templates")
+templates: Jinja2Templates = Jinja2Templates(directory="app/templates")
 
 
 @app.middleware("http")
-async def add_navigation_to_request(request: Request, call_next):
+async def add_navigation_to_request(request: Request, call_next: Any) -> Any:
     request.state.navigation_items = navigation_items
     response = await call_next(request)
     return response

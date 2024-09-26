@@ -2,10 +2,10 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.navigation import navigation_items
 
-client = TestClient(app)
+client: TestClient = TestClient(app)
 
 
-def test_navigation_items_present_on_home():
+def test_navigation_items_present_on_home() -> None:
     response = client.get("/")
     assert response.status_code == 200
     for item in navigation_items:
@@ -13,7 +13,7 @@ def test_navigation_items_present_on_home():
         assert item['href'].replace('&', '&amp;') in response.text
 
 
-def test_navigation_items_present_on_hello():
+def test_navigation_items_present_on_hello() -> None:
     response = client.get("/hello?to=Test")
     assert response.status_code == 200
     for item in navigation_items:

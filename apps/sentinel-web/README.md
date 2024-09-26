@@ -70,3 +70,24 @@ Please read CONTRIBUTING.md for details on our code of conduct and the process f
 ## License
 
 This project is licensed under the MIT License - see the LICENSE.md file for details.
+
+## Setup
+
+1. Make sure you have Python 3.12 and Node.js installed.
+2. Run `npm install` to set up the project and install dependencies.
+3. Activate the virtual environment:
+   ```
+   source sentinel-web/bin/activate
+   ```
+4. Set the `PYTHONPATH`:
+   ```
+   export PYTHONPATH=$PYTHONPATH:$(pwd)
+   ```
+
+## Development
+
+For development with live reloading of CSS:
+
+```
+npm run
+```

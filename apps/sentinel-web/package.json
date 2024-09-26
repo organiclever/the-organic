@@ -7,15 +7,16 @@
     "watch-css": "tailwindcss -i ./src/input.css -o ./static/styles.css --watch",
     "build-css": "tailwindcss -i ./src/input.css -o ./static/css/output.css --minify",
     "start-server": "source sentinel-web/bin/activate && PYTHONPATH=$PWD uvicorn app.main:app --reload --port $(python -c 'from app.config import PORT; print(PORT)')",
-    "test:unit": "source sentinel-web/bin/activate && PYTHONPATH=$PWD pytest tests/unit -n auto -v",
+    "test:unit": "source sentinel-web/bin/activate && PYTHONPATH=$PWD pyright && PYTHONPATH=$PWD pytest tests/unit -n auto -v",
     "postinstall": "bash setup-python.sh && npm run build-css"
   },
   "dependencies": {
     "htmx.org": "^1.9.2"
   },
   "devDependencies": {
-    "tailwindcss": "^3.3.2",
     "concurrently": "^8.0.1",
-    "jest": "^29.5.0"
+    "jest": "^29.5.0",
+    "pyright": "^1.1.382",
+    "tailwindcss": "^3.3.2"
   }
 }

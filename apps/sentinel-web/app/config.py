@@ -1,13 +1,14 @@
 import json
 from pathlib import Path
+from typing import Dict, Any
 
 
-DEFAULT_CONFIG = {
+DEFAULT_CONFIG: Dict[str, Any] = {
     'port': 8000
 }
 
 
-def load_config():
+def load_config() -> Dict[str, Any]:
     config_path = Path(__file__).parent.parent / 'config.json'
     try:
         with open(config_path, 'r') as config_file:
