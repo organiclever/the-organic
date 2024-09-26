@@ -3,3 +3,4 @@ uvicorn
 jinja2
 pytest
 pytest-xdist
+black

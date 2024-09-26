@@ -11,7 +11,5 @@ async def read_root(request: Request) -> HTMLResponse:
     return templates.TemplateResponse(
         request,
         "index.html",
-        {
-            "navigation_items": request.state.navigation_items
-        }
+        {"navigation_items": request.state.navigation_items},
     )

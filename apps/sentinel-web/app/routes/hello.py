@@ -11,7 +11,7 @@ templates: Jinja2Templates = Jinja2Templates(directory="app/templates")
 async def say_hello(
     request: Request,
     to: str = Query(..., description="Name of the person to greet"),
-    salutation: str = Query("Hello", description="Salutation to use")
+    salutation: str = Query("Hello", description="Salutation to use"),
 ) -> HTMLResponse:
     return templates.TemplateResponse(
         request,
@@ -19,6 +19,6 @@ async def say_hello(
         {
             "name": to,
             "salutation": salutation,
-            "navigation_items": request.state.navigation_items
-        }
+            "navigation_items": request.state.navigation_items,
+        },
     )
