@@ -130,5 +130,5 @@ The application can be configured using the `config.json` file in the root direc
 
 - Home page
 - Say Hello page
-- Team Members management
+- Members management
 - Settings page with database backup functionality # Add this line
