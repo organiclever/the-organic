@@ -18,6 +18,7 @@ This project is a Python web application using Tailwind CSS for styling.
 │   └── unit/
 │       ├── test_hello.py
 │       └── test_home.py
+├── config.json
 ├── package.json
 ├── requirements.txt
 ├── tailwind.config.js
@@ -40,23 +41,27 @@ This project is a Python web application using Tailwind CSS for styling.
    `npm install`
 
 5. Build the CSS:
-   `npm run build:css`
+   `npm run build-css`
 
 ## Running the Application
 
 To run the application in development mode with live reloading:
 
+`npm run dev`
+
+This will start the FastAPI server on the port specified in `config.json` (default is 8001 if not specified).
+
 ## Running Tests
 
 To run the tests:
 
-`pytest`
+`npm run test:unit`
 
 ## Development
 
 For development with live reloading of CSS:
 
-`npm run watch:css`
+`npm run watch-css`
 
 ## Contributing
 

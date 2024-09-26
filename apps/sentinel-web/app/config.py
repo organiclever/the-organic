@@ -2,18 +2,26 @@ import json
 from pathlib import Path
 
 
+DEFAULT_CONFIG = {
+    'port': 8000
+}
+
+
 def load_config():
-    config_path = Path(__file__).parent / 'config.json'
+    config_path = Path(__file__).parent.parent / 'config.json'
     try:
         with open(config_path, 'r') as config_file:
-            return json.load(config_file)
+            loaded_config = json.load(config_file)
+            return {**DEFAULT_CONFIG, **loaded_config}
     except FileNotFoundError:
-        raise FileNotFoundError(
-            f"Configuration file not found at {config_path}")
+        print(f"Configuration file not found at {
+              config_path}. Using default configuration.")
+        return DEFAULT_CONFIG
     except json.JSONDecodeError:
-        raise ValueError(
-            f"Invalid JSON in configuration file at {config_path}")
+        print(f"Invalid JSON in configuration file at {
+              config_path}. Using default configuration.")
+        return DEFAULT_CONFIG
 
 
 config = load_config()
-PORT = config.get('port', 8000)  # Default to 8000 if 'port' is not specified
+PORT = config['port']
