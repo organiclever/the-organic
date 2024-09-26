@@ -5,6 +5,7 @@ from uuid import UUID, uuid4
 from typing import List, Optional
 from app.repositories.member_repository import MemberRepository, get_member_repository
 from fastapi.templating import Jinja2Templates
+from app.navigation import navigation_items  # Add this import
 
 router: APIRouter = APIRouter()
 templates: Jinja2Templates = Jinja2Templates(directory="app/templates")
@@ -29,7 +30,12 @@ async def list_members(
 ):
     members = await repo.list()
     return templates.TemplateResponse(
-        "members/list.html", {"request": request, "members": members}
+        "members/list.html",
+        {
+            "request": request,
+            "members": members,
+            "navigation_items": navigation_items,  # Add this line
+        },
     )
 
 
