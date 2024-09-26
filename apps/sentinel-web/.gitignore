@@ -1,3 +1,4 @@
 sentinel-web/
 __pycache__/
 *.pyc
+static/styles.css

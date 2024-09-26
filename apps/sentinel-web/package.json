@@ -4,10 +4,11 @@
   "description": "FastAPI project with HTMX and Tailwind CSS",
   "scripts": {
     "dev": "concurrently \"npm run watch-css\" \"npm run start-server\"",
-    "watch-css": "tailwindcss -i ./static/styles.css -o ./static/styles.css --watch",
+    "watch-css": "tailwindcss -i ./src/input.css -o ./static/styles.css --watch",
+    "build-css": "tailwindcss -i ./src/input.css -o ./static/styles.css --minify",
     "start-server": "source sentinel-web/bin/activate && PYTHONPATH=$PWD uvicorn app.main:app --reload",
     "test:unit": "bash -c 'source sentinel-web/bin/activate && PYTHONPATH=$PWD pytest tests/unit -v || echo \"No tests found or all tests passed\"'",
-    "postinstall": "bash setup-python.sh"
+    "postinstall": "bash setup-python.sh && npm run build-css"
   },
   "dependencies": {
     "htmx.org": "^1.9.2"
