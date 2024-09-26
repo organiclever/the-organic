@@ -30,11 +30,11 @@ async def list_members(
 ):
     members = await repo.list()
     return templates.TemplateResponse(
+        request,  # Change: Move request to the first argument
         "members/list.html",
         {
-            "request": request,
             "members": members,
-            "navigation_items": navigation_items,  # Add this line
+            "navigation_items": navigation_items,
         },
     )
 
