@@ -7,7 +7,7 @@
     "watch-css": "tailwindcss -i ./src/input.css -o ./static/styles.css --watch",
     "build-css": "tailwindcss -i ./src/input.css -o ./static/css/output.css --minify",
     "start-server": "source sentinel-web/bin/activate && PYTHONPATH=$PWD uvicorn app.main:app --reload",
-    "test:unit": "bash -c 'source sentinel-web/bin/activate && PYTHONPATH=$PWD pytest tests/unit -v || echo \"No tests found or all tests passed\"'",
+    "test:unit": "source sentinel-web/bin/activate && PYTHONPATH=$PWD pytest tests/unit -n auto -v",
     "postinstall": "bash setup-python.sh && npm run build-css"
   },
   "dependencies": {
