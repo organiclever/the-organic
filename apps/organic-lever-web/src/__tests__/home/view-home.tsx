@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import Home from "../app/page";
+import Home from "../../app/page";
 
 // Mock the @libs/hello module
 vi.mock("@libs/hello", () => ({

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import MemberList from "../components/MemberList";
+import MemberList from "../../components/MemberList";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const createWrapper = () => {
