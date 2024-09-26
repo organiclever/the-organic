@@ -16,17 +16,15 @@
         <div class="p-4">
           <h2 class="text-xl font-semibold mb-4">Navigation</h2>
           <ul>
-            <li class="mb-2">
-              <a href="/" class="text-blue-500 hover:text-blue-700">Home</a>
-            </li>
+            {% for item in navigation_items %}
             <li class="mb-2">
               <a
-                href="/hello?to=World&salutation=Hi"
+                href="{{ item.href }}"
                 class="text-blue-500 hover:text-blue-700"
-                >Say Hello</a
+                >{{ item.text }}</a
               >
             </li>
-            <!-- Add more links here as you add more routes -->
+            {% endfor %}
           </ul>
         </div>
       </div>

@@ -13,5 +13,10 @@ async def say_hello(
 ):
     return templates.TemplateResponse(
         "hello.html",
-        {"request": request, "name": to, "salutation": salutation}
+        {
+            "request": request,
+            "name": to,
+            "salutation": salutation,
+            "navigation_items": request.state.navigation_items
+        }
     )
