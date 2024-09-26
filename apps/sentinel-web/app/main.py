@@ -9,9 +9,9 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
 
 
-@app.get("/")
+@app.get("/hello")
 async def root(request: Request):
-    return templates.TemplateResponse(request, "index.html", {"request": request})
+    return templates.TemplateResponse(request, "hello.html", {"request": request})
 
 
 @app.post("/hello")
