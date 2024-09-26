@@ -4,9 +4,20 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
+interface Member {
+  id: string;
+  name: string;
+  github_account: string;
+}
+
 interface MemberFormData {
   name: string;
   github_account: string;
+}
+
+interface MemberFormProps {
+  initialData?: Member;
+  onSuccess?: () => void;
 }
 
 const createMember = async (data: MemberFormData): Promise<void> => {
@@ -22,16 +33,43 @@ const createMember = async (data: MemberFormData): Promise<void> => {
   }
 };
 
-export default function MemberForm() {
-  const [name, setName] = useState("");
-  const [githubAccount, setGithubAccount] = useState("");
+const updateMember = async (
+  id: string,
+  data: MemberFormData
+): Promise<void> => {
+  const response = await fetch(`/api/members/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to update member");
+  }
+};
+
+export default function MemberForm({
+  initialData,
+  onSuccess,
+}: MemberFormProps) {
+  const [name, setName] = useState(initialData?.name || "");
+  const [githubAccount, setGithubAccount] = useState(
+    initialData?.github_account || ""
+  );
   const router = useRouter();
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: createMember,
+    mutationFn: initialData
+      ? (data: MemberFormData) => updateMember(initialData.id, data)
+      : createMember,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["members"] });
+      if (initialData) {
+        queryClient.invalidateQueries({ queryKey: ["member", initialData.id] });
+      }
+      onSuccess?.();
       router.push("/members");
     },
   });
@@ -80,7 +118,11 @@ export default function MemberForm() {
         disabled={mutation.isPending}
         className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
       >
-        {mutation.isPending ? "Creating..." : "Create Member"}
+        {mutation.isPending
+          ? "Saving..."
+          : initialData
+          ? "Update Member"
+          : "Create Member"}
       </button>
       {mutation.isError && (
         <div className="text-red-600">
