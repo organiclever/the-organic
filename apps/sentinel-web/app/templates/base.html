@@ -9,12 +9,35 @@
       rel="stylesheet"
     />
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <style>
+      .resizer {
+        width: 8px;
+        background-color: #e5e7eb;
+        cursor: col-resize;
+        transition: background-color 0.3s;
+      }
+      .resizer:hover {
+        background-color: #d1d5db;
+      }
+      #sidebar {
+        min-width: 200px;
+        max-width: 50vw;
+      }
+      .main-content {
+        height: 100vh;
+        overflow-y: auto;
+      }
+    </style>
     <!-- Remove the confirmAction function if it's not used elsewhere -->
   </head>
   <body class="bg-gray-100">
-    <div class="grid grid-cols-[256px_1fr] min-h-screen">
+    <div class="flex h-screen">
       <!-- Sidebar -->
-      <div class="bg-white shadow-md overflow-y-auto">
+      <div
+        id="sidebar"
+        class="bg-white shadow-md overflow-y-auto flex-shrink-0"
+        style="width: 256px"
+      >
         <div class="p-4">
           <h2 class="text-xl font-semibold mb-4">Navigation</h2>
           <ul>
@@ -31,8 +54,41 @@
         </div>
       </div>
 
+      <!-- Resizer -->
+      <div id="resizer" class="resizer"></div>
+
       <!-- Main content -->
-      <div class="p-8">{% block content %}{% endblock %}</div>
+      <div class="main-content flex-grow">
+        <div class="p-8">{% block content %}{% endblock %}</div>
+      </div>
     </div>
+
+    <script>
+      const resizer = document.getElementById("resizer");
+      const sidebar = document.getElementById("sidebar");
+
+      let isResizing = false;
+      let lastDownX = 0;
+
+      resizer.addEventListener("mousedown", (e) => {
+        isResizing = true;
+        lastDownX = e.clientX;
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (!isResizing) return;
+        const offsetX = e.clientX - lastDownX;
+        const newWidth = Math.max(
+          200,
+          Math.min(sidebar.offsetWidth + offsetX, window.innerWidth * 0.5)
+        );
+        sidebar.style.width = `${newWidth}px`;
+        lastDownX = e.clientX;
+      });
+
+      document.addEventListener("mouseup", () => {
+        isResizing = false;
+      });
+    </script>
   </body>
 </html>
