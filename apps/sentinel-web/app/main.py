@@ -1,9 +1,11 @@
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+import uvicorn
 
 from app.routes import home, hello
 from app.navigation import navigation_items
+from app.config import PORT
 
 app = FastAPI()
 
@@ -20,3 +22,6 @@ async def add_navigation_to_request(request: Request, call_next):
 # Include routers
 app.include_router(home.router)
 app.include_router(hello.router)
+
+if __name__ == "__main__":
+    uvicorn.run("app.main:app", host="0.0.0.0", port=PORT, reload=True)

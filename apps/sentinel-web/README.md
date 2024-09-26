@@ -44,9 +44,7 @@ This project is a Python web application using Tailwind CSS for styling.
 
 ## Running the Application
 
-To run the application:
-
-`python -m app.main` # Adjust this command based on your actual entry point
+To run the application in development mode with live reloading:
 
 ## Running Tests
 
