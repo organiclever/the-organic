@@ -8,6 +8,7 @@
     "build-css": "tailwindcss -i ./src/input.css -o ./static/css/output.css --minify",
     "start-server": "source sentinel-web/bin/activate && PYTHONPATH=$PWD uvicorn app.main:app --reload --port $(python -c 'from app.config import PORT; print(PORT)')",
     "test:unit": "source sentinel-web/bin/activate && PYTHONPATH=$PWD pyright && PYTHONPATH=$PWD pytest tests/unit -n auto -v",
+    "test:unit:watch": "source sentinel-web/bin/activate && PYTHONPATH=$PWD pytest-watch -- tests/unit -v",
     "postinstall": "bash setup-python.sh && npm run build-css",
     "format": "source sentinel-web/bin/activate && black app tests"
   },

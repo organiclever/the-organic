@@ -6,3 +6,4 @@ pytest-xdist
 black
 aiosqlite
 pytest-asyncio
+pytest-watch
