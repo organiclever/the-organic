@@ -1,26 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sentinel Web</title>
-    <link
-      href="{{ url_for('static', path='/css/output.css') }}"
-      rel="stylesheet"
-    />
-  </head>
-  <body class="bg-gray-100">
-    <div class="container mx-auto px-4 py-8">
-      <h1 class="text-3xl font-bold mb-4">Welcome to Sentinel Web</h1>
-      <p class="mb-4">
-        This is a simple index page for your FastAPI application.
-      </p>
-      <a
-        href="/hello?to=World&salutation=Hi"
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >
-        Say Hello
-      </a>
-    </div>
-  </body>
-</html>
+{% extends "base.html" %} {% block content %}
+<div class="container mx-auto">
+  <h1 class="text-3xl font-bold mb-4">Welcome to Sentinel Web</h1>
+  <p class="mb-4">This is a simple index page for your FastAPI application.</p>
+</div>
+{% endblock %}
