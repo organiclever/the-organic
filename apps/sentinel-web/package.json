@@ -9,7 +9,8 @@
     "start-server": "source sentinel-web/bin/activate && PYTHONPATH=$PWD uvicorn app.main:app --reload --port $(python -c 'from app.config import PORT; print(PORT)')",
     "test:unit": "source sentinel-web/bin/activate && PYTHONPATH=$PWD pyright && PYTHONPATH=$PWD pytest tests/unit -n auto -v",
     "test:unit:watch": "source sentinel-web/bin/activate && concurrently \"PYTHONPATH=$PWD pyright --watch\" \"PYTHONPATH=$PWD pytest-watch -- tests/unit -v\"",
-    "postinstall": "bash setup-python.sh && npm run build-css",
+    "setup-python": "rm -rf sentinel-web && python3 -m venv sentinel-web && source sentinel-web/bin/activate && pip install --upgrade pip setuptools && pip install -r requirements.txt",
+    "postinstall": "npm run setup-python && npm run build-css",
     "format": "source sentinel-web/bin/activate && black app tests"
   },
   "dependencies": {
