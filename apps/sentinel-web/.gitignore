@@ -1,0 +1,3 @@
+sentinel-web/
+__pycache__/
+*.pyc

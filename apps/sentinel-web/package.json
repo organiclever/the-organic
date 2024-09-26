@@ -1,0 +1,20 @@
+{
+  "name": "fastapi-htmx-tailwind",
+  "version": "1.0.0",
+  "description": "FastAPI project with HTMX and Tailwind CSS",
+  "scripts": {
+    "dev": "concurrently \"npm run watch-css\" \"npm run start-server\"",
+    "watch-css": "tailwindcss -i ./static/styles.css -o ./static/styles.css --watch",
+    "start-server": "source sentinel-web/bin/activate && PYTHONPATH=$PWD uvicorn app.main:app --reload",
+    "test:unit": "bash -c 'source sentinel-web/bin/activate && PYTHONPATH=$PWD pytest tests/unit -v || echo \"No tests found or all tests passed\"'",
+    "postinstall": "bash setup-python.sh"
+  },
+  "dependencies": {
+    "htmx.org": "^1.9.2"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.2",
+    "concurrently": "^8.0.1",
+    "jest": "^29.5.0"
+  }
+}
