@@ -6,9 +6,14 @@ from typing import Dict, Union, TypedDict, Literal
 class ConfigDict(TypedDict):
     port: int
     db_path: str
+    db_path_backup: str
 
 
-DEFAULT_CONFIG: ConfigDict = {"port": 8000, "db_path": "./sentinel.db"}
+DEFAULT_CONFIG: ConfigDict = {
+    "port": 8000,
+    "db_path": "./sentinel.db",
+    "db_path_backup": "./sentinel_backup.db",
+}
 
 
 def load_config() -> ConfigDict:
@@ -18,12 +23,13 @@ def load_config() -> ConfigDict:
             loaded_config: Dict[str, Union[int, str]] = json.load(config_file)
             config: ConfigDict = {**DEFAULT_CONFIG, **loaded_config}  # type: ignore
 
-            # Convert relative db_path to absolute path
-            if "db_path" in config:
-                db_path: Path = Path(config["db_path"]).expanduser()
-                if not db_path.is_absolute():
-                    db_path = (config_path.parent / db_path).resolve()
-                config["db_path"] = str(db_path)
+            # Convert relative db_path and db_path_backup to absolute paths
+            for key in ["db_path", "db_path_backup"]:
+                if key in config:
+                    path = Path(config[key]).expanduser()
+                    if not path.is_absolute():
+                        path = (config_path.parent / path).resolve()
+                    config[key] = str(path)
 
             return config
     except FileNotFoundError:
@@ -43,3 +49,4 @@ def load_config() -> ConfigDict:
 config: ConfigDict = load_config()
 PORT: Literal[8000, 8001] = config["port"]  # type: ignore
 DB_PATH: str = config["db_path"]
+DB_PATH_BACKUP: str = config["db_path_backup"]

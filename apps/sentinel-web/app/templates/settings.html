@@ -1,0 +1,24 @@
+{% extends "base.html" %} {% block title %}Settings{% endblock %} {% block
+content %}
+<div class="container mx-auto">
+  <h1 class="text-3xl font-bold mb-4">Settings</h1>
+
+  <div class="mb-4">
+    <h2 class="text-xl font-semibold mb-2">Database Backup</h2>
+    <form
+      hx-post="/settings/backup"
+      hx-target="#backup-message"
+      hx-swap="innerHTML"
+      class="mb-2"
+    >
+      <button
+        type="submit"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Backup Database
+      </button>
+    </form>
+    <div id="backup-message"></div>
+  </div>
+</div>
+{% endblock %}

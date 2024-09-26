@@ -1,4 +1,5 @@
 {
   "port": 8001,
-  "db_path": "~/local-db/sentinel-db/sentinel.db"
+  "db_path": "~/local-db/sentinel-db/sentinel.db",
+  "db_path_backup": "~/local-db/sentinel-db/sentinel_backup.db"
 }

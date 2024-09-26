@@ -9,11 +9,13 @@ This project is a Python web application using Tailwind CSS for styling and Alem
 │   ├── routes/
 │   │   ├── hello.py
 │   │   ├── home.py
-│   │   └── members.py
+│   │   ├── members.py
+│   │   └── settings.py  # Add this line
 │   ├── templates/
 │   │   ├── base.html
 │   │   ├── hello.html
 │   │   ├── home.html
+│   │   ├── settings.html  # Add this line
 │   │   └── members/
 │   │       ├── list.html
 │   │       └── member_row.html
@@ -123,3 +125,10 @@ The application can be configured using the `config.json` file in the root direc
 
 - `port`: The port number on which the application will run (default: 8000)
 - `db_path`: The path to the SQLite database file (default: "./sentinel.db")
+
+## Features
+
+- Home page
+- Say Hello page
+- Team Members management
+- Settings page with database backup functionality # Add this line
