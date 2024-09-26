@@ -32,4 +32,5 @@ done
 # Return to the original directory
 cd "$ORIGINAL_DIR"
 
+# Install Python dependencies
 pip install -r requirements.txt
