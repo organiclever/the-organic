@@ -30,7 +30,7 @@ async def list_members(
 ):
     members = await repo.list()
     return templates.TemplateResponse(
-        request,  # Change: Move request to the first argument
+        request,
         "members/list.html",
         {
             "members": members,
@@ -48,7 +48,7 @@ async def create_member(
     member_id = uuid4()
     created_member = await repo.create(id=member_id, name=name)
     return templates.TemplateResponse(
-        "members/member_row.html", {"request": request, "member": created_member}
+        request, "members/member_row.html", {"member": created_member}
     )
 
 
@@ -62,7 +62,9 @@ async def get_member(
     if member is None:
         raise HTTPException(status_code=404, detail="Member not found")
     return templates.TemplateResponse(
-        "members/detail.html", {"request": request, "member": member}
+        request,
+        "members/detail.html",
+        {"member": member, "navigation_items": navigation_items},
     )
 
 
@@ -73,11 +75,11 @@ async def update_member(
     member: MemberUpdate,
     repo: MemberRepository = Depends(get_member_repository),
 ):
-    updated_member = await repo.update(member_id, member.dict(exclude_unset=True))
+    updated_member = await repo.update(member_id, member.model_dump(exclude_unset=True))
     if updated_member is None:
         raise HTTPException(status_code=404, detail="Member not found")
     return templates.TemplateResponse(
-        "members/member_row.html", {"request": request, "member": updated_member}
+        request, "members/member_row.html", {"member": updated_member}
     )
 
 

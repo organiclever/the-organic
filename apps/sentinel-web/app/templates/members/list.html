@@ -28,8 +28,12 @@
       </tr>
     </thead>
     <tbody id="member-list">
-      {% for member in members %} {% include "members/member_row.html" %} {%
-      endfor %}
+      {% if members %} {% for member in members %} {% include
+      "members/member_row.html" %} {% endfor %} {% else %}
+      <tr>
+        <td colspan="2" class="text-center py-4">No members found</td>
+      </tr>
+      {% endif %}
     </tbody>
   </table>
 </div>
