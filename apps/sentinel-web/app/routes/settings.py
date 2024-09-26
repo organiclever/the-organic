@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request  # Add Request import
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from app.database import db_session, backup_database, restore_database
+from app.db import db_session, backup_database, restore_database
 from app.navigation import navigation_items  # Import navigation items
 from datetime import datetime
 import asyncio
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 @router.post("/settings/backup")
 async def backup_db():
     try:
-        success, message = backup_database()
+        success, message = await backup_database()
         if success:
             logger.info(f"Database backed up successfully at {message}")
             return HTMLResponse(
@@ -40,7 +40,7 @@ async def backup_db():
 @router.post("/settings/restore")
 async def restore_db():
     try:
-        success, message = restore_database()
+        success, message = await restore_database()
         if success:
             logger.info(f"Database restored successfully at {message}")
             return HTMLResponse(
