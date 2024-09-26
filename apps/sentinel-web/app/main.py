@@ -5,7 +5,7 @@ import uvicorn
 from starlette.middleware.base import RequestResponseEndpoint
 from starlette.responses import Response
 
-from app.routes import home, hello
+from app.routes import home, hello, members
 from app.navigation import navigation_items
 from app.config import PORT
 
@@ -27,6 +27,7 @@ async def add_navigation_to_request(
 # Include routers
 app.include_router(home.router)
 app.include_router(hello.router)
+app.include_router(members.router)
 
 if __name__ == "__main__":
     uvicorn.run("app.main:app", host="0.0.0.0", port=PORT, reload=True)

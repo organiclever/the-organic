@@ -1,0 +1,20 @@
+<tr id="member-{{ member.id }}">
+  <td>{{ member.name }}</td>
+  <td>
+    <button
+      hx-get="/members/{{ member.id }}"
+      hx-target="#member-detail"
+      class="text-blue-500"
+    >
+      View
+    </button>
+    <button
+      hx-delete="/members/{{ member.id }}"
+      hx-target="#member-{{ member.id }}"
+      hx-swap="outerHTML"
+      class="text-red-500"
+    >
+      Delete
+    </button>
+  </td>
+</tr>

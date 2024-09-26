@@ -1,0 +1,36 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mx-auto">
+  <h1 class="text-3xl font-bold mb-4">Team Members</h1>
+
+  <form
+    hx-post="/members"
+    hx-target="#member-list"
+    hx-swap="beforeend"
+    class="mb-4"
+  >
+    <input
+      type="text"
+      name="name"
+      placeholder="Enter member name"
+      required
+      class="border p-2 mr-2"
+    />
+    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
+      Add Member
+    </button>
+  </form>
+
+  <table class="w-full">
+    <thead>
+      <tr>
+        <th class="text-left">Name</th>
+        <th class="text-left">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="member-list">
+      {% for member in members %} {% include "members/member_row.html" %} {%
+      endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
