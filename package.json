@@ -39,7 +39,8 @@
   "license": "MIT",
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown",
-    "**/*.fs": "dotnet tool run fantomas"
+    "**/*.fs": "dotnet tool run fantomas",
+    "**/*.py": "black"
   },
   "name": "the-organic",
   "scripts": {
@@ -47,7 +48,8 @@
     "khadim:build": "dotnet publish the-khadim/khadim.fsproj -c Release -o ./the-khadim-published && chmod +x ./khadim",
     "khadim:test:unit": "cd the-khadim/khadim.Tests && dotnet test",
     "khadim": "dotnet ./the-khadim-published/khadim.dll",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "format:py": "black apps/sentinel-web"
   },
   "version": "1.0.0",
   "volta": {
