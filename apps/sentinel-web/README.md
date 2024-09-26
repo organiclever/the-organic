@@ -1,6 +1,6 @@
 # Python Web Application with Tailwind CSS
 
-This project is a Python web application using Tailwind CSS for styling.
+This project is a Python web application using Tailwind CSS for styling and Alembic for database migrations.
 
 ## Project Structure
 
@@ -19,12 +19,19 @@ This project is a Python web application using Tailwind CSS for styling.
 │   │       └── member_row.html
 │   ├── config.py
 │   └── main.py
+├── migrations/
+│   ├── versions/
+│   │   └── ...
+│   ├── env.py
+│   ├── README
+│   └── script.py.mako
 ├── src/
 │   └── input.css
 ├── tests/
 │   └── unit/
 │       ├── test_hello.py
 │       └── test_home.py
+├── alembic.ini
 ├── config.json
 ├── package.json
 ├── requirements.txt
@@ -50,6 +57,9 @@ This project is a Python web application using Tailwind CSS for styling.
 5. Build the CSS:
    `npm run build-css`
 
+6. Set up the database and run migrations:
+   `alembic upgrade head`
+
 ## Running the Application
 
 To run the application in development mode with live reloading:
@@ -69,6 +79,20 @@ To run the tests:
 For development with live reloading of CSS:
 
 `npm run watch-css`
+
+## Database Migrations
+
+We use Alembic for database migrations. To create a new migration:
+
+`alembic revision --autogenerate -m "Description of the change"`
+
+To apply migrations:
+
+`alembic upgrade head`
+
+To revert the last migration:
+
+`alembic downgrade -1`
 
 ## Contributing
 
