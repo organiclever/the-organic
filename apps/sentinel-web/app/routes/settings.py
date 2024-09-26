@@ -40,3 +40,27 @@ async def backup_database(request: Request, db: AsyncSession = Depends(get_db)):
         message = f"Backup failed: {str(e)}"
 
     return f'<p class="text-green-600">{message}</p>'
+
+
+@router.post("/settings/restore", response_class=PlainTextResponse)
+async def restore_database(request: Request, db: AsyncSession = Depends(get_db)):
+    try:
+        source_path = Path(config["db_path_backup"]).expanduser()
+        restore_path = Path(config["db_path"]).expanduser()
+
+        # Check if backup file exists
+        if not source_path.exists():
+            return f'<p class="text-red-600">Backup file not found: {source_path}</p>'
+
+        # Close the database connection
+        await db.close()
+
+        # Perform the restore
+        shutil.copy2(source_path, restore_path)
+
+        restore_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        message = f"Database restored successfully at {restore_time}"
+    except Exception as e:
+        message = f"Restore failed: {str(e)}"
+
+    return f'<p class="text-green-600">{message}</p>'
