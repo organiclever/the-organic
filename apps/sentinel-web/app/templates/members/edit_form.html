@@ -1,0 +1,46 @@
+<tr id="member-{{ member.id }}">
+  <form
+    id="edit-form-{{ member.id }}"
+    hx-put="/members/{{ member.id }}"
+    hx-target="#member-{{ member.id }}"
+    hx-swap="outerHTML"
+    hx-indicator="#loading-{{ member.id }}"
+  >
+    <td>
+      <input
+        type="text"
+        name="name"
+        value="{{ member.name }}"
+        required
+        class="border p-1 w-full"
+      />
+    </td>
+    <td>
+      <input
+        type="text"
+        name="github_account"
+        value="{{ member.github_account }}"
+        required
+        class="border p-1 w-full"
+      />
+    </td>
+    <td class="text-right">
+      <button type="submit" class="text-green-500 hover:text-green-700">
+        Save
+      </button>
+      <span class="text-gray-400 ml-2">|</span>
+      <button
+        type="button"
+        hx-get="/members/{{ member.id }}/cancel-edit"
+        hx-target="#member-{{ member.id }}"
+        hx-swap="outerHTML"
+        class="text-gray-500 hover:text-gray-700 ml-2"
+      >
+        Cancel
+      </button>
+      <span id="loading-{{ member.id }}" class="htmx-indicator"
+        >Loading...</span
+      >
+    </td>
+  </form>
+</tr>

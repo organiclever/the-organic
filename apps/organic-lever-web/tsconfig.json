@@ -21,7 +21,7 @@
       "@/*": ["./src/*"],
       "@libs/*": ["../../libs/*"]
     },
-    "types": ["jest", "node"]
+    "types": ["jest", "node", "vitest/globals"]
   },
   "include": [
     "next-env.d.ts",

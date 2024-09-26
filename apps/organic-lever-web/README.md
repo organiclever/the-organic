@@ -21,6 +21,17 @@ This is the Organic Lever web application, part of The Organic monorepo.
 - `test:organic-lever-web:watch`: Run tests in watch mode
 - `clean:organic-lever-web`: Clean build artifacts
 
+## Testing
+
+This project uses Vitest for testing. Here are the available test commands:
+
+- `npm run test`: Run tests once
+- `npm run test:watch`: Run tests in watch mode
+- `npm run test:ui`: Run tests with UI
+- `npm run coverage`: Run tests with coverage
+
+To write tests, create files with the `.test.tsx` or `.test.ts` extension next to the files you want to test.
+
 ## Contributing
 
 Please ensure to run tests and linting before submitting pull requests:
