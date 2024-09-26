@@ -13,15 +13,18 @@ templates: Jinja2Templates = Jinja2Templates(directory="app/templates")
 
 class MemberCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
+    github_account: str = Field(..., min_length=1, max_length=100)
 
 
 class MemberUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=100)
+    github_account: Optional[str] = Field(None, min_length=1, max_length=100)
 
 
 class Member(BaseModel):
     id: UUID
     name: str
+    github_account: str
 
 
 @router.get("/members", response_class=HTMLResponse)
@@ -43,10 +46,13 @@ async def list_members(
 async def create_member(
     request: Request,
     name: str = Form(...),
+    github_account: str = Form(...),
     repo: MemberRepository = Depends(get_member_repository),
 ):
     member_id = uuid4()
-    created_member = await repo.create(id=member_id, name=name)
+    created_member = await repo.create(
+        id=member_id, name=name, github_account=github_account
+    )
     return templates.TemplateResponse(
         request, "members/member_row.html", {"member": created_member}
     )

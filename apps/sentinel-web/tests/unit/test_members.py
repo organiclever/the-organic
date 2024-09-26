@@ -1,6 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from uuid import UUID, uuid4
+from typing import Dict, List, Optional
 from app.main import app
 from app.repositories.member_repository import MemberRepository
 from app.routes.members import get_member_repository
@@ -9,26 +10,26 @@ from contextlib import asynccontextmanager
 
 class InMemoryMemberRepository(MemberRepository):
     def __init__(self):
-        self.members = {}
+        self.members: Dict[UUID, Dict[str, str]] = {}
 
-    async def create(self, id: UUID, name: str):
-        member = {"id": id, "name": name}
+    async def create(self, id: UUID, name: str, github_account: str) -> Dict[str, str]:
+        member = {"id": str(id), "name": name, "github_account": github_account}
         self.members[id] = member
         return member
 
-    async def get(self, id: UUID):
+    async def get(self, id: UUID) -> Optional[Dict[str, str]]:
         return self.members.get(id)
 
-    async def list(self):
+    async def list(self) -> List[Dict[str, str]]:
         return list(self.members.values())
 
-    async def update(self, id: UUID, data: dict):
+    async def update(self, id: UUID, data: Dict[str, str]) -> Optional[Dict[str, str]]:
         if id in self.members:
             self.members[id].update(data)
             return self.members[id]
         return None
 
-    async def delete(self, id: UUID):
+    async def delete(self, id: UUID) -> bool:
         return self.members.pop(id, None) is not None
 
 
@@ -60,15 +61,11 @@ def override_get_repository(in_memory_repo):
 async def test_list_members(client, override_get_repository, in_memory_repo):
     async with override_get_repository():
         # Add some test data
-        await in_memory_repo.create(uuid4(), "Test Member 1")
-        await in_memory_repo.create(uuid4(), "Test Member 2")
+        await in_memory_repo.create(uuid4(), "Test Member 1", "github1")
+        await in_memory_repo.create(uuid4(), "Test Member 2", "github2")
 
         response = client.get("/members")
         assert response.status_code == 200
-
-        # Print the response content for debugging
-        print(response.text)
-
         assert "Test Member 1" in response.text
         assert "Test Member 2" in response.text
 
@@ -76,7 +73,9 @@ async def test_list_members(client, override_get_repository, in_memory_repo):
 @pytest.mark.asyncio
 async def test_create_member(client, override_get_repository):
     async with override_get_repository():
-        response = client.post("/members", data={"name": "New Member"})
+        response = client.post(
+            "/members", data={"name": "New Member", "github_account": "newgithub"}
+        )
         assert response.status_code == 200
         assert "New Member" in response.text
 
@@ -85,7 +84,7 @@ async def test_create_member(client, override_get_repository):
 async def test_get_member(client, override_get_repository, in_memory_repo):
     async with override_get_repository():
         member_id = uuid4()
-        await in_memory_repo.create(member_id, "Test Member")
+        await in_memory_repo.create(member_id, "Test Member", "testgithub")
 
         response = client.get(f"/members/{member_id}")
         assert response.status_code == 200
@@ -98,9 +97,12 @@ async def test_get_member(client, override_get_repository, in_memory_repo):
 async def test_update_member(client, override_get_repository, in_memory_repo):
     async with override_get_repository():
         member_id = uuid4()
-        await in_memory_repo.create(member_id, "Old Name")
+        await in_memory_repo.create(member_id, "Old Name", "oldgithub")
 
-        response = client.put(f"/members/{member_id}", json={"name": "Updated Name"})
+        response = client.put(
+            f"/members/{member_id}",
+            json={"name": "Updated Name", "github_account": "updatedgithub"},
+        )
         assert response.status_code == 200
         assert "Updated Name" in response.text
 
@@ -109,7 +111,7 @@ async def test_update_member(client, override_get_repository, in_memory_repo):
 async def test_delete_member(client, override_get_repository, in_memory_repo):
     async with override_get_repository():
         member_id = uuid4()
-        await in_memory_repo.create(member_id, "To Be Deleted")
+        await in_memory_repo.create(member_id, "To Be Deleted", "deletegithub")
 
         response = client.delete(f"/members/{member_id}")
         assert response.status_code == 200

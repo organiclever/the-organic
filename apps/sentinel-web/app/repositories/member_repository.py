@@ -11,22 +11,37 @@ class MemberRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create(self, id: UUID, name: str) -> Dict[str, str]:
-        new_member = Member(id=id, name=name)
+    async def create(self, id: UUID, name: str, github_account: str) -> Dict[str, str]:
+        new_member = Member(id=id, name=name, github_account=github_account)
         self.session.add(new_member)
         await self.session.commit()
-        return {"id": str(new_member.id), "name": str(new_member.name)}
+        return {
+            "id": str(new_member.id),
+            "name": str(new_member.name),
+            "github_account": str(new_member.github_account),
+        }
 
     async def list(self) -> List[Dict[str, str]]:
         result = await self.session.execute(select(Member))
         members = result.scalars().all()
-        return [{"id": str(member.id), "name": str(member.name)} for member in members]
+        return [
+            {
+                "id": str(member.id),
+                "name": str(member.name),
+                "github_account": str(member.github_account),
+            }
+            for member in members
+        ]
 
     async def get(self, id: UUID) -> Optional[Dict[str, str]]:
         try:
             result = await self.session.execute(select(Member).filter(Member.id == id))
             member = result.scalar_one()
-            return {"id": str(member.id), "name": str(member.name)}
+            return {
+                "id": str(member.id),
+                "name": str(member.name),
+                "github_account": str(member.github_account),
+            }
         except NoResultFound:
             return None
 
