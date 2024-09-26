@@ -1,69 +1,46 @@
-import sqlite3
 from uuid import UUID
-from typing import List, Optional, Dict, Union
-import aiosqlite
-from app.config import DB_PATH
+from typing import List, Optional, Dict
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, update, delete
+from sqlalchemy.exc import NoResultFound
+from app.db import get_db
+from app.models import Member
 
 
 class MemberRepository:
-    def __init__(self, db_path: str = DB_PATH):
-        self.db_path = db_path
+    def __init__(self, session: AsyncSession):
+        self.session = session
 
-    async def _init_db(self) -> None:
-        async with aiosqlite.connect(self.db_path) as db:
-            await db.execute(
-                """
-                CREATE TABLE IF NOT EXISTS members (
-                    id TEXT PRIMARY KEY,
-                    name TEXT NOT NULL
-                )
-            """
-            )
-            await db.commit()
+    async def create(self, id: UUID, name: str) -> Dict[str, str]:
+        new_member = Member(id=id, name=name)
+        self.session.add(new_member)
+        await self.session.commit()
+        return {"id": str(new_member.id), "name": str(new_member.name)}
 
-    async def create(self, id: UUID, name: str) -> Dict[str, Union[UUID, str]]:
-        await self._init_db()
-        async with aiosqlite.connect(self.db_path) as db:
-            await db.execute(
-                "INSERT INTO members (id, name) VALUES (?, ?)", (str(id), name)
-            )
-            await db.commit()
-        return {"id": id, "name": name}
+    async def list(self) -> List[Dict[str, str]]:
+        result = await self.session.execute(select(Member))
+        members = result.scalars().all()
+        return [{"id": str(member.id), "name": str(member.name)} for member in members]
 
-    async def list(self) -> List[Dict[str, Union[UUID, str]]]:
-        await self._init_db()
-        async with aiosqlite.connect(self.db_path) as db:
-            async with db.execute("SELECT id, name FROM members") as cursor:
-                rows = await cursor.fetchall()
-        return [{"id": UUID(row[0]), "name": row[1]} for row in rows]
+    async def get(self, id: UUID) -> Optional[Dict[str, str]]:
+        try:
+            result = await self.session.execute(select(Member).filter(Member.id == id))
+            member = result.scalar_one()
+            return {"id": str(member.id), "name": str(member.name)}
+        except NoResultFound:
+            return None
 
-    async def get(self, id: UUID) -> Optional[Dict[str, Union[UUID, str]]]:
-        await self._init_db()
-        async with aiosqlite.connect(self.db_path) as db:
-            async with db.execute(
-                "SELECT id, name FROM members WHERE id = ?", (str(id),)
-            ) as cursor:
-                row = await cursor.fetchone()
-        return {"id": UUID(row[0]), "name": row[1]} if row else None
-
-    async def update(
-        self, id: UUID, data: Dict[str, str]
-    ) -> Optional[Dict[str, Union[UUID, str]]]:
-        await self._init_db()
-        set_clause = ", ".join(f"{key} = ?" for key in data.keys())
-        values = list(data.values()) + [str(id)]
-        async with aiosqlite.connect(self.db_path) as db:
-            await db.execute(f"UPDATE members SET {set_clause} WHERE id = ?", values)
-            await db.commit()
+    async def update(self, id: UUID, data: Dict[str, str]) -> Optional[Dict[str, str]]:
+        await self.session.execute(update(Member).where(Member.id == id).values(**data))
+        await self.session.commit()
         return await self.get(id)
 
     async def delete(self, id: UUID) -> bool:
-        await self._init_db()
-        async with aiosqlite.connect(self.db_path) as db:
-            cursor = await db.execute("DELETE FROM members WHERE id = ?", (str(id),))
-            await db.commit()
-        return cursor.rowcount > 0
+        result = await self.session.execute(delete(Member).where(Member.id == id))
+        await self.session.commit()
+        return result.rowcount > 0
 
 
 async def get_member_repository() -> MemberRepository:
-    return MemberRepository(DB_PATH)
+    session = await anext(get_db())
+    return MemberRepository(session)

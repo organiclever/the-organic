@@ -7,3 +7,5 @@ black
 aiosqlite
 pytest-asyncio
 pytest-watch
+alembic
+greenlet

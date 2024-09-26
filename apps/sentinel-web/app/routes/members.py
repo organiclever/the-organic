@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Form
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 from uuid import UUID, uuid4
-from typing import List, Optional
+from typing import Optional
 from app.repositories.member_repository import MemberRepository, get_member_repository
 from fastapi.templating import Jinja2Templates
 from app.navigation import navigation_items  # Add this import
