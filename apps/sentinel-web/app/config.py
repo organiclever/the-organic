@@ -1,6 +1,10 @@
 import json
 from pathlib import Path
 from typing import Dict, Union, TypedDict, Literal
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class ConfigDict(TypedDict):
@@ -50,3 +54,4 @@ config: ConfigDict = load_config()
 PORT: Literal[8000, 8001] = config["port"]  # type: ignore
 DB_PATH: str = config["db_path"]
 DB_PATH_BACKUP: str = config["db_path_backup"]
+DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{DB_PATH}")

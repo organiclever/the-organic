@@ -2,9 +2,29 @@ from datetime import datetime
 import logging
 import shutil
 from typing import Tuple
-from app.config import DB_PATH, DB_PATH_BACKUP
+from contextlib import contextmanager
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, scoped_session
+from app.config import DB_PATH, DB_PATH_BACKUP, DATABASE_URL
 
 logger = logging.getLogger(__name__)
+
+engine = create_engine(DATABASE_URL)
+Session = scoped_session(sessionmaker(bind=engine))
+
+
+@contextmanager
+def db_session():
+    session = Session()
+    try:
+        yield session
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+        Session.remove()  # This explicitly removes the session from the registry
 
 
 def backup_database() -> Tuple[bool, str]:

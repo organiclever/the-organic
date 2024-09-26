@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request  # Add Request import
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from app.database import backup_database, restore_database
+from app.database import db_session, backup_database, restore_database
 from app.navigation import navigation_items  # Import navigation items
 from datetime import datetime
 import asyncio
@@ -19,11 +19,15 @@ logger = logging.getLogger(__name__)
 @router.post("/settings/backup")
 async def backup_db():
     try:
-        backup_time = await asyncio.to_thread(backup_database)
-        logger.info(f"Database backed up successfully at {backup_time}")
-        return HTMLResponse(
-            f'<p class="text-green-600">Database backed up successfully at {backup_time}</p>'
-        )
+        success, message = backup_database()
+        if success:
+            logger.info(f"Database backed up successfully at {message}")
+            return HTMLResponse(
+                f'<p class="text-green-600">Database backed up successfully at {
+                    message}</p>'
+            )
+        else:
+            raise HTTPException(status_code=500, detail=message)
     except Exception as e:
         logger.error(f"Error backing up database: {str(e)}")
         logger.error(traceback.format_exc())
@@ -36,11 +40,15 @@ async def backup_db():
 @router.post("/settings/restore")
 async def restore_db():
     try:
-        restore_time = await asyncio.to_thread(restore_database)
-        logger.info(f"Database restored successfully at {restore_time}")
-        return HTMLResponse(
-            f'<p class="text-green-600">Database restored successfully at {restore_time}</p>'
-        )
+        success, message = restore_database()
+        if success:
+            logger.info(f"Database restored successfully at {message}")
+            return HTMLResponse(
+                f'<p class="text-green-600">Database restored successfully at {
+                    message}</p>'
+            )
+        else:
+            raise HTTPException(status_code=500, detail=message)
     except Exception as e:
         logger.error(f"Error restoring database: {str(e)}")
         logger.error(traceback.format_exc())
