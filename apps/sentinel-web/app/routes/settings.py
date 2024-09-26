@@ -1,66 +1,68 @@
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, HTTPException
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, PlainTextResponse
-from app.config import config
-from app.db import get_db
-from sqlalchemy.ext.asyncio import AsyncSession
-import shutil
+from app.database import backup_database, restore_database
+from app.navigation import navigation_items  # Import navigation items
 from datetime import datetime
-from pathlib import Path
+import asyncio
+import logging
+import traceback
 
-router: APIRouter = APIRouter()
-templates: Jinja2Templates = Jinja2Templates(directory="app/templates")
+router = APIRouter()
+templates = Jinja2Templates(directory="app/templates")
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
-@router.get("/settings", response_class=HTMLResponse)
+@router.post("/settings/backup")
+async def backup_db():
+    try:
+        backup_time = await asyncio.to_thread(backup_database)
+        logger.info(f"Database backed up successfully at {backup_time}")
+        return HTMLResponse(
+            f'<p class="text-green-600">Database backed up successfully at {backup_time}</p>'
+        )
+    except Exception as e:
+        logger.error(f"Error backing up database: {str(e)}")
+        logger.error(traceback.format_exc())
+        return HTMLResponse(
+            f'<p class="text-red-600">Error backing up database: {str(e)}</p>',
+            status_code=500,
+        )
+
+
+@router.post("/settings/restore")
+async def restore_db():
+    try:
+        restore_time = await asyncio.to_thread(restore_database)
+        logger.info(f"Database restored successfully at {restore_time}")
+        return HTMLResponse(
+            f'<p class="text-green-600">Database restored successfully at {restore_time}</p>'
+        )
+    except Exception as e:
+        logger.error(f"Error restoring database: {str(e)}")
+        logger.error(traceback.format_exc())
+        return HTMLResponse(
+            f'<p class="text-red-600">Error restoring database: {str(e)}</p>',
+            status_code=500,
+        )
+
+
+@router.get("/settings")
 async def settings_page(request: Request):
-    return templates.TemplateResponse(
-        request, "settings.html", {"navigation_items": request.state.navigation_items}
-    )
-
-
-@router.post("/settings/backup", response_class=PlainTextResponse)
-async def backup_database(request: Request, db: AsyncSession = Depends(get_db)):
     try:
-        source_path = Path(config["db_path"]).expanduser()
-        backup_path = Path(config["db_path_backup"]).expanduser()
-
-        # Ensure the backup directory exists
-        backup_path.parent.mkdir(parents=True, exist_ok=True)
-
-        # Close the database connection
-        await db.close()
-
-        # Perform the backup
-        shutil.copy2(source_path, backup_path)
-
-        backup_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        message = f"Database backed up successfully at {backup_time}"
+        return templates.TemplateResponse(
+            "settings.html",
+            {
+                "request": request,
+                "navigation_items": navigation_items,  # Add navigation items to the context
+            },
+        )
     except Exception as e:
-        message = f"Backup failed: {str(e)}"
+        logger.error(f"Error rendering settings page: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
-    return f'<p class="text-green-600">{message}</p>'
 
-
-@router.post("/settings/restore", response_class=PlainTextResponse)
-async def restore_database(request: Request, db: AsyncSession = Depends(get_db)):
-    try:
-        source_path = Path(config["db_path_backup"]).expanduser()
-        restore_path = Path(config["db_path"]).expanduser()
-
-        # Check if backup file exists
-        if not source_path.exists():
-            return f'<p class="text-red-600">Backup file not found: {source_path}</p>'
-
-        # Close the database connection
-        await db.close()
-
-        # Perform the restore
-        shutil.copy2(source_path, restore_path)
-
-        restore_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        message = f"Database restored successfully at {restore_time}"
-    except Exception as e:
-        message = f"Restore failed: {str(e)}"
-
-    return f'<p class="text-green-600">{message}</p>'
+# ... other routes ...

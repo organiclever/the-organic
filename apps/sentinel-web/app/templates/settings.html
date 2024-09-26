@@ -6,48 +6,30 @@ content %}
   <div class="mb-4">
     <h2 class="text-xl font-semibold mb-2">Database Management</h2>
     <div class="flex space-x-4">
-      <form
+      <button
         hx-post="/settings/backup"
         hx-target="#db-message"
         hx-swap="innerHTML"
-        class="mb-2"
+        hx-indicator="#loading"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-40"
       >
-        <button
-          type="submit"
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Backup Database
-        </button>
-      </form>
-      <form
+        Backup Database
+      </button>
+      <button
         hx-post="/settings/restore"
+        hx-confirm="Are you sure you want to restore the database? This action cannot be undone."
         hx-target="#db-message"
         hx-swap="innerHTML"
-        class="mb-2"
+        hx-indicator="#loading"
+        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-40"
       >
-        <button
-          type="submit"
-          class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded flex items-center"
-        >
-          <svg
-            class="w-5 h-5 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-            ></path>
-          </svg>
-          Restore Database
-        </button>
-      </form>
+        Restore Database
+      </button>
     </div>
-    <div id="db-message"></div>
+    <div id="db-message" class="mt-4"></div>
+    <div id="loading" class="htmx-indicator">
+      <p class="text-blue-600">Processing, please wait...</p>
+    </div>
   </div>
 </div>
 {% endblock %}
