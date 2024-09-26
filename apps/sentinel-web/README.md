@@ -8,10 +8,17 @@ This project is a Python web application using Tailwind CSS for styling.
 ├── app/
 │   ├── routes/
 │   │   ├── hello.py
-│   │   └── home.py
-│   └── templates/
-│       ├── hello.html
-│       └── home.html
+│   │   ├── home.py
+│   │   └── members.py
+│   ├── templates/
+│   │   ├── base.html
+│   │   ├── hello.html
+│   │   ├── home.html
+│   │   └── members/
+│   │       ├── list.html
+│   │       └── member_row.html
+│   ├── config.py
+│   └── main.py
 ├── src/
 │   └── input.css
 ├── tests/
@@ -76,21 +83,15 @@ This project is licensed under the MIT License - see the LICENSE.md file for det
 1. Make sure you have Python 3.12 and Node.js installed.
 2. Run `npm install` to set up the project and install dependencies.
 3. Activate the virtual environment:
-   ```
-   source sentinel-web/bin/activate
-   ```
+   `source sentinel-web/bin/activate`
 4. Set the `PYTHONPATH`:
-   ```
-   export PYTHONPATH=$PYTHONPATH:$(pwd)
-   ```
+   `export PYTHONPATH=$PYTHONPATH:$(pwd)`
 
 ## Development
 
 For development with live reloading of CSS:
 
-```
-npm run
-```
+`npm run dev`
 
 ## Configuration
 
