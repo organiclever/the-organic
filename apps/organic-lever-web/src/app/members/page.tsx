@@ -1,10 +1,12 @@
-import { hello } from "@libs/hello";
+"use client";
+
+import MemberList from "@/components/MemberList";
 
 export default function MembersPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center">
-      <h1 className="text-4xl font-bold mb-4">{hello("Members")}</h1>
-      <p className="text-xl">Welcome to the members page!</p>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">Members Page</h1>
+      <MemberList />
     </div>
   );
 }
