@@ -31,3 +31,5 @@ done
 
 # Return to the original directory
 cd "$ORIGINAL_DIR"
+
+pip install -r requirements.txt
