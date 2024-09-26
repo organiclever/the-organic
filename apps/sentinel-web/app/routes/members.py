@@ -68,9 +68,12 @@ async def get_member(
     if member is None:
         raise HTTPException(status_code=404, detail="Member not found")
     return templates.TemplateResponse(
-        request,
         "members/detail.html",
-        {"member": member, "navigation_items": navigation_items},
+        {
+            "request": request,
+            "member": member,
+            "navigation_items": request.state.navigation_items,
+        },
     )
 
 

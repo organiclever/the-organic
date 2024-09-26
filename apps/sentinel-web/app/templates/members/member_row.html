@@ -2,18 +2,17 @@
   <td>{{ member.name }}</td>
   <td>{{ member.github_account }}</td>
   <td>
-    <button
-      hx-get="/members/{{ member.id }}"
-      hx-target="#member-detail"
-      class="text-blue-500"
+    <a
+      href="/members/{{ member.id }}"
+      class="text-blue-500 hover:text-blue-700"
     >
       View
-    </button>
+    </a>
     <button
       hx-delete="/members/{{ member.id }}"
       hx-target="#member-{{ member.id }}"
       hx-swap="outerHTML"
-      class="text-red-500"
+      class="text-red-500 hover:text-red-700 ml-2"
     >
       Delete
     </button>
