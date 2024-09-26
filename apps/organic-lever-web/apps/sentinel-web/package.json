@@ -1,5 +1,0 @@
-{
-  "scripts": {
-    "test:unit": "python -m venv sentinel-web-env && source sentinel-web-env/bin/activate && PYTHONPATH=$PWD pyright && PYTHONPATH=$PWD pytest tests/unit -n auto -v"
-  }
-}
