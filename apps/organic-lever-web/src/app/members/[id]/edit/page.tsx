@@ -2,6 +2,7 @@
 
 import { useParams } from "next/navigation";
 import MemberForm from "@/components/MemberForm";
+import Spinner from "@/components/Spinner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const fetchMember = async (id: string) => {
@@ -26,7 +27,7 @@ export default function EditMemberPage() {
     staleTime: 0, // This ensures the data is always fetched
   });
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Spinner />;
   if (error) return <div>Error: {(error as Error).message}</div>;
 
   return (

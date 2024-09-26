@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
+import Spinner from "@/components/Spinner";
 
 interface Member {
   id: string;
@@ -53,7 +54,7 @@ export default function MemberList() {
     deleteMutation.mutate(id);
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Spinner />;
   if (error) return <div>Error: {(error as Error).message}</div>;
 
   return (
