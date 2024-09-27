@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
+import {
+  Pencil1Icon,
+  TrashIcon,
+  MagnifyingGlassIcon,
+} from "@radix-ui/react-icons";
 
 type TeamRole =
   | "Backend Developer"
@@ -76,18 +80,33 @@ export default function MembersPage() {
   const [displayedMembers, setDisplayedMembers] = useState<Member[]>([]);
   const [editingMember, setEditingMember] = useState<Member | null>(null);
   const [page, setPage] = useState(1);
-  const loader = useRef(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const loader = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMembers(mockMembers);
     setDisplayedMembers(mockMembers.slice(0, 10));
   }, []);
 
+  useEffect(() => {
+    const filteredMembers = members.filter((member) =>
+      member.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setDisplayedMembers(filteredMembers.slice(0, 10));
+    setPage(1);
+  }, [searchTerm, members]);
+
   const loadMore = () => {
     const nextPage = page + 1;
     const start = (nextPage - 1) * 10;
     const end = start + 10;
-    setDisplayedMembers([...displayedMembers, ...members.slice(start, end)]);
+    const filteredMembers = members.filter((member) =>
+      member.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setDisplayedMembers([
+      ...displayedMembers,
+      ...filteredMembers.slice(start, end),
+    ]);
     setPage(nextPage);
   };
 
@@ -109,7 +128,7 @@ export default function MembersPage() {
     }
 
     return () => observer.disconnect();
-  }, [displayedMembers, members]);
+  }, [displayedMembers, members, loadMore]);
 
   const addMember = (member: Omit<Member, "id">) => {
     const newMember = { ...member, id: Date.now() };
@@ -117,9 +136,9 @@ export default function MembersPage() {
     setDisplayedMembers([...displayedMembers, newMember]);
   };
 
-  const updateMember = (updatedMember: Member) => {
+  const updateMember = (updatedMember: Omit<Member, "id">) => {
     const updatedMembers = members.map((m) =>
-      m.id === updatedMember.id ? updatedMember : m
+      m.id === editingMember?.id ? { ...updatedMember, id: m.id } : m
     );
     setMembers(updatedMembers);
     setDisplayedMembers(updatedMembers.slice(0, displayedMembers.length));
@@ -132,18 +151,6 @@ export default function MembersPage() {
     setDisplayedMembers(updatedMembers.slice(0, displayedMembers.length));
   };
 
-  const handleEdit = (member: Member) => {
-    setEditingMember(member);
-    setFormData({
-      name: member.name,
-      githubId: member.githubId,
-      jiraId: member.jiraId || "",
-      slackId: member.slackId || "",
-      teamRole: member.teamRole,
-      squad: member.squad,
-    });
-  };
-
   return (
     <>
       <h1 className="text-3xl font-bold mb-6 text-center">Team Members</h1>
@@ -154,21 +161,23 @@ export default function MembersPage() {
         <MemberForm
           onSubmit={editingMember ? updateMember : addMember}
           initialData={editingMember}
-          onCancel={() => {
-            setEditingMember(null);
-            setFormData({
-              name: "",
-              githubId: "",
-              jiraId: "",
-              slackId: "",
-              teamRole: "Backend Developer",
-              squad: "Core Banking",
-            });
-          }}
+          onCancel={() => setEditingMember(null)}
         />
       </div>
       <div className="bg-white rounded-lg shadow-md p-6">
         <h2 className="text-xl font-semibold mb-4">Member List</h2>
+        <div className="mb-4 relative">
+          <input
+            type="text"
+            placeholder="Search members..."
+            value={searchTerm}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setSearchTerm(e.target.value)
+            }
+            className="pl-10 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+          />
+          <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        </div>
         <div className="space-y-4">
           {displayedMembers.map((member) => (
             <div
@@ -235,12 +244,6 @@ function MemberForm({ onSubmit, initialData, onCancel }: MemberFormProps) {
       squad: "Core Banking",
     }
   );
-
-  useEffect(() => {
-    if (initialData) {
-      setFormData(initialData);
-    }
-  }, [initialData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
