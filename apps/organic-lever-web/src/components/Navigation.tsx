@@ -21,9 +21,15 @@ const navItems: NavItem[] = [
     name: "Teams",
     href: "/teams",
     children: [
-      { name: "Members", href: "/teams/members" },
-      { name: "Roles", href: "/teams/roles" },
-      { name: "Squads", href: "/teams/squads" },
+      {
+        name: "Management",
+        href: "/teams/management",
+        children: [
+          { name: "Members", href: "/teams/management/members" },
+          { name: "Roles", href: "/teams/management/roles" },
+          { name: "Squads", href: "/teams/management/squads" },
+        ],
+      },
     ],
   },
   {
@@ -108,12 +114,14 @@ function NavItem({ item, toggleSidebar, isMobile, level }: NavItemProps) {
   const [isOpen, setIsOpen] = useState(level < 2);
 
   const toggleOpen = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsOpen(!isOpen);
+    if (item.children) {
+      e.preventDefault();
+      setIsOpen(!isOpen);
+    }
   };
 
   const handleClick = () => {
-    if (isMobile) {
+    if (isMobile && !item.children) {
       toggleSidebar();
     }
   };
@@ -123,7 +131,9 @@ function NavItem({ item, toggleSidebar, isMobile, level }: NavItemProps) {
       <div className="flex items-center">
         <Link
           href={item.href}
-          className="hover:text-primary-foreground/80 w-full block py-2"
+          className={`hover:text-primary-foreground/80 w-full block py-2 ${
+            level > 0 ? "pl-4" : ""
+          }`}
           onClick={handleClick}
         >
           {item.name}

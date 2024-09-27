@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import TeamRolesPage from "@/app/teams/roles/page";
+import TeamRolesPage from "@/app/teams/management/roles/page";
 
 // Mock the Radix UI icons
 vi.mock("@radix-ui/react-icons", () => ({

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import MembersPage from "@/app/teams/members/page";
+import MembersPage from "@/app/teams/management/members/page";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 
