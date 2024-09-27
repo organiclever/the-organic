@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   ChevronDownIcon,
   ChevronRightIcon,
@@ -107,10 +107,13 @@ type NavItemProps = {
 function NavItem({ item, toggleSidebar, isMobile, level }: NavItemProps) {
   const [isOpen, setIsOpen] = useState(level < 2);
 
-  const toggleOpen = () => setIsOpen(!isOpen);
+  const toggleOpen = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsOpen(!isOpen);
+  };
 
   const handleClick = () => {
-    if (!item.children && isMobile) {
+    if (isMobile) {
       toggleSidebar();
     }
   };
@@ -118,31 +121,28 @@ function NavItem({ item, toggleSidebar, isMobile, level }: NavItemProps) {
   return (
     <li>
       <div className="flex items-center">
-        {item.children ? (
+        <Link
+          href={item.href}
+          className="hover:text-primary-foreground/80 w-full block py-2"
+          onClick={handleClick}
+        >
+          {item.name}
+        </Link>
+        {item.children && (
           <button
             onClick={toggleOpen}
-            className="flex items-center hover:text-primary-foreground/80 focus:outline-none focus:ring-2 focus:ring-primary-foreground/50 rounded w-full"
+            className="p-2 hover:bg-primary-foreground/10 rounded-md ml-2"
             aria-expanded={isOpen}
           >
-            {level >= 2 &&
-              (isOpen ? (
-                <ChevronDownIcon className="w-4 h-4 mr-1" />
-              ) : (
-                <ChevronRightIcon className="w-4 h-4 mr-1" />
-              ))}
-            {item.name}
+            {isOpen ? (
+              <ChevronDownIcon className="w-4 h-4" />
+            ) : (
+              <ChevronRightIcon className="w-4 h-4" />
+            )}
           </button>
-        ) : (
-          <Link
-            href={item.href}
-            className="hover:text-primary-foreground/80 w-full block"
-            onClick={handleClick}
-          >
-            {item.name}
-          </Link>
         )}
       </div>
-      {item.children && (isOpen || level < 2) && (
+      {item.children && isOpen && (
         <ul className="ml-4 mt-2 space-y-2">
           {item.children.map((child) => (
             <NavItem
