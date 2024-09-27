@@ -2,28 +2,23 @@
 
 import Link from "next/link";
 import { Users } from "lucide-react";
-import Navigation from "../components/Navigation";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navigation />
-      <div className="p-4">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-6 text-center">
-            Welcome to Organic Lever
-          </h1>
-          <div className="grid grid-cols-1 gap-6">
-            <LinkCard
-              href="/teams"
-              title="Team Management"
-              description="Manage your teams, members, roles, and squads"
-              Icon={Users}
-            />
-          </div>
-        </div>
+    <>
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        Welcome to Organic Lever
+      </h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <LinkCard
+          href="/teams"
+          title="Team Management"
+          description="Manage your teams, members, roles, and squads"
+          Icon={Users}
+        />
+        {/* Add other LinkCards here */}
       </div>
-    </div>
+    </>
   );
 }
 

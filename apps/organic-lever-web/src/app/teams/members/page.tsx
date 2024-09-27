@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
-import Navigation from "../../../components/Navigation";
 
 type TeamRole =
   | "Backend Developer"
@@ -70,121 +69,6 @@ const mockMembers: Member[] = [
     teamRole: "Engineering Manager",
     squad: "Release",
   },
-  {
-    id: 6,
-    name: "Fiona Gallagher",
-    githubId: "fiona_code",
-    teamRole: "Frontend Developer",
-    squad: "User Lifecycle",
-  },
-  {
-    id: 7,
-    name: "George Lucas",
-    githubId: "force_coder",
-    jiraId: "george.l",
-    teamRole: "SEIT",
-    squad: "Core Banking",
-  },
-  {
-    id: 8,
-    name: "Hannah Montana",
-    githubId: "pop_dev",
-    slackId: "hannah_slack",
-    teamRole: "Backend Developer",
-    squad: "Savings & Transaction",
-  },
-  {
-    id: 9,
-    name: "Ian Malcolm",
-    githubId: "chaos_theory",
-    teamRole: "Release Manager",
-    squad: "Release",
-  },
-  {
-    id: 10,
-    name: "Julia Child",
-    githubId: "cooking_code",
-    jiraId: "julia.c",
-    teamRole: "Frontend Developer",
-    squad: "User Lifecycle",
-  },
-  {
-    id: 11,
-    name: "Kevin Hart",
-    githubId: "funny_dev",
-    teamRole: "QA Engineer",
-    squad: "Core Banking",
-  },
-  {
-    id: 12,
-    name: "Lara Croft",
-    githubId: "tomb_coder",
-    slackId: "lara_slack",
-    teamRole: "Tech Lead",
-    squad: "Savings & Transaction",
-  },
-  {
-    id: 13,
-    name: "Michael Scott",
-    githubId: "paper_dev",
-    jiraId: "michael.s",
-    teamRole: "Engineering Manager",
-    squad: "User Lifecycle",
-  },
-  {
-    id: 14,
-    name: "Natasha Romanoff",
-    githubId: "black_widow",
-    teamRole: "SEIT",
-    squad: "Release",
-  },
-  {
-    id: 15,
-    name: "Oscar Wilde",
-    githubId: "witty_coder",
-    jiraId: "oscar.w",
-    slackId: "oscar_slack",
-    teamRole: "Backend Developer",
-    squad: "Core Banking",
-  },
-  {
-    id: 16,
-    name: "Peggy Carter",
-    githubId: "agent_dev",
-    teamRole: "Frontend Developer",
-    squad: "Savings & Transaction",
-  },
-  {
-    id: 17,
-    name: "Quentin Tarantino",
-    githubId: "pulp_coder",
-    jiraId: "quentin.t",
-    teamRole: "Release Manager",
-    squad: "Release",
-  },
-  {
-    id: 18,
-    name: "Ron Swanson",
-    githubId: "wood_dev",
-    teamRole: "Tech Lead",
-    squad: "User Lifecycle",
-  },
-  {
-    id: 19,
-    name: "Sherlock Holmes",
-    githubId: "detective_coder",
-    slackId: "sherlock_slack",
-    teamRole: "QA Engineer",
-    squad: "Core Banking",
-  },
-  {
-    id: 20,
-    name: "Tony Stark",
-    githubId: "iron_dev",
-    jiraId: "tony.s",
-    teamRole: "Engineering Manager",
-    squad: "Savings & Transaction",
-  },
 ];
 
 export default function MembersPage() {
@@ -248,76 +132,89 @@ export default function MembersPage() {
     setDisplayedMembers(updatedMembers.slice(0, displayedMembers.length));
   };
 
+  const handleEdit = (member: Member) => {
+    setEditingMember(member);
+    setFormData({
+      name: member.name,
+      githubId: member.githubId,
+      jiraId: member.jiraId || "",
+      slackId: member.slackId || "",
+      teamRole: member.teamRole,
+      squad: member.squad,
+    });
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navigation />
-      <div className="p-4">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-6 text-center">Team Members</h1>
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4">
-              {editingMember ? "Edit Member" : "Add New Member"}
-            </h2>
-            <MemberForm
-              onSubmit={editingMember ? updateMember : addMember}
-              initialData={editingMember}
-              onCancel={() => setEditingMember(null)}
-            />
-          </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4">Member List</h2>
-            <div className="space-y-4">
-              {displayedMembers.map((member) => (
-                <div
-                  key={member.id}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-md"
-                >
-                  <div>
-                    <h3 className="font-semibold">{member.name}</h3>
-                    <p className="text-sm text-gray-600">
-                      GitHub: {member.githubId}
-                    </p>
-                    {member.jiraId && (
-                      <p className="text-sm text-gray-600">
-                        Jira: {member.jiraId}
-                      </p>
-                    )}
-                    {member.slackId && (
-                      <p className="text-sm text-gray-600">
-                        Slack: {member.slackId}
-                      </p>
-                    )}
-                    <p className="text-sm text-gray-600">
-                      Team Role: {member.teamRole}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Squad: {member.squad}
-                    </p>
-                  </div>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => setEditingMember(member)}
-                      className="p-2 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200"
-                      aria-label="Edit member"
-                    >
-                      <Pencil1Icon />
-                    </button>
-                    <button
-                      onClick={() => deleteMember(member.id)}
-                      className="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200"
-                      aria-label="Delete member"
-                    >
-                      <TrashIcon />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div ref={loader} className="h-10" />
-          </div>
-        </div>
+    <>
+      <h1 className="text-3xl font-bold mb-6 text-center">Team Members</h1>
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 className="text-xl font-semibold mb-4">
+          {editingMember ? "Edit Member" : "Add New Member"}
+        </h2>
+        <MemberForm
+          onSubmit={editingMember ? updateMember : addMember}
+          initialData={editingMember}
+          onCancel={() => {
+            setEditingMember(null);
+            setFormData({
+              name: "",
+              githubId: "",
+              jiraId: "",
+              slackId: "",
+              teamRole: "Backend Developer",
+              squad: "Core Banking",
+            });
+          }}
+        />
       </div>
-    </div>
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-xl font-semibold mb-4">Member List</h2>
+        <div className="space-y-4">
+          {displayedMembers.map((member) => (
+            <div
+              key={member.id}
+              className="flex items-center justify-between p-4 bg-gray-50 rounded-md"
+            >
+              <div>
+                <h3 className="font-semibold">{member.name}</h3>
+                <p className="text-sm text-gray-600">
+                  GitHub: {member.githubId}
+                </p>
+                {member.jiraId && (
+                  <p className="text-sm text-gray-600">Jira: {member.jiraId}</p>
+                )}
+                {member.slackId && (
+                  <p className="text-sm text-gray-600">
+                    Slack: {member.slackId}
+                  </p>
+                )}
+                <p className="text-sm text-gray-600">
+                  Team Role: {member.teamRole}
+                </p>
+                <p className="text-sm text-gray-600">Squad: {member.squad}</p>
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setEditingMember(member)}
+                  className="p-2 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200"
+                  aria-label="Edit member"
+                >
+                  <Pencil1Icon />
+                </button>
+                <button
+                  onClick={() => deleteMember(member.id)}
+                  className="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200"
+                  aria-label="Delete member"
+                >
+                  <TrashIcon />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div ref={loader} className="h-10" />
+      </div>
+    </>
   );
 }
 
@@ -338,6 +235,12 @@ function MemberForm({ onSubmit, initialData, onCancel }: MemberFormProps) {
       squad: "Core Banking",
     }
   );
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    }
+  }, [initialData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

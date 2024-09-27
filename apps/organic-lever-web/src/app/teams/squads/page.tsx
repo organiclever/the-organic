@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
-import Navigation from "../../../components/Navigation";
 
 type Squad = {
   id: number;
@@ -37,6 +36,10 @@ const initialSquads: Squad[] = [
 export default function SquadsPage() {
   const [squads, setSquads] = useState<Squad[]>(initialSquads);
   const [editingSquad, setEditingSquad] = useState<Squad | null>(null);
+  const [formData, setFormData] = useState<Omit<Squad, "id">>({
+    name: "",
+    description: "",
+  });
 
   const addSquad = (squad: Omit<Squad, "id">) => {
     const newSquad = { ...squad, id: Date.now() };
@@ -56,64 +59,62 @@ export default function SquadsPage() {
     setSquads(squads.filter((squad) => squad.id !== id));
   };
 
+  const handleCancel = () => {
+    setEditingSquad(null);
+    setFormData({ name: "", description: "" });
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navigation />
-      <div className="p-4">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-6 text-center">
-            Squad Management
-          </h1>
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4">
-              {editingSquad ? "Edit Squad" : "Add New Squad"}
-            </h2>
-            <SquadForm
-              onSubmit={editingSquad ? updateSquad : addSquad}
-              initialData={editingSquad}
-              onCancel={() => setEditingSquad(null)}
-            />
-          </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4">Squads List</h2>
-            <div className="space-y-4">
-              {squads.map((squad) => (
-                <div
-                  key={squad.id}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-md"
+    <>
+      <h1 className="text-3xl font-bold mb-6 text-center">Squad Management</h1>
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 className="text-xl font-semibold mb-4">
+          {editingSquad ? "Edit Squad" : "Add New Squad"}
+        </h2>
+        <SquadForm
+          onSubmit={editingSquad ? updateSquad : addSquad}
+          initialData={editingSquad}
+          onCancel={handleCancel}
+        />
+      </div>
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-xl font-semibold mb-4">Squads List</h2>
+        <div className="space-y-4">
+          {squads.map((squad) => (
+            <div
+              key={squad.id}
+              className="flex items-center justify-between p-4 bg-gray-50 rounded-md"
+            >
+              <div>
+                <h3 className="font-semibold">{squad.name}</h3>
+                <p className="text-sm text-gray-600">{squad.description}</p>
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setEditingSquad(squad)}
+                  className="p-2 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200"
+                  aria-label="Edit squad"
                 >
-                  <div>
-                    <h3 className="font-semibold">{squad.name}</h3>
-                    <p className="text-sm text-gray-600">{squad.description}</p>
-                  </div>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => setEditingSquad(squad)}
-                      className="p-2 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200"
-                      aria-label="Edit squad"
-                    >
-                      <Pencil1Icon />
-                    </button>
-                    <button
-                      onClick={() => deleteSquad(squad.id)}
-                      className="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200"
-                      aria-label="Delete squad"
-                    >
-                      <TrashIcon />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                  <Pencil1Icon />
+                </button>
+                <button
+                  onClick={() => deleteSquad(squad.id)}
+                  className="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200"
+                  aria-label="Delete squad"
+                >
+                  <TrashIcon />
+                </button>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 type SquadFormProps = {
-  onSubmit: (squad: Omit<Squad, "id">) => void;
+  onSubmit: (squad: Omit<Squad, "id"> & { id?: number }) => void;
   initialData?: Squad | null;
   onCancel: () => void;
 };
@@ -122,6 +123,14 @@ function SquadForm({ onSubmit, initialData, onCancel }: SquadFormProps) {
   const [formData, setFormData] = useState<Omit<Squad, "id">>(
     initialData || { name: "", description: "" }
   );
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    } else {
+      setFormData({ name: "", description: "" });
+    }
+  }, [initialData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

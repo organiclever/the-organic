@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
-import Navigation from "../../../components/Navigation";
 
 type TeamRole = {
   id: number;
@@ -37,22 +36,15 @@ const initialTeamRoles: TeamRole[] = [
     name: "SEIT",
     description: "Manages software engineering tools and infrastructure",
   },
-  {
-    id: 6,
-    name: "Tech Lead",
-    description:
-      "Provides technical leadership and guidance to development teams",
-  },
-  {
-    id: 7,
-    name: "Release Manager",
-    description: "Coordinates and manages software releases and deployments",
-  },
 ];
 
 export default function TeamRolesPage() {
   const [teamRoles, setTeamRoles] = useState<TeamRole[]>(initialTeamRoles);
   const [editingRole, setEditingRole] = useState<TeamRole | null>(null);
+  const [formData, setFormData] = useState<Omit<TeamRole, "id">>({
+    name: "",
+    description: "",
+  });
 
   const addTeamRole = (role: Omit<TeamRole, "id">) => {
     const newRole = { ...role, id: Date.now() };
@@ -70,64 +62,64 @@ export default function TeamRolesPage() {
     setTeamRoles(teamRoles.filter((role) => role.id !== id));
   };
 
+  const handleCancel = () => {
+    setEditingRole(null);
+    setFormData({ name: "", description: "" });
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navigation />
-      <div className="p-4">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-6 text-center">
-            Team Roles Management
-          </h1>
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4">
-              {editingRole ? "Edit Team Role" : "Add New Team Role"}
-            </h2>
-            <TeamRoleForm
-              onSubmit={editingRole ? updateTeamRole : addTeamRole}
-              initialData={editingRole}
-              onCancel={() => setEditingRole(null)}
-            />
-          </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4">Team Roles List</h2>
-            <div className="space-y-4">
-              {teamRoles.map((role) => (
-                <div
-                  key={role.id}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-md"
+    <>
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        Team Roles Management
+      </h1>
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 className="text-xl font-semibold mb-4">
+          {editingRole ? "Edit Team Role" : "Add New Team Role"}
+        </h2>
+        <TeamRoleForm
+          onSubmit={editingRole ? updateTeamRole : addTeamRole}
+          initialData={editingRole}
+          onCancel={handleCancel}
+        />
+      </div>
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-xl font-semibold mb-4">Team Roles List</h2>
+        <div className="space-y-4">
+          {teamRoles.map((role) => (
+            <div
+              key={role.id}
+              className="flex items-center justify-between p-4 bg-gray-50 rounded-md"
+            >
+              <div>
+                <h3 className="font-semibold">{role.name}</h3>
+                <p className="text-sm text-gray-600">{role.description}</p>
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setEditingRole(role)}
+                  className="p-2 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200"
+                  aria-label="Edit team role"
                 >
-                  <div>
-                    <h3 className="font-semibold">{role.name}</h3>
-                    <p className="text-sm text-gray-600">{role.description}</p>
-                  </div>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => setEditingRole(role)}
-                      className="p-2 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200"
-                      aria-label="Edit team role"
-                    >
-                      <Pencil1Icon />
-                    </button>
-                    <button
-                      onClick={() => deleteTeamRole(role.id)}
-                      className="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200"
-                      aria-label="Delete team role"
-                    >
-                      <TrashIcon />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                  <Pencil1Icon />
+                </button>
+                <button
+                  onClick={() => deleteTeamRole(role.id)}
+                  className="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200"
+                  aria-label="Delete team role"
+                >
+                  <TrashIcon />
+                </button>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 type TeamRoleFormProps = {
-  onSubmit: (role: Omit<TeamRole, "id">) => void;
+  onSubmit: (role: Omit<TeamRole, "id"> & { id?: number }) => void;
   initialData?: TeamRole | null;
   onCancel: () => void;
 };
@@ -137,10 +129,20 @@ function TeamRoleForm({ onSubmit, initialData, onCancel }: TeamRoleFormProps) {
     initialData || { name: "", description: "" }
   );
 
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    } else {
+      setFormData({ name: "", description: "" });
+    }
+  }, [initialData]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
-    setFormData({ name: "", description: "" });
+    if (!initialData) {
+      setFormData({ name: "", description: "" });
+    }
   };
 
   const handleChange = (
