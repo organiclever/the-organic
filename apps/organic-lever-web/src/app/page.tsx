@@ -5,8 +5,8 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { Users, Settings, Database, BarChart2, Briefcase } from "lucide-react";
 
 export default function HomePage() {
@@ -73,13 +73,13 @@ export default function HomePage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Link href="/settings/db" passHref>
+              <Link href="/settings/data-storage" passHref>
                 <Button
                   variant="outline"
                   className="w-full flex items-center justify-start"
                 >
                   <Database className="mr-2 h-4 w-4" />
-                  Database Management
+                  Data Storage Management
                 </Button>
               </Link>
               <Button

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -26,7 +26,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/AlertDialog";
 
-export default function DatabaseManagementPage() {
+export default function DataStorageManagementPage() {
   const [backupStatus, setBackupStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
@@ -36,31 +36,42 @@ export default function DatabaseManagementPage() {
   const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">(
     "idle"
   );
-  const [mainDbPath, setMainDbPath] = useState<string>("");
-  const [backupDbPath, setBackupDbPath] = useState<string>("");
-  const [initialMainDbPath, setInitialMainDbPath] = useState<string>("");
-  const [initialBackupDbPath, setInitialBackupDbPath] = useState<string>("");
+  const [mainStoragePath, setMainStoragePath] = useState<string>("");
+  const [backupStoragePath, setBackupStoragePath] = useState<string>("");
+  const [initialMainStoragePath, setInitialMainStoragePath] =
+    useState<string>("");
+  const [initialBackupStoragePath, setInitialBackupStoragePath] =
+    useState<string>("");
   const [isLocationChanged, setIsLocationChanged] = useState<boolean>(false);
 
   useEffect(() => {
-    // Simulating initial load of database paths
-    setMainDbPath("/initial/main/database.sqlite");
-    setBackupDbPath("/initial/backup/database.sqlite");
-    setInitialMainDbPath("/initial/main/database.sqlite");
-    setInitialBackupDbPath("/initial/backup/database.sqlite");
+    // Simulating initial load of storage paths
+    setMainStoragePath("/initial/main/storage.sqlite");
+    setBackupStoragePath("/initial/backup/storage.sqlite");
+    setInitialMainStoragePath("/initial/main/storage.sqlite");
+    setInitialBackupStoragePath("/initial/backup/storage.sqlite");
   }, []);
 
   useEffect(() => {
     setIsLocationChanged(
-      mainDbPath !== initialMainDbPath || backupDbPath !== initialBackupDbPath
+      mainStoragePath !== initialMainStoragePath ||
+        backupStoragePath !== initialBackupStoragePath
     );
-  }, [mainDbPath, backupDbPath, initialMainDbPath, initialBackupDbPath]);
+  }, [
+    mainStoragePath,
+    backupStoragePath,
+    initialMainStoragePath,
+    initialBackupStoragePath,
+  ]);
 
   const handleSaveLocations = () => {
     // Here you would typically save the new paths to your backend or configuration
-    console.log("Saving new database locations:", { mainDbPath, backupDbPath });
-    setInitialMainDbPath(mainDbPath);
-    setInitialBackupDbPath(backupDbPath);
+    console.log("Saving new data storage locations:", {
+      mainStoragePath,
+      backupStoragePath,
+    });
+    setInitialMainStoragePath(mainStoragePath);
+    setInitialBackupStoragePath(backupStoragePath);
     setIsLocationChanged(false);
     setSaveStatus("success");
     // Reset the success message after 3 seconds
@@ -68,18 +79,18 @@ export default function DatabaseManagementPage() {
   };
 
   const handleBackup = async () => {
-    if (!mainDbPath || !backupDbPath) {
-      alert("Please provide both main and backup database paths");
+    if (!mainStoragePath || !backupStoragePath) {
+      alert("Please provide both main and backup data storage paths");
       return;
     }
 
     try {
       setBackupStatus("idle");
-      // Simulating a database backup
+      // Simulating a data backup
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // In a real application, you would perform the actual backup here
-      console.log(`Backing up from ${mainDbPath} to ${backupDbPath}`);
+      console.log(`Backing up from ${mainStoragePath} to ${backupStoragePath}`);
 
       setBackupStatus("success");
     } catch (error) {
@@ -89,18 +100,18 @@ export default function DatabaseManagementPage() {
   };
 
   const handleRestore = async () => {
-    if (!mainDbPath || !backupDbPath) {
-      alert("Please provide both main and backup database paths");
+    if (!mainStoragePath || !backupStoragePath) {
+      alert("Please provide both main and backup data storage paths");
       return;
     }
 
     try {
       setRestoreStatus("idle");
-      // Simulating a database restore
+      // Simulating a data restore
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // In a real application, you would perform the actual restore here
-      console.log(`Restoring from ${backupDbPath} to ${mainDbPath}`);
+      console.log(`Restoring from ${backupStoragePath} to ${mainStoragePath}`);
 
       setRestoreStatus("success");
     } catch (error) {
@@ -111,28 +122,28 @@ export default function DatabaseManagementPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Database Management</h1>
+      <h1 className="text-3xl font-bold mb-6">Data Storage Management</h1>
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>Database Locations</CardTitle>
+          <CardTitle>Data Storage Locations</CardTitle>
           <CardDescription>
-            Specify the paths for your main and backup databases
+            Specify the paths for your main and backup data storage
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="grid w-full items-center gap-1.5">
-              <Label htmlFor="main-db-path">Main Database Path</Label>
+              <Label htmlFor="main-storage-path">Main Data Storage Path</Label>
               <div className="flex">
                 <Input
-                  id="main-db-path"
-                  value={mainDbPath}
-                  onChange={(e) => setMainDbPath(e.target.value)}
-                  placeholder="/path/to/main/database.sqlite"
+                  id="main-storage-path"
+                  value={mainStoragePath}
+                  onChange={(e) => setMainStoragePath(e.target.value)}
+                  placeholder="/path/to/main/storage.sqlite"
                   className="flex-grow"
                 />
                 <Button
-                  onClick={() => alert("Select main database file")}
+                  onClick={() => alert("Select main data storage file")}
                   className="ml-2"
                   variant="outline"
                 >
@@ -141,17 +152,19 @@ export default function DatabaseManagementPage() {
               </div>
             </div>
             <div className="grid w-full items-center gap-1.5">
-              <Label htmlFor="backup-db-path">Backup Database Path</Label>
+              <Label htmlFor="backup-storage-path">
+                Backup Data Storage Path
+              </Label>
               <div className="flex">
                 <Input
-                  id="backup-db-path"
-                  value={backupDbPath}
-                  onChange={(e) => setBackupDbPath(e.target.value)}
-                  placeholder="/path/to/backup/database.sqlite"
+                  id="backup-storage-path"
+                  value={backupStoragePath}
+                  onChange={(e) => setBackupStoragePath(e.target.value)}
+                  placeholder="/path/to/backup/storage.sqlite"
                   className="flex-grow"
                 />
                 <Button
-                  onClick={() => alert("Select backup database file")}
+                  onClick={() => alert("Select backup data storage file")}
                   className="ml-2"
                   variant="outline"
                 >
@@ -172,10 +185,10 @@ export default function DatabaseManagementPage() {
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>
-                  Are you sure you want to save the new database locations?
+                  Are you sure you want to save the new data storage locations?
                 </AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action will update the database locations used by the
+                  This action will update the data storage locations used by the
                   application. Make sure the paths are correct before
                   proceeding.
                 </AlertDialogDescription>
@@ -194,7 +207,7 @@ export default function DatabaseManagementPage() {
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Success</AlertTitle>
             <AlertDescription>
-              Database locations have been updated successfully.
+              Data storage locations have been updated successfully.
             </AlertDescription>
           </Alert>
         )}
@@ -202,20 +215,20 @@ export default function DatabaseManagementPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Backup Database</CardTitle>
+            <CardTitle>Backup Data</CardTitle>
             <CardDescription>
-              Create a backup of your current database
+              Create a backup of your current data
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col h-full">
             <p className="text-sm text-gray-500 mb-4">
-              Backing up your database will create a copy of your current data
-              in the specified backup location.
+              Backing up your data will create a copy of your current
+              information in the specified backup location.
             </p>
             <div className="flex-grow">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button disabled={!mainDbPath || !backupDbPath}>
+                  <Button disabled={!mainStoragePath || !backupStoragePath}>
                     <Download className="mr-2 h-4 w-4" />
                     Backup Now
                   </Button>
@@ -223,7 +236,7 @@ export default function DatabaseManagementPage() {
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>
-                      Are you sure you want to backup the database?
+                      Are you sure you want to backup the data?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
                       This action will create a new backup file at the specified
@@ -245,7 +258,7 @@ export default function DatabaseManagementPage() {
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Success</AlertTitle>
                 <AlertDescription>
-                  Database backup has been created successfully.
+                  Data backup has been created successfully.
                 </AlertDescription>
               </Alert>
             )}
@@ -254,8 +267,8 @@ export default function DatabaseManagementPage() {
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>
-                  An error occurred while creating the database backup. Please
-                  try again.
+                  An error occurred while creating the data backup. Please try
+                  again.
                 </AlertDescription>
               </Alert>
             )}
@@ -264,31 +277,31 @@ export default function DatabaseManagementPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Restore Database</CardTitle>
+            <CardTitle>Restore Data</CardTitle>
             <CardDescription>
-              Restore your database from a backup file
+              Restore your data from a backup file
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col h-full">
             <p className="text-sm text-gray-500 mb-4">
-              Warning: Restoring a database will overwrite your current data.
+              Warning: Restoring data will overwrite your current information.
               Make sure you have a backup before proceeding.
             </p>
             <div className="flex-grow">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button disabled={!mainDbPath || !backupDbPath}>
+                  <Button disabled={!mainStoragePath || !backupStoragePath}>
                     <Upload className="mr-2 h-4 w-4" />
-                    Restore Database
+                    Restore Data
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>
-                      Are you sure you want to restore the database?
+                      Are you sure you want to restore the data?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                      This action will overwrite your current database with the
+                      This action will overwrite your current data with the
                       backup. This cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
@@ -306,7 +319,7 @@ export default function DatabaseManagementPage() {
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Success</AlertTitle>
                 <AlertDescription>
-                  Database has been restored successfully from the backup file.
+                  Data has been restored successfully from the backup file.
                 </AlertDescription>
               </Alert>
             )}
@@ -315,8 +328,8 @@ export default function DatabaseManagementPage() {
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>
-                  An error occurred while restoring the database. Please check
-                  your backup file and try again.
+                  An error occurred while restoring the data. Please check your
+                  backup file and try again.
                 </AlertDescription>
               </Alert>
             )}

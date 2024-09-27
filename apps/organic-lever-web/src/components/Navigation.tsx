@@ -35,7 +35,7 @@ const navItems: NavItem[] = [
   {
     name: "Settings",
     href: "/settings",
-    children: [{ name: "Database", href: "/settings/db" }],
+    children: [{ name: "Data Storage", href: "/settings/data-storage" }],
   },
 ];
 
@@ -131,9 +131,7 @@ function NavItem({ item, toggleSidebar, isMobile, level }: NavItemProps) {
       <div className="flex items-center">
         <Link
           href={item.href}
-          className={`hover:text-primary-foreground/80 w-full block py-2 ${
-            level > 0 ? "pl-4" : ""
-          }`}
+          className="hover:text-primary-foreground/80 w-full block py-2"
           onClick={handleClick}
         >
           {item.name}
