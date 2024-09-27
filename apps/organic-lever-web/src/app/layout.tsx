@@ -1,14 +1,14 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import Navigation from "../components/Navigation";
 import { Inter } from "next/font/google";
 import ClientProvider from "../components/ClientProvider";
+import RootLayoutClient from "../components/RootLayoutClient";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Organic Lever",
-  description: "Team productivity tracking for startups",
+  description: "Welcome to the Organic Lever project",
 };
 
 export default function RootLayout({
@@ -18,12 +18,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} min-h-screen bg-gray-100`}>
-        <Navigation />
+      <body className={inter.className}>
         <ClientProvider>
-          <main className="p-4">
-            <div className="max-w-4xl mx-auto">{children}</div>
-          </main>
+          <RootLayoutClient> {children} </RootLayoutClient>
         </ClientProvider>
       </body>
     </html>
