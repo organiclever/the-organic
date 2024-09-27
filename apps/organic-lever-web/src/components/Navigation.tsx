@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ChevronDownIcon,
   ChevronRightIcon,
@@ -25,6 +25,11 @@ const navItems: NavItem[] = [
       { name: "Roles", href: "/teams/roles" },
       { name: "Squads", href: "/teams/squads" },
     ],
+  },
+  {
+    name: "Settings",
+    href: "/settings",
+    children: [{ name: "Database", href: "/settings/db" }],
   },
 ];
 
