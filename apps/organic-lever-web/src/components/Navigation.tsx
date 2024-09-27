@@ -92,11 +92,12 @@ export default function Navigation({
           </ul>
         </div>
       </nav>
-      {isSidebarOpen && isMobile && (
+      {isMobile && isSidebarOpen && (
         <div
+          data-testid="mobile-overlay"
+          aria-hidden="true"
           className="fixed inset-0 bg-black bg-opacity-50 z-30"
           onClick={toggleSidebar}
-          aria-hidden="true"
         />
       )}
     </>

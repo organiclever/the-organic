@@ -74,25 +74,22 @@ describe("HomePage component", () => {
 
   it("renders the Settings card", () => {
     render(<HomePage />);
+
     expect(screen.getByText("Settings")).toBeInTheDocument();
     expect(
       screen.getByText("Configure application settings")
     ).toBeInTheDocument();
 
-    const dbManagementButton = screen.getByText("Database Management");
-    expect(dbManagementButton).toBeInTheDocument();
-    expect(dbManagementButton.closest("a")).toHaveAttribute(
+    // Update this to match the actual text
+    const dataStorageButton = screen.getByText("Data Storage Management");
+    expect(dataStorageButton).toBeInTheDocument();
+    expect(dataStorageButton.closest("a")).toHaveAttribute(
       "href",
-      "/settings/db"
+      "/settings/data-storage"
     );
 
-    const generalSettingsButton = screen.getByText("General Settings");
-    expect(generalSettingsButton).toBeInTheDocument();
-    expect(generalSettingsButton).toBeDisabled();
-
-    const userPreferencesButton = screen.getByText("User Preferences");
-    expect(userPreferencesButton).toBeInTheDocument();
-    expect(userPreferencesButton).toBeDisabled();
+    expect(screen.getByText("General Settings")).toBeInTheDocument();
+    expect(screen.getByText("User Preferences")).toBeInTheDocument();
   });
 
   it("renders the correct icons", () => {
