@@ -8,29 +8,41 @@ export default function Home({ params }: { params: { lang?: string } }) {
   const t = getTranslations(lang);
 
   return (
-    <div className="min-h-screen bg-black text-green-400 font-mono p-8">
+    <div className="min-h-screen bg-gray-900 text-emerald-300 font-mono p-8">
       <header className="mb-12">
-        <h1 className="text-4xl font-bold mb-4">Ayokoding</h1>
+        <h1 className="text-4xl font-bold mb-4 text-emerald-200">Ayokoding</h1>
         <p className="text-xl">{t.tagline}</p>
       </header>
 
       <main>
         <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4">{t.availableContent}</h2>
+          <h2 className="text-2xl font-bold mb-4 text-emerald-200">
+            {t.availableContent}
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex flex-col items-center text-center p-6 border border-green-400">
-              <FileText size={48} className="mb-4" />
-              <h3 className="text-xl font-bold mb-2">{t.blogs}</h3>
+            <div className="flex flex-col items-center text-center p-6 border border-emerald-400 rounded-lg bg-gray-800">
+              <FileText size={48} className="mb-4 text-emerald-400" />
+              <h3 className="text-xl font-bold mb-2 text-emerald-200">
+                {t.blogs}
+              </h3>
               <p>{t.blogsDescription}</p>
-              <Link href={`/${lang}/blogs`} className="mt-4 underline">
+              <Link
+                href={`/${lang}/blogs`}
+                className="mt-4 underline text-emerald-400 hover:text-emerald-300"
+              >
                 {t.readBlogs}
               </Link>
             </div>
-            <div className="flex flex-col items-center text-center p-6 border border-green-400">
-              <Book size={48} className="mb-4" />
-              <h3 className="text-xl font-bold mb-2">{t.books}</h3>
+            <div className="flex flex-col items-center text-center p-6 border border-emerald-400 rounded-lg bg-gray-800">
+              <Book size={48} className="mb-4 text-emerald-400" />
+              <h3 className="text-xl font-bold mb-2 text-emerald-200">
+                {t.books}
+              </h3>
               <p>{t.booksDescription}</p>
-              <Link href={`/${lang}/books`} className="mt-4 underline">
+              <Link
+                href={`/${lang}/books`}
+                className="mt-4 underline text-emerald-400 hover:text-emerald-300"
+              >
                 {t.exploreBooks}
               </Link>
             </div>
@@ -38,11 +50,13 @@ export default function Home({ params }: { params: { lang?: string } }) {
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">{t.aboutPlatform}</h2>
+          <h2 className="text-2xl font-bold mb-4 text-emerald-200">
+            {t.aboutPlatform}
+          </h2>
           <p className="mb-4">{t.platformDescription}</p>
           <Link
             href={`/${lang}/about`}
-            className="inline-block px-6 py-3 border border-green-400 hover:bg-green-900 transition-colors"
+            className="inline-block px-6 py-3 border border-emerald-400 rounded-lg hover:bg-emerald-900 transition-colors text-emerald-200 hover:text-emerald-100"
           >
             {t.learnMore}
           </Link>
